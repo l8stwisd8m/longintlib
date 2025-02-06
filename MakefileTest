@@ -1,0 +1,24 @@
+# compiler options
+CC = gcc
+CFLAGS = -Wall
+LDFLAGS = -Llib -llongintlib
+RPATH = -Wl,-rpath=./lib
+
+# directories
+TEST_DIR = test
+
+# source files
+SRC_FILES = $(wildcard $(TEST_DIR)/*.c)
+
+# targets
+TARGETS = $(patsubst $(TEST_DIR)/%.c, %, $(SRC_FILES))
+
+.PHONY: all clean
+
+all: $(TARGETS)
+
+%: $(TEST_DIR)/%.c
+	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS) $(RPATH)
+
+clean:
+	rm -rf $(TARGETS)
