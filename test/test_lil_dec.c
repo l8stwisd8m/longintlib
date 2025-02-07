@@ -1,8 +1,15 @@
 #include <stdio.h>
 #include <stdint.h>
+#include "utils/test_utils.h"
 #include "../include/longintlib.h"
-#define BASE_MAX 0xffffffffffffffff
-#define N 4
+
+void test_dec(lil_t *a) {
+    printf("a:\t");
+    lil_print_hex(a);
+    lil_dec(a);
+    printf("dec(a):\t");
+    lil_print_hex(a);
+}
 
 int main(int argc, char *argv[]) {
     // decrement test
@@ -12,28 +19,16 @@ int main(int argc, char *argv[]) {
     printf("Decrement test \n");
     
     printf("Least significant digit decrement \n");
-    printf("a:\t");
-    lil_print_hex(&a);
-    lil_dec(&a);
-    printf("dec(a):\t");
-    lil_print_hex(&a);
-     
+    test_dec(&a);
+    
     printf("Most significant digit decrement \n");
     a.val[0] = 0;
     a.val[N - 1] = BASE_MAX;
-    printf("a:\t");
-    lil_print_hex(&a);
-    lil_dec(&a);
-    printf("dec(a):\t");
-    lil_print_hex(&a);
-     
+    test_dec(&a);
+    
     printf("An overflaw caused by decrement of an empty value\n");
     for (int i = 0; i < N; a.val[i++] = 0);
-    printf("a:\t");
-    lil_print_hex(&a);
-    lil_dec(&a);
-    printf("dec(a):\t");
-    lil_print_hex(&a);
+    test_dec(&a);
     
     return 0;
 }

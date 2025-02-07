@@ -6,9 +6,13 @@ RPATH = -Wl,-rpath=./lib
 
 # directories
 TEST_DIR = test
+UTILS_DIR = utils
 
 # source files
 SRC_FILES = $(wildcard $(TEST_DIR)/*.c)
+UTILS_SRC = $(TEST_DIR)/$(UTILS_DIR)/test_utils.c
+
+UTILS_OBJ = $(UTILS_SRC:.c=.o)
 
 # targets
 TARGETS = $(patsubst $(TEST_DIR)/%.c, %, $(SRC_FILES))
@@ -17,8 +21,11 @@ TARGETS = $(patsubst $(TEST_DIR)/%.c, %, $(SRC_FILES))
 
 all: $(TARGETS)
 
-%: $(TEST_DIR)/%.c
+%: $(TEST_DIR)/%.c $(UTILS_OBJ)
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS) $(RPATH)
 
+$(UTILS_SRC): $(UTILS_SRC)
+	$(CC) $(CFLAGS) -c $@ $^ $(LDFLAGS) $(RPATH)
+
 clean:
-	rm -rf $(TARGETS)
+	rm -rf $(TARGETS) $(UTILS_OBJ)

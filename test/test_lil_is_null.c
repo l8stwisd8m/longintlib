@@ -1,9 +1,12 @@
 #include <stdio.h>
 #include <stdint.h>
+#include "utils/test_utils.h"
 #include "../include/longintlib.h"
-#define N 4
 
-void test_is_null(int flag) {
+void test_is_null(lil_t *a) {
+    printf("a:\t");
+    lil_print_hex(a);
+    int flag = lil_is_null(a);
     if (flag) printf("Value is null\n");
     else printf("Value is not null\n");
 }
@@ -16,25 +19,16 @@ int main(int argc, char *argv[]) {
     printf("Function \"is null\" test \n");
     
     printf("Empty value \n");
-    int flag = lil_is_null(&a);
-    printf("a:\t");
-    lil_print_hex(&a);
-    test_is_null(flag);
+    test_is_null(&a);
     
     printf("Most significant digit is not null \n");
     a.val[N - 1] = 1;
-    flag = lil_is_null(&a);
-    printf("a:\t");
-    lil_print_hex(&a);
-    test_is_null(flag);
-     
+    test_is_null(&a);
+    
     printf("Least significant digit is not null \n");
     a.val[N - 1] = 0;
     a.val[0] = 1;
-    flag = lil_is_null(&a);
-    printf("a:\t");
-    lil_print_hex(&a);
-    test_is_null(flag);
+    test_is_null(&a);
     
     return 0;
 }

@@ -1,8 +1,15 @@
 #include <stdio.h>
 #include <stdint.h>
+#include "utils/test_utils.h"
 #include "../include/longintlib.h"
-#define BASE_MAX 0xffffffffffffffff
-#define N 4
+
+void test_inc(lil_t *a) {
+    printf("a:\t");
+    lil_print_hex(a);
+    lil_dec(a);
+    printf("dec(a):\t");
+    lil_print_hex(a);
+}
 
 int main(int argc, char *argv[]) {
     // increment test
@@ -12,27 +19,15 @@ int main(int argc, char *argv[]) {
     printf("Increment test \n");
     
     printf("Most significant digit increment \n");
-    printf("a:\t");
-    lil_print_hex(&a);
-    lil_inc(&a);
-    printf("inc(a):\t");
-    lil_print_hex(&a);
-     
+    test_inc(&a);
+    
     printf("Least significant digit increment \n");
     for (int i = 0; i < N; a.val[i++] = 0);
-    printf("a:\t");
-    lil_print_hex(&a);
-    lil_inc(&a);
-    printf("inc(a):\t");
-    lil_print_hex(&a);
-     
+    test_inc(&a);
+    
     printf("An overflaw caused by increment of a \"full\" value \n");
     for (int i = 0; i < N; a.val[i++] = BASE_MAX);
-    printf("a:\t");
-    lil_print_hex(&a);
-    lil_inc(&a);
-    printf("inc(a):\t");
-    lil_print_hex(&a);
+    test_inc(&a);
     
     return 0;
 }

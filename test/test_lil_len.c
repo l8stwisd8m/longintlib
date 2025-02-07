@@ -1,9 +1,15 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <inttypes.h>
+#include "utils/test_utils.h"
 #include "../include/longintlib.h"
-#define BASE_MAX 0xffffffffffffffff
-#define N 4
+
+void test_len(lil_t *a) {
+    uint64_t a_len = lil_len(a);
+    printf("a:\t");
+    lil_print_hex(a);
+    printf("len(a): %"PRIu64"\n", a_len);
+}
 
 int main(int argc, char *argv[]) {
     // length test
@@ -13,32 +19,20 @@ int main(int argc, char *argv[]) {
     printf("Length test \n");
     
     printf("Length of an empty value \n");
-    uint64_t a_len = lil_len(&a);
-    printf("a:\t");
-    lil_print_hex(&a);
-    printf("len(a): %"PRIu64"\n", a_len);
-     
+    test_len(&a);
+    
     printf("Most significant digit is not null \n");
     a.val[N - 1] = 0x1234567;
-    a_len = lil_len(&a);
-    printf("a:\t");
-    lil_print_hex(&a);
-    printf("len(a): %"PRIu64"\n", a_len);
-      
+    test_len(&a);
+    
     printf("Least significant digit is not null \n");
     a.val[N - 1] = 0;
     a.val[0] = 0x1234567;
-    a_len = lil_len(&a);
-    printf("a:\t");
-    lil_print_hex(&a);
-    printf("len(a): %"PRIu64"\n", a_len);
-     
+    test_len(&a);
+    
     printf("All digits are \"full\" \n");
     for (int i = 0; i < N; a.val[i++] = BASE_MAX);
-    a_len = lil_len(&a);
-    printf("a:\t");
-    lil_print_hex(&a);
-    printf("len(a): %"PRIu64"\n", a_len);
+    test_len(&a);
     
     return 0;
 }

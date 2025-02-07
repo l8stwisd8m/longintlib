@@ -1,9 +1,12 @@
 #include <stdio.h>
 #include <stdint.h>
+#include "utils/test_utils.h"
 #include "../include/longintlib.h"
-#define N 4
 
-void test_is_odd(int flag) {
+void test_is_odd(lil_t *a) {
+    printf("a:\t");
+    lil_print_hex(a);
+    int flag = lil_is_odd(a);
     if (flag) printf("Value is odd\n");
     else printf("Value is not odd\n");
 }
@@ -16,24 +19,15 @@ int main(int argc, char *argv[]) {
     printf("Function \"is odd\" test \n");
     
     printf("Empty value \n");
-    int flag = lil_is_odd(&a);
-    printf("a:\t");
-    lil_print_hex(&a);
-    test_is_odd(flag);
+    test_is_odd(&a);
     
     printf("Least significant digit is odd \n");
     a.val[0] = 1;
-    flag = lil_is_odd(&a);
-    printf("a:\t");
-    lil_print_hex(&a);
-    test_is_odd(flag);
-     
+    test_is_odd(&a);
+    
     printf("Most significant digit is even \n");
     a.val[0] = 2;
-    flag = lil_is_odd(&a);
-    printf("a:\t");
-    lil_print_hex(&a);
-    test_is_odd(flag);
+    test_is_odd(&a);
     
     return 0;
 }
