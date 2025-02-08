@@ -16,6 +16,7 @@ void lil_sub(lil_t *src_a, lil_t *src_b) {
     }
     
     // check borrow
+    if (carry_flag == 1) return; 
     for (int i = src_b->size; i < src_a->size; i++) {
         if (src_a->val[i]) {
             src_a->val[i] -= 1;

@@ -171,7 +171,7 @@ Function calculates the arithmetic sum of two values.
 Input arguments are pointers to the long_int sources "a" and "b" (lil_t src_a and lil_t src_b) and pointer to the destination variable (lil_t dst).  
 Result is stored in the destination variable (dst).  
 
-### 4. Multiplication (lilmul)
+### 4. Multiplication (lil_mul)
 *Function performs multiplication of two values.*  
 Input arguments are pointers to the long_int sources "a" and "b" (lil_t *src_a and lil_t *src_b) and pointer to the destination variable (lilt *dst).  
 Result is stored in the destination variable (dst).  

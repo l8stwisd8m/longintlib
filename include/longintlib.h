@@ -19,6 +19,8 @@ typedef union {
     uint64_t halves[2];
 } lil_chunk_t;
 
+#undef PLUS
+#undef MINUS
 #define long_int lil_t
 
 // BASIC FUNCTIONS

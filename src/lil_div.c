@@ -3,6 +3,7 @@
 #include <iso646.h>
 #include <assert.h>
 #include "../include/longintlib.h"
+#include "../include/longintconst.h"
 
 void lil_div(lil_t *dst, lil_t *src_a, lil_t *src_b) {
     // return floor from division of a by b
@@ -12,13 +13,13 @@ void lil_div(lil_t *dst, lil_t *src_a, lil_t *src_b) {
     uint64_t offset = 0;
 
     // default result
-    dst->sign = 0;
+    dst->sign = LIL_PLUS;
     for (int i = 0; i < dst->size; dst->val[i++] = 0);
 
     // exceptions
-    if (lil_is_null(src_b)) return; // invalid b value
     if (lil_is_null(src_a)) return; // a = 0 => a mod b = 0
-    if (src_a->size != src_b->size or src_b->size != dst->size) return; // operand sizes mismatch error
+    assert(lil_is_null(src_b) == 0); // invalid b value
+    assert((src_a->size == dst->size) and (src_b->size == dst->size)); // operand sizes mismatch error
 
     a_len = lil_len(src_a);
     b_len = lil_len(src_b);
@@ -50,8 +51,8 @@ void lil_div(lil_t *dst, lil_t *src_a, lil_t *src_b) {
     assert(src_t and src_t->val);
 
     // mod calculation
-    src_a->sign = 0;
-    src_b->sign = 1;
+    src_a->sign = LIL_PLUS;
+    src_b->sign = LIL_MINUS;
     for (int i = 0; i <= offset; i++) {
         lil_shl(dst); // dst *= 2
         lil_sum(src_t, src_a, src_b); // t = a - b

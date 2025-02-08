@@ -10,8 +10,6 @@ void lil_shln(lil_t *src, uint64_t n) {
     uint64_t carry_value = 0;
     uint64_t carry_mask = 0;
 
-    if (n == 0) return; // shift by 0 bits
-
     // shift by word size
     for (int i = 0; i < w_shift; i++) {
         for (int j = src->size - 1; j > 0; j--) {
@@ -23,16 +21,12 @@ void lil_shln(lil_t *src, uint64_t n) {
     // shift by (n mod w) bits
     for (int i = 0; i < b_shift; i++) {
         // carry mask generation
-        carry_mask = carry_mask ^ (LIL_MSBIT >> i);
+        carry_mask = carry_mask | (LIL_MSBIT >> i);
     }
     for (int i = 0; i < src->size; i++) {
         // shift by (n mow w) bits
         tmp = src->val[i] & carry_mask;
         src->val[i] = (src->val[i] << b_shift) ^ carry_value;
-        // reverse carry value bits order
-        carry_value = 0;
-        for (int j = 0; j < b_shift; j++) {
-            carry_value = carry_value ^ ((LIL_LSBIT & (tmp >> (LIL_BASE - 1 - j))) << j);
-        }
+        carry_value = (carry_value ^ carry_value) ^ (tmp >> (LIL_BASE - b_shift));
     }
 }

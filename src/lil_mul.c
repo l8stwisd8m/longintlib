@@ -6,8 +6,9 @@
 void lil_mul(lil_t *dst, lil_t *src_a, lil_t *src_b) {
     // multiplication of a and b
     lil_chunk_t _chunk;
-    assert(dst->size >= src_a->size + src_b->size);
+    assert(dst->size >= (src_a->size + src_b->size));
     dst->sign = src_a->sign ^ src_b->sign;
+    for (int i = 0; i < dst->size; dst->val[i++] = 0);
 
     // memory allocation for temporary structure
     lil_t *tmp_struct = (lil_t*)malloc(sizeof(lil_t));
@@ -29,6 +30,7 @@ void lil_mul(lil_t *dst, lil_t *src_a, lil_t *src_b) {
         lil_add(dst, tmp_struct);
         for (int i = 0; i < tmp_struct->size; tmp_struct->val[i++] = 0); // clean temporary values
     }
+    
     free(tmp_struct->val);
     free(tmp_struct);
 }
