@@ -1,7 +1,7 @@
 # compiler options
 CC = gcc
 CFLAGS = -Wall
-LDFLAGS = -Llib -llongintlib
+LDFLAGS = -Llib -llongint
 RPATH = -Wl,-rpath=./lib
 
 # directories
@@ -15,7 +15,10 @@ TARGETS = $(patsubst $(TEST_DIR)/%.c, %, $(SRC_FILES))
 
 .PHONY: all clean
 
-all: $(TARGETS)
+all: $(EXX_DIR) $(TARGETS)
+
+$(EXX_DIR):
+	mkdir -p $(EXX_DIR)
 
 %: $(EXX_DIR)/%.c
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS) $(RPATH)

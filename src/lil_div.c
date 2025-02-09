@@ -20,15 +20,25 @@ void lil_div(lil_t *dst, lil_t *src_a, lil_t *src_b) {
     if (lil_is_null(src_a)) return; // a = 0 => a mod b = 0
     assert(lil_is_null(src_b) == 0); // invalid b value
     assert((src_a->size == dst->size) and (src_b->size == dst->size)); // operand sizes mismatch error
-
+     
+    int cmp_flag = lil_cmp_val(src_a, src_b);
+    if (cmp_flag == -1) {
+        return; // abs(a) < b => floor(a/b) = 0
+    }
+    if (cmp_flag == 0) {
+        dst->val[0] = 1;
+        return; // abs(a) = b => floor(a/b) = 1
+    }
+    
     a_len = lil_len(src_a);
     b_len = lil_len(src_b);
     offset = a_len - b_len;
-
-    if (b_len > a_len) return; // floor(a/b) = 0
+    
     dst->sign = src_a->sign;
 
     // save initial values of a and b
+    int src_a_sign = src_a->sign;
+    int src_b_sign = src_b->sign;
     uint64_t *src_a_initial = (uint64_t *)malloc(src_a->size * sizeof(uint64_t));
     uint64_t *src_b_initial = (uint64_t *)malloc(src_b->size * sizeof(uint64_t));
     assert(src_a_initial and src_b_initial);
@@ -50,13 +60,13 @@ void lil_div(lil_t *dst, lil_t *src_a, lil_t *src_b) {
     src_t->val = (uint64_t *)calloc(src_t->size, sizeof(uint64_t));
     assert(src_t and src_t->val);
 
-    // mod calculation
+    // div calculation
     src_a->sign = LIL_PLUS;
     src_b->sign = LIL_MINUS;
     for (int i = 0; i <= offset; i++) {
         lil_shl(dst); // dst *= 2
         lil_sum(src_t, src_a, src_b); // t = a - b
-        if (not src_t->sign or lil_is_null(src_t)) {
+        if ((src_t->sign == LIL_PLUS) or lil_is_null(src_t)) {
             lil_inc(dst); // dst++
             lil_cpy(src_a, src_t); // a = t
         }
@@ -71,6 +81,8 @@ void lil_div(lil_t *dst, lil_t *src_a, lil_t *src_b) {
         src_a->val[i] = src_a_initial[i];
         src_b->val[i] = src_b_initial[i];
     }
+    src_a->sign = src_a_sign;
+    src_b->sign = src_b_sign;
     
     free(src_a_initial);
     free(src_b_initial);

@@ -1,7 +1,7 @@
 # compiler options
 CC = gcc
 CFLAGS = -Wall
-LDFLAGS = -Llib -llongintlib
+LDFLAGS = -Llib -llongint
 RPATH = -Wl,-rpath=./lib
 
 # directories
