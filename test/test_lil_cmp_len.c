@@ -1,7 +1,14 @@
 #include <stdio.h>
 #include <stdint.h>
-#include "utils/test_utils.h"
+#include "test_utils.h"
 #include "../include/longintlib.h"
+
+void print_args(lil_t *a, lil_t *b) {
+    printf("a:\t");
+    lil_print_hex(a);
+    printf("b:\t");
+    lil_print_hex(b);
+}
 
 void verbose_cmp_len(int flag) {
     if (flag == -1) printf("len(a) is less than len(b)\n");

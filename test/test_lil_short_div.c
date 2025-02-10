@@ -2,11 +2,10 @@
 #include <stdint.h>
 #include <inttypes.h>
 #include "../include/longintlib.h"
-#include "utils/test_utils.h"
+#include "test_utils.h"
 
 void test_short_div(lil_t *a, uint64_t b, lil_t *c) {
-    printf("a:\t");
-    lil_print_hex(a);
+    PRINT_ARG(a);
     printf("b:\t0x %"PRIx64"\n", b);
     lil_short_div(c, a, b);
     printf("a / b:\t");

@@ -1,11 +1,10 @@
 #include <stdio.h>
 #include <stdint.h>
-#include "utils/test_utils.h"
+#include "test_utils.h"
 #include "../include/longintlib.h"
 
 void test_is_odd(lil_t *a) {
-    printf("a:\t");
-    lil_print_hex(a);
+    PRINT_ARG(a);
     int flag = lil_is_odd(a);
     if (flag) printf("Value is odd\n");
     else printf("Value is not odd\n");

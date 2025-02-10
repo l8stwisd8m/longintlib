@@ -1,11 +1,10 @@
 #include <stdio.h>
 #include <stdint.h>
-#include "utils/test_utils.h"
+#include "test_utils.h"
 #include "../include/longintlib.h"
 
 void test_inc(lil_t *a) {
-    printf("a:\t");
-    lil_print_hex(a);
+    PRINT_ARG(a);
     lil_dec(a);
     printf("dec(a):\t");
     lil_print_hex(a);

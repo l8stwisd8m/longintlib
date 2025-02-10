@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
-#include "utils/test_utils.h"
+#include "test_utils.h"
 #include "../include/longintlib.h"
 #include "../include/longintconst.h"
 #define M 8
@@ -15,7 +15,8 @@ void mul(lil_t *a, lil_t *b, lil_t *c) {
 }
 
 void test_mul(lil_t *a, lil_t *b, lil_t *c) {
-    print_args(a, b);
+    PRINT_ARG(a);
+    PRINT_ARG(b);
     
     printf("Both terms are positive \n");
     a->sign = LIL_PLUS; b->sign = LIL_PLUS;
@@ -46,7 +47,10 @@ int main(int argc, char *argv[]) {
     printf("Multiplication test \n");
     
     printf("Multiplication of terms both equal to zero \n");
-    print_args(&a, &b);
+    printf("a:\t");
+    lil_print_hex(&a);
+    printf("b:\t");
+    lil_print_hex(&b);
     mul(&a, &b, &c);
      
     printf("Multiplication of a term equal to zero and a non-zero value \n");

@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
-#include "utils/test_utils.h"
+#include "test_utils.h"
 #include "../include/longintlib.h"
 
 void verbose_cmp(int flag) {
@@ -11,7 +11,8 @@ void verbose_cmp(int flag) {
 }
 
 void comparison(lil_t *a, lil_t *b, int flag) {
-    print_args(a, b);
+    PRINT_ARG(a);
+    PRINT_ARG(b);
     
     printf("Both values are positive \n");
     a->sign = PLUS; b->sign = PLUS;
@@ -39,7 +40,10 @@ int main(int argc, char *argv[]) {
     printf("Comparison test \n");
     
     printf("Comparison between two equal arguments \n");
-    print_args(&a, &b);
+    printf("a:\t");
+    lil_print_hex(&a);
+    printf("b:\t");
+    lil_print_hex(&b);
     int cmp_flag = lil_cmp(&a, &b);
     verbose_cmp(cmp_flag);
     

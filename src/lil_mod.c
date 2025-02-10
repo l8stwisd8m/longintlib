@@ -1,9 +1,9 @@
-#include <stdlib.h>
 #include <stdint.h>
 #include <iso646.h>
 #include <assert.h>
 #include "../include/longintlib.h"
 #include "../include/longintconst.h"
+#include "../include/longintmacro.h"
 
 void lil_mod(lil_t *dst, lil_t *src_a, lil_t *src_b) {
     // return remainder after division of a by b
@@ -14,7 +14,7 @@ void lil_mod(lil_t *dst, lil_t *src_a, lil_t *src_b) {
 
     // default result
     dst->sign = LIL_PLUS;
-    for (int i = 0; i < dst->size; dst->val[i++] = 0);
+    LIL_SET_NULL(dst);
 
     // exceptions
     if (lil_is_null(src_a)) return; // a = 0 => a mod b = 0
@@ -37,15 +37,11 @@ void lil_mod(lil_t *dst, lil_t *src_a, lil_t *src_b) {
     }
     
     // save initial values of a and b
-    int src_a_sign = src_a->sign;
-    int src_b_sign = src_b->sign;
-    uint64_t *src_a_initial = (uint64_t *)malloc(src_a->size * sizeof(uint64_t));
-    uint64_t *src_b_initial = (uint64_t *)malloc(src_b->size * sizeof(uint64_t));
-    assert(src_a_initial and src_b_initial);
-    for (int i = 0; i < src_a->size; i++) {
-        src_a_initial[i] = src_a->val[i];
-        src_b_initial[i] = src_b->val[i];
-    }
+    long_int *src_a_initial, *src_b_initial;
+    LIL_MALLOC(src_a_initial, src_a->size);
+    LIL_MALLOC(src_b_initial, src_b->size);
+    lil_cpy(src_a_initial, src_a);
+    lil_cpy(src_b_initial, src_b);
     
     // left shift b while b < a
     lil_shln(src_b, offset);
@@ -67,13 +63,8 @@ void lil_mod(lil_t *dst, lil_t *src_a, lil_t *src_b) {
     lil_cpy(dst, src_a); // result
     
     // restore values of a and b
-    for (int i = 0; i < src_a->size; i++) {
-        src_a->val[i] = src_a_initial[i];
-        src_b->val[i] = src_b_initial[i];
-    }
-    src_a->sign = src_a_sign;
-    src_b->sign = src_b_sign;
-    
-    free(src_a_initial);
-    free(src_b_initial);
+    lil_cpy(src_a, src_a_initial);
+    lil_cpy(src_b, src_b_initial);
+    LIL_FREE(src_a_initial);
+    LIL_FREE(src_b_initial);
 }

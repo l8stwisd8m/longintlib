@@ -2,7 +2,13 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include "../include/longintlib.h"
-#include "utils/test_utils.h"
+#include "test_utils.h"
+
+void short_print_args(lil_t *a, uint64_t b) {
+    printf("a:\t");
+    lil_print_hex(a);
+    printf("b:\t0x %"PRIx64"\n", b);
+}
 
 void test_short_mul(lil_t *a, uint64_t b) {
     short_print_args(a, b);

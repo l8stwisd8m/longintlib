@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdint.h>
-#include "utils/test_utils.h"
+#include "test_utils.h"
 #include "../include/longintlib.h"
 
 void test_dec(lil_t *a) {

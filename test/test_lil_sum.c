@@ -1,9 +1,16 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
-#include "utils/test_utils.h"
+#include "test_utils.h"
 #include "../include/longintlib.h"
 #include "../include/longintconst.h"
+
+void print_args(lil_t *a, lil_t *b) {
+    printf("a:\t");
+    lil_print_hex(a);
+    printf("b:\t");
+    lil_print_hex(b);
+}
 
 void sum(lil_t *a, lil_t *b, lil_t *c) {
     lil_sum(c, a, b);
@@ -14,7 +21,8 @@ void sum(lil_t *a, lil_t *b, lil_t *c) {
 }
 
 void test_sum(lil_t *a, lil_t *b, lil_t *c) {
-    print_args(a, b);
+    PRINT_ARG(a);
+    PRINT_ARG(b);
     
     printf("Both terms are positive \n");
     a->sign = LIL_PLUS; b->sign = LIL_PLUS;

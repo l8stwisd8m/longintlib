@@ -1,11 +1,10 @@
 #include <stdio.h>
 #include <stdint.h>
-#include "utils/test_utils.h"
+#include "test_utils.h"
 #include "../include/longintlib.h"
 
 void test_shlw(lil_t *a) {
-    printf("a:\t");
-    lil_print_hex(a);
+    PRINT_ARG(a);
     lil_shlw(a);
     printf("a << 1:\t");
     lil_print_hex(a);

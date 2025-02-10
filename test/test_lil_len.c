@@ -1,13 +1,12 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <inttypes.h>
-#include "utils/test_utils.h"
+#include "test_utils.h"
 #include "../include/longintlib.h"
 
 void test_len(lil_t *a) {
     uint64_t a_len = lil_len(a);
-    printf("a:\t");
-    lil_print_hex(a);
+    PRINT_ARG(a);
     printf("len(a): %"PRIu64"\n", a_len);
 }
 

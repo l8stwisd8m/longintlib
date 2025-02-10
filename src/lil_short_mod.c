@@ -1,9 +1,9 @@
 #include <iso646.h>
 #include <stdint.h>
-#include <stdlib.h>
 #include <assert.h>
 #include "../include/longintlib.h"
 #include "../include/longintconst.h"
+#include "../include/longintmacro.h"
 
 uint64_t lil_short_mod(lil_t *src_a, uint64_t val_b) {
     // return short remainder after division of long a by short b
@@ -13,13 +13,10 @@ uint64_t lil_short_mod(lil_t *src_a, uint64_t val_b) {
     assert(val_b);
     
     // casting b value to long_int
-    lil_t *src_b = (lil_t *)malloc(sizeof(lil_t));
-    assert(src_b);
-    src_b->size = src_a->size;
-    src_b->val = calloc(src_b->size, sizeof(uint64_t));
-    assert(src_b->val);
+    lil_t *src_b;
+    LIL_CALLOC(src_b, src_a->size);
     src_b->val[0] = val_b;
-     
+    
     int cmp_flag = lil_cmp_val(src_a, src_b);
     if (cmp_flag == -1) {
         free(src_b->val);
@@ -43,20 +40,14 @@ uint64_t lil_short_mod(lil_t *src_a, uint64_t val_b) {
         offset -= 1;
     }
     
-    // memory allocation for temporary structure
-    lil_t *src_t = (lil_t *)malloc(sizeof(lil_t));
-    assert(src_t);
-    src_t->size = src_a->size;
-    src_t->val = calloc(src_t->size, sizeof(uint64_t));
-    assert(src_t->val);
+    // temporary structure
+    long_int *src_t;
+    LIL_CALLOC(src_t, src_a->size);
     
     // save initial value of a
-    int src_a_sign = src_a->sign;
-    uint64_t *src_a_initial = (uint64_t *)malloc(src_a->size * sizeof(uint64_t));
-    assert(src_a_initial);
-    for (int i = 0; i < src_a->size; i++) {
-        src_a_initial[i] = src_a->val[i];
-    }
+    long_int *src_a_initial;
+    LIL_MALLOC(src_a_initial, src_a->size);
+    lil_cpy(src_a_initial, src_a);
     
     // mod calculation
     src_a->sign = LIL_PLUS;
@@ -72,15 +63,10 @@ uint64_t lil_short_mod(lil_t *src_a, uint64_t val_b) {
     uint64_t result = src_a->val[0];
 
     // restore value of a
-    src_a->sign = src_a_sign;
-    for (int i = 0; i < src_a->size; i++) {
-        src_a->val[i] = src_a_initial[i];
-    }
-    free(src_a_initial);
+    lil_cpy(src_a, src_a_initial);
+    LIL_FREE(src_a_initial);
     
-    free(src_t->val);
-    free(src_t);
-    free(src_b->val);
-    free(src_b);
+    LIL_FREE(src_t);
+    LIL_FREE(src_b);
     return result;
 }

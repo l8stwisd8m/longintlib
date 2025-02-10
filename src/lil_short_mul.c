@@ -1,14 +1,15 @@
 #include <stdint.h>
 #include "../include/longintlib.h"
 #include "../include/longintconst.h"
+#include "../include/longintmacro.h"
 
 void lil_short_mul(long_int *src_a, uint64_t src_b) {
     // multiplication of long a and short b
     
     if (src_b == 0) {
-        for (int i = 0; i < src_a->size; src_a->val[i++] = 0);
+        LIL_SET_NULL(src_a);
         src_a->sign = LIL_PLUS;
-        return;
+        return; // a * 0 = 0
     }
     
     // multiplication

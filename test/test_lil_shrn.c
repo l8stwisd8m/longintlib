@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <inttypes.h>
-#include "utils/test_utils.h"
+#include "test_utils.h"
 #include "../include/longintlib.h"
 
 void shrn(lil_t *a, uint64_t n) {
@@ -12,8 +12,7 @@ void shrn(lil_t *a, uint64_t n) {
 }
 
 void test_shrn(lil_t *a) {
-    printf("a:\t");
-    lil_print_hex(a);
+    PRINT_ARG(a);
     shrn(a, 0);
     shrn(a, 16);
     shrn(a, 48);

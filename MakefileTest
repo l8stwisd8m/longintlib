@@ -7,11 +7,9 @@ RPATH = -Wl,-rpath=./lib
 # directories
 BIN_DIR = bin
 TEST_DIR = test
-UTILS_DIR = utils
 
 # source files
 SRC_FILES = $(wildcard $(TEST_DIR)/*.c)
-UTILS_SRC = $(TEST_DIR)/$(UTILS_DIR)/test_utils.c
 
 # object files
 OBJ_FILES = $(SRC_FILES:.c=.o)
@@ -27,11 +25,8 @@ all: $(BIN_DIR) $(TARGETS)
 $(BIN_DIR):
 	mkdir -p $(BIN_DIR)
 
-$(BIN_DIR)/%: $(TEST_DIR)/%.c $(UTILS_OBJ)
+$(BIN_DIR)/%: $(TEST_DIR)/%.c
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS) $(RPATH)
 
-$(UTILS_OBJ): $(UTILS_SRC)
-	$(CC) $(CFLAGS) -c $< -o $@
-
 clean:
-	rm -rf $(TARGETS) $(UTILS_OBJ)
+	rm -rf $(TARGETS)

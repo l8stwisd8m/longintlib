@@ -1,11 +1,12 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
-#include "utils/test_utils.h"
+#include "test_utils.h"
 #include "../include/longintlib.h"
 
 void test_cpy(lil_t *a, lil_t *b) {
-    print_args(a, b);
+    PRINT_ARG(a);
+    PRINT_ARG(b);
     lil_cpy(a, b);
     printf("a <- b:\t");
     lil_print_hex(a);

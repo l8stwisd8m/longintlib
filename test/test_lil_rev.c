@@ -2,10 +2,10 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include "../include/longintlib.h"
+#include "test_utils.h"
 
 void test_rev(lil_t *a) {
-    printf("a:\t");
-    lil_print_hex(a);
+    PRINT_ARG(a);
     lil_rev(a);
     printf("rev(a):\t");
     lil_print_hex(a);
