@@ -6,21 +6,25 @@ RPATH = -Wl,-rpath=./lib
 
 # directories
 EXX_DIR = examples
+BIN_DIR = bin
 
 # source files
-SRC_FILES = $(wildcard $(EXX_DIR)/*.c)
+SRC_FILES = $(wildcard $(EXX_DIR)/example_*.c)
+
+# object files
+OBJ_FILES = $(SRC_FILES:.c=.o)
 
 # targets
-TARGETS = $(patsubst $(TEST_DIR)/%.c, %, $(SRC_FILES))
+TARGETS = $(patsubst $(TEST_DIR)/%.c, $(BIN_DIR)/%, $(SRC_FILES))
 
 .PHONY: all clean
 
-all: $(EXX_DIR) $(TARGETS)
+all: $(BIN_DIR) $(TARGETS)
 
-$(EXX_DIR):
-	mkdir -p $(EXX_DIR)
+$(BIN_DIR):
+	mkdir -p $(BIN_DIR)
 
-%: $(EXX_DIR)/%.c
+$(BIN_DIR)/%: $(EXX_DIR)/%.c
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS) $(RPATH)
 
 clean:

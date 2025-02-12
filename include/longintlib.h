@@ -39,6 +39,9 @@ int lil_is_odd(lil_t *src);  // return 1 if source is odd, 0 otherwise
 void lil_print_bin(lil_t *src); // print binary representation of source
 void lil_print_dec(lil_t *src); // print decimal representation of source
 void lil_print_hex(lil_t *src); // print hexadecimal representation of source
+void lil_scan_bin(lil_t *src); // scan binary representation of source
+void lil_scan_dec(lil_t *src); // scan decimal representation of source
+void lil_scan_hex(lil_t *src); // scan hexadecimal representation of source
 
 // BASIC MATH FUNCTIONS
 void lil_add(lil_t *src_a, lil_t *src_b); // addition of a and b
@@ -59,10 +62,6 @@ void lil_shlw(lil_t *src); // left shift by word size
 void lil_shrw(lil_t *src); // right shift by word size
 void lil_shln(lil_t *src, uint64_t n); // left shift by n bits
 void lil_shrn(lil_t *src, uint64_t n); // right shift by n bits
-
-// BITWISE OPERATIONS
-void lil_xor(lil_t *src_a, lil_t *src_b); // bitwise exclusive or
-void lil_and(lil_t *src_a, lil_t *src_b); // bitwise conjunction
 
 // MODULAR ARITHMETIC FUNCTIONS
 void lil_mul_mod(lil_t *src_a, lil_t *src_b, lil_t *src_m); // multiplication of a and b modulo m

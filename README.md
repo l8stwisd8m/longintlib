@@ -6,7 +6,7 @@ The **longintlib** is a lightweight dynamic arbitrary-precision arithmetic libra
 A brief introduction is provided below. See [documentation](https://github.com/l8stwisd8m/longintlib/blob/main/docs/Documentation.md) in the `docs` folder for more detailed types & functions description.
 
 ## Quick start
-You can download a headers & precompiled dynamic library file in the **Releases** (currently, for Linux users only - if you're running MacOS or Windows, you have to change the target platform in the `Makefile` and build shared library file (.dylib or .dll) with `make`).
+You can download a headers & precompiled dynamic library file in the **Releases** (currently, for Linux users only — if you're running MacOS or Windows, you have to change the target platform in the `Makefile` and build a shared library file with `make`).
 
 The `longintlib.h`contains all the necessary prototypes and type definitions. The header can be included manually; to compile a file you need to link it with one of the following shared objects:
 
@@ -69,10 +69,10 @@ lil_t var = {PLUS, values, n};
 free(values);
 ```
 
-There are plenty useful constants and macros in `longintconst` and `longintmacro` headers. See `docs` folder for more detailed explanation.
+There are plenty useful constants and macros in `longintconst` and `longintmacro` headers. See `docs` folder for explanation.
 
 ## Issues, contributing etc.
 
 Feel free to fork and modify the project! You can contribute anything to the `dev` branch. Good examples will be added to the main branch; however, the amount of source files is limited to reasonable limits to keep the library less bloated.
 
-I would also appreciate recieving suggestions for improving any features, found bugs, patches, etc - open an [issue](https://github.com/l8stwisd8m/longintlib/issues) to submit it. Please, provide bug reports detailed information how to reproduce it.
+I would also appreciate recieving suggestions for improving any features, found bugs, patches, etc - open an [issue](https://github.com/l8stwisd8m/longintlib/issues) to submit it. Please, provide bug reports information how to reproduce it.

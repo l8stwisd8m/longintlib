@@ -9,11 +9,10 @@ BIN_DIR = bin
 TEST_DIR = test
 
 # source files
-SRC_FILES = $(wildcard $(TEST_DIR)/*.c)
+SRC_FILES = $(wildcard $(TEST_DIR)/test_*.c)
 
 # object files
 OBJ_FILES = $(SRC_FILES:.c=.o)
-UTILS_OBJ = $(UTILS_SRC:.c=.o)
 
 # targets
 TARGETS = $(patsubst $(TEST_DIR)/%.c, $(BIN_DIR)/%, $(SRC_FILES))
