@@ -26,7 +26,7 @@ void concatenation(char *path, const char *beginning, const char *middle, const 
 void test_scan_dec(lil_t *a) {
     const char *prefixes[] = { "zero_", "empty_", "leading_zero_", "single_digit_" };
     const char *msg_prefixes[] = { "zero ", "empty ", "leading zero ", "single digit " };
-    const char dir[] = "assets/dec/"; // change to absolute path if it doesn't work
+    const char dir[] = "/home/siegfried/c/longintlib/test/assets/dec/"; // change to absolute path if it doesn't work
     const char input[] = "input.txt\0";
     const char msg_input[] = "Input of ";
     const char msg_end[] = "file \n";
@@ -41,7 +41,7 @@ void test_scan_dec(lil_t *a) {
         free(msg);
     }
     
-    const char new_dir[] = "assets/dec/minus_"; // change to absolute path if it doesn't work
+    const char new_dir[] = "/home/siegfried/c/longintlib/test/assets/dec/minus_"; // change to absolute path if it doesn't work
     const char new_msg_input[] = "Input of negative ";
      
     for (int i = 0; i < 4; i++) {

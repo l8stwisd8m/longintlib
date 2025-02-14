@@ -5,11 +5,14 @@
 #include "../include/longintconst.h"
 #include "../include/longintmacro.h"
 
-uint64_t lil_short_mod(lil_t *src_a, uint64_t val_b) {
+void lil_short_mod(uint64_t *dst, lil_t *src_a, uint64_t val_b) {
     // return short remainder after division of long a by short b
     
     // exceptions
-    if (lil_is_null(src_a)) return 0; // a = 0 => a mod b = 0
+    if (lil_is_null(src_a)) {
+        *dst = 0;
+        return; // a = 0 => a mod b = 0
+    }
     assert(val_b);
     
     // casting b value to long_int
@@ -21,12 +24,14 @@ uint64_t lil_short_mod(lil_t *src_a, uint64_t val_b) {
     if (cmp_flag == -1) {
         free(src_b->val);
         free(src_b);
-        return src_a->val[0]; // abs(a) < b => a mod b = a
+        *dst = src_a->val[0];
+        return; // abs(a) < b => a mod b = a
     }
     if (cmp_flag == 0) {
         free(src_b->val);
         free(src_b);
-        return 0; // abs(a) = b => a mod b = 0
+        *dst = 0;
+        return; // abs(a) = b => a mod b = 0
     }
     
     uint64_t a_len = lil_len(src_a);
@@ -60,13 +65,12 @@ uint64_t lil_short_mod(lil_t *src_a, uint64_t val_b) {
         lil_shr(src_b); // b /= 2
     }
 
-    uint64_t result = src_a->val[0];
+    *dst = src_a->val[0];
 
     // restore value of a
     lil_cpy(src_a, src_a_initial);
-    LIL_FREE(src_a_initial);
     
+    LIL_FREE(src_a_initial);
     LIL_FREE(src_t);
     LIL_FREE(src_b);
-    return result;
 }

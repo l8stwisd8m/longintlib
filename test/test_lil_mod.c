@@ -32,7 +32,7 @@ int main(int argc, char *argv[]) {
     b.val[1] = BASE_MAX; b.val[0] = 0xfedcba9876543210;
     test_mod(&a, &b, &c);
     
-    printf("Modulus of two equal terms of same size \n");
+    printf("Modulus of two unequal terms of same size \n");
     a.val[2] = BASE_MAX; b.val[0] = 0x1234567; b.val[1] = 0;
     test_mod(&a, &b, &c);
     

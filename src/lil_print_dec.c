@@ -34,18 +34,25 @@ void lil_print_dec(lil_t *src) {
     LIL_MALLOC(tmp, src->size);
     
     LIL_CPY_VAL(value, src); // value = src
-    base->val[0] = 10; // base = 10
     
     // left shift base while base < value
-    while(lil_cmp_val(base, value) != 1) {
-        lil_short_mul(base, 10);
+    base->val[0] = 10; // base = 10
+    if (value_len == LIL_BASE * src->size) {
+        while((LIL_MSBIT & base->val[src->size - 1]) == 0) {
+            lil_short_mul(base, 10);
+        }
     }
-    // correct base (div by 10)
-    lil_cpy(tmp, base); // tmp = base
-    lil_short_div(base, tmp, 10); // base = tmp / 10
+    else {
+        while(lil_cmp_val(base, value) != 1) {
+            lil_short_mul(base, 10);
+        }
+        // correct base (div by 10)
+        lil_cpy(tmp, base); // tmp = base
+        lil_short_div(base, tmp, 10); // base = tmp / 10
+    }
     
     // digits calculation
-    while(lil_is_null(value) != 1) {
+    while(lil_is_null(base) != 1) {
         lil_div(digit, value, base); // digit = floor(value/base)
         printf("%"PRIu64, digit->val[0]); // current digit
         lil_cpy(tmp, base);

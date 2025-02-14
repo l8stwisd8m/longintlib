@@ -32,7 +32,7 @@ int main(int argc, char *argv[]) {
     b.val[1] = BASE_MAX; b.val[0] = 0xfedcba9876543210;
     test_div(&a, &b, &c);
     
-    printf("Division of two equal terms of same size \n");
+    printf("Division of two unequal terms of same size \n");
     a.val[2] = BASE_MAX; b.val[0] = 0x1234567; b.val[1] = 0;
     test_div(&a, &b, &c);
     

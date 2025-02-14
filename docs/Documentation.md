@@ -18,8 +18,9 @@
 4. [Clean memory allocation (LIL_CALLOC)](#4-clean-memory-allocation-lil_calloc) 
 5. [Free memory (LIL_FREE)](#5-free-memory-lil_free) 
 6. [Bitwise exclusive or (LIL_XOR)](#6-bitwise-exclusive-or-lil_xor) 
-7. [Bitwise conjunction (LIL_AND)](#7-bitwise-conjunction-lil_and) 
-8. [Bitwise disjunction (LIL_OR)](#8-bitwise-disjunction-lil_or)
+7. [Bitwise inversion (LIL_NOT)](#7-bitwise-inversion-lil_not)
+8. [Bitwise conjunction (LIL_AND)](#8-bitwise-conjunction-lil_and) 
+9. [Bitwise disjunction (LIL_OR)](#9-bitwise-disjunction-lil_or)
 
 ### [Basic functions](#basic-functions-1)
 1. [Reverse value (lil_rev)](#1-reverse-value-lil_rev)
@@ -47,6 +48,7 @@
 4. [Multiplication (lil_mul)](#4-multiplication-lil_mul)
 5. [Division (lil_div)](#5-division-lil_div)
 6. [Modulus (lil_mod)](#6-modulus-lil_mod)
+7. [Greatest Common Divisor (lil_gcd)](#7-greatest-common-divisor-lil_gcd)
 
 ### [Unary math functions](#unary-math-functions-1)
 1. [Increment value (lil_inc)](#1-increment-value-lil_inc)
@@ -60,12 +62,23 @@
 5. [Left shift by n bits (lil_shln)](#5-left-shift-by-n-bits-lil_shln)
 6. [Right shift by n bits (lil_shrn)](#6-right-shift-by-n-bits-lil_shrn)
 
+### [Short operations](#short-operations-1)
+1. [Short addition (lil_short_add)](#1-short-addition-lil_short_add)  
+2. [Short subtraction (lil_short_sub)](#2-short-subtraction-lil_short_sub)  
+3. [Short multiplication (lil_short_mul)](#3-short-multiplication-lil_short_mul)  
+4. [Short division (lil_short_div)](#4-short-division-lil_short_div)  
+5. [Short modulo (lil_short_mod)](#5-short-modulo-lil_short_mod)  
+6. [Short power modulo (lil_short_pow_mod)](#6-short-power-modulo-lil_short_pow_mod)
+
+### [Custom functions](#custom-functions-1)
+1. [Fast GCD (lil_fast_gcd)](#1-fast-gcd-lil_fast_gcd)
+
 ## Introduction 
 The **longintlib** is a lightweight dynamic arbitrary-precision arithmetic library providing basic functions for operating long integers. Syntax is pretty straightforward making it simple and highly customisible. This project consists of the library itself, tests and examples.
 
 There are three **headers**:
 
-• `longintlib.c` containing custom type called `lil_t` or `long_int` and prototypes of [functions](#basic-functions-1);
+• `longintlib.h` containing custom type called `lil_t` or `long_int` and prototypes of [functions](#basic-functions-1);
 
 • `longintconst.h` for often used [constants](#constants-1), such as variables sizes, bit masks and other;
 
@@ -80,6 +93,8 @@ Here's brief description of functions, provided by **longintlib**:
 5. **Shifts** — the shift functions allow for bitwise shifting operations on the `lil_t` values, enabling both left and right shifts by one bit or by word size, as well as by a specified number of bits. These operations are vital for efficient data manipulation at a binary level.
 6. **Modular arithmetic functions** — this category handles operations in modular arithmetic, such as multiplication and exponentiation modulo a given number. They are beneficial for cryptographic computations and other scenarios requiring modular constraints. **Currently unavailable**.
 7. **Short operations** — these functions perform arithmetic operations involving both `lil_t` values and short integer values (consisting of a single digit, `uint64_t` number). They allow for efficient calculations and manipulations with smaller integer values, useful in various applications where long integers interact with standard integers for performance and memory efficiency.
+
+The `longintlib.h` header contains some [custom functions](#custom-functions-1), which are located in the `custom` folder to keep the main source files folder and the library itself less bloated. These files provide additional functional, however, some of them can not be tested proprerly. To use any of these functions, you need to move corresponding source file from `custom` to `src` directory and recompile shared object with `make` command.
 
 ## Long Integer type 
 The library provides one main **type** called `lil_t` or :
@@ -102,7 +117,7 @@ The `sign` value can be left uninitialized (most of the functions doesn't use it
 Each `val` array element represents a single digit of the value. Functions treat `val` arrays as little-endian numbers, so you have to input numbers in reversed order or use `lil_rev` to change the order of a value. The only exceptions are `scan` functions, which expect numbers to be entered in direct order.
 **Warning**: value array lenght must always corresond to the `size` value and be greater than zero. There are no assertions or `size` checks in library functions.
 
-**Note**: avoid using different sized variables. Arguments of certain functions, such as `div` and `mod`, must the same size.
+**Note**: avoid using different sized variables. Arguments of certain functions, such as `div` and `mod`, must have the same size.
 
 Here's recommended way of initializing a variable:
 
@@ -128,7 +143,15 @@ lil_t var = {PLUS, values, n};
 free(values);
 ```
 
-There are `LIL_MALLOC`, `LIL_CALLOC` and `LIL_FREE` [macros](#macros-1) which can be used when you need to allocate space for value storage and have size of the value only.
+There are `LIL_MALLOC`, `LIL_CALLOC` and `LIL_FREE` [macros](#macros-1) which can be used when you need to allocate space for value storage and have size of the value only without need to initialize a sign or value itself. For instance:
+```
+const int n = 8;
+lil_t *var;
+LIL_MALLOC(var, n);
+/* ... */
+LIL_FREE(var);
+```
+The `LIL_CALLOC` macro can be used the same way.
 
 ## Constants 
 The `longintconst.h` header file defines key constants crucial for managing long integers effectively. This includes `Sign` constants that help determine the positivity or negativity of values, `Size` constants that specify the maximum and minimum limits of long integers, and various `Bitmasks` used for effective data manipulation.
@@ -136,32 +159,38 @@ The `longintconst.h` header file defines key constants crucial for managing long
 ### 1. Sign constants
 The sign constants are used to represent basic arithmetic signs of variables. The enumerations `PLUS` and `MINUS`, used in `lil_t` type definition, are undefined to avoid conflicts with eponymous constants from other libraries, so they can be used only inside variable initializations. To change the sign of a variable, one can use `0` for *plus* and `1` for *minus*, or the following constants:
 
-1. **LIL_PLUS (0)**: Represents the positive sign.
-2. **LIL_MINUS (1)**: Represents the negative sign.
+1. **LIL_PLUS**: Represents the positive sign.
+2. **LIL_MINUS**: Represents the negative sign.
 
 ### 2. Size constants
 Size constants define various bit sizes used in memory allocation. Each constant represent the amount of digits used to store a number of certain bit length.
 
-1. **LIL_128_BIT (2)**: Represents a data size of 128 bits.
-2. **LIL_256_BIT (4)**: Represents a data size of 256 bits.
-3. **LIL_512_BIT (8)**: Represents a data size of 512 bits.
-4. **LIL_1024_BIT (16)**: Represents a data size of 1024 bits.
-5. **LIL_2048_BIT (32)**: Represents a data size of 2048 bits.
-6. **LIL_4096_BIT (64)**: Represents a data size of 4096 bits.
+1. **LIL_128_BIT**: Represents a data size of 128 bits.
+2. **LIL_256_BIT**: Represents a data size of 256 bits.
+3. **LIL_512_BIT**: Represents a data size of 512 bits.
+4. **LIL_1024_BIT**: Represents a data size of 1024 bits.
+5. **LIL_2048_BIT**: Represents a data size of 2048 bits.
+6. **LIL_4096_BIT**: Represents a data size of 4096 bits.
+
+Here's an example of using a size constant:
+```
+lil_t *var;
+LIL_MALLOC(var, LIL_256_BIT);
+```
 
 ### 3. Bitmasks & other practical constants
 These constants are critical for bitwise operations and data manipulation. They help in isolating specific bits or bytes from data structures.
 
-1. **LIL_BASE (64)**: Represents bit length of a single digit number.
-2. **LIL_RH (0x00000000ffffffff)**: Mask for the right half of a 64-bit value.
-3. **LIL_LH (0xffffffff00000000)**: Mask for the left half of a 64-bit value.
-4. **LIL_MSBIT (0x8000000000000000)**: Represents the most significant bit in a 64-bit integer.
-5. **LIL_LSBIT (0x0000000000000001)**: Represents the least significant bit in a 64-bit integer.
-6. **LIL_MSBYTE (0xff00000000000000)**: Represents the most significant byte in a 64-bit integer.
-7. **LIL_LSBYTE (0x00000000000000ff)**: Represents the least significant byte in a 64-bit integer.
+1. **LIL_BASE**: Represents bit length of a single digit number.
+2. **LIL_RH**: Mask for the right half of a 64-bit value.
+3. **LIL_LH**: Mask for the left half of a 64-bit value.
+4. **LIL_MSBIT**: Represents the most significant bit in a 64-bit integer.
+5. **LIL_LSBIT**: Represents the least significant bit in a 64-bit integer.
+6. **LIL_MSBYTE**: Represents the most significant byte in a 64-bit integer.
+7. **LIL_LSBYTE**: Represents the least significant byte in a 64-bit integer.
 
 ## Macros
-The `longintmacro.h` header file contains a collection of macros designed to simplify and streamline operations with long integers. Among these macros, you'll find utilities for copying values, setting source values to null, and allocating memory efficiently. Additionally, it includes various bitwise operation macros for performing AND, OR, XOR operations seamlessly. 
+The `longintmacro.h` header file contains a collection of macros designed to simplify and streamline operations with long integers. Among these macros, you'll find utilities for copying values, setting source values to null, and allocating memory efficiently. Additionally, it includes various bitwise operation macros for performing AND, OR, NOT and XOR operations seamlessly. 
 
 ### 1. Copy value (LIL_CPY_VAL)
 *Macro copies the source value to the destination value.*  
@@ -175,30 +204,35 @@ Result is stored in the source argument - source "SRC" (SRC).
 
 ### 3. Memory allocation (LIL_MALLOC)
 *Macro allocates memory for the source.*  
-Input arguments are a pointer to the long_int source pointer and the size (long_int **SRC_PTR and size_t SIZE).  
-Result is stored in the source pointer argument - source pointer "SRC_PTR" (SRC_PTR).  
+Input arguments are a pointer to the long_int source pointer and the size (long_int **SRC and size_t SIZE).  
+Result is stored in the source pointer argument - source pointer "SRC" (SRC).  
 
 ### 4. Clean memory allocation (LIL_CALLOC)
 *Macro performs a clean memory allocation for the source.*  
-Input arguments are a pointer to the long_int source pointer and the size (long_int **SRC_PTR and size_t SIZE).  
-Result is stored in the source pointer argument - source pointer "SRC_PTR" (SRC_PTR).  
+Input arguments are a pointer to the long_int source pointer and the size (long_int **SRC and size_t SIZE).  
+Result is stored in the source pointer argument - source pointer "SRC" (SRC).  
 
 ### 5. Free memory (LIL_FREE)
 *Macro frees the memory allocated for the source.*  
-Input argument is a pointer to the long_int source pointer (lil_t *SRC_PTR).  
-Result is that the memory associated with the source argument "SRC_PTR" is freed.  
+Input argument is a pointer to the long_int source pointer (lil_t *SRC).  
+Result is that the memory associated with the source argument "SRC" is freed.  
 
 ### 6. Bitwise exclusive or (LIL_XOR)
 *Macro performs a bitwise exclusive or operation.*  
 Input arguments are pointers to the long_int sources "a" and "b" (lil_t *SRC_A and lil_t *SRC_B).  
 Result is stored in the first argument - source "a" (SRC_A).  
 
-### 7. Bitwise conjunction (LIL_AND)
+### 7. Bitwise inversion (LIL_NOT)
+*Macro performs a bitwise inversion operation.*
+Input argument is pointer to the `long_int` source "src" (lil_t *SRC).
+Result is stored in the source argument - source pointer "SRC" (SRC).
+
+### 8. Bitwise conjunction (LIL_AND)
 *Macro performs a bitwise conjunction operation.*  
 Input arguments are pointers to the long_int sources "a" and "b" (lil_t *SRC_A and lil_t *SRC_B).  
 Result is stored in the first argument - source "a" (SRC_A).  
 
-### 8. Bitwise disjunction (LIL_OR)
+### 9. Bitwise disjunction (LIL_OR)
 *Macro performs a bitwise disjunction operation.*  
 Input arguments are pointers to the long_int sources "a" and "b" (lil_t *SRC_A and lil_t *SRC_B).  
 Result is stored in the first argument - source "a" (SRC_A).
@@ -276,7 +310,6 @@ Input argument is a pointer to the long_int source (lil_t *src).
 *Function scans and inputs a decimal representation into the source.*  
 Input argument is a pointer to the long_int source (lil_t *src).  
 **Note**: the source value should have enough lenght to store a number. Excess input will be truncated.
-**Warning**: currently, there is an issue with excessive lenght input.
 
 ### 6. Scan hexadecimal (lil_scan_hex)
 *Function scans and inputs a hexadecimal representation into the source.*  
@@ -286,17 +319,17 @@ Input argument is a pointer to the long_int source (lil_t *src).
 ## Basic math functions
 
 ### 1. Addition (lil_add)
-Function adds two values together.  
+*Function adds two values together.*
 Input arguments are pointers to the long_int sources "a" and "b" (lil_t *src_a and lil_t *src_b).  
 Result is stored in the first argument - source "a" (src_a).  
 
 ### 2. Subtraction (lil_sub)
-Function subtracts b from a.  
+*Function subtracts b from a.*
 Input arguments are pointers to the long_int sources "a" and "b" (lil_t *src_a and lil_t *src_b).  
-Result is stored in the first argument - source "a" (src_a).  
+Result is stored in the first argument - source "a" (src_a).
 
 ### 3. Arithmetic sum (lil_sum)
-Function calculates the arithmetic sum of two values.  
+*Function calculates the arithmetic sum of two values*
 Input arguments are pointers to the long_int sources "a" and "b" (lil_t *src_a and lil_t *src_b) and pointer to the destination variable (lil_t *dst).  
 Result is stored in the destination variable (dst).  
 
@@ -304,16 +337,25 @@ Result is stored in the destination variable (dst).
 *Function performs multiplication of two values.*  
 Input arguments are pointers to the long_int sources "a" and "b" (lil_t *src_a and lil_t *src_b) and pointer to the destination variable (lilt *dst).  
 Result is stored in the destination variable (dst).  
+**Warning**: the destination variable size can not be less than the sum of source term sizes.
 
 ### 5. Division (lil_div)
-Function calculates the floor from the division of a by b.  
+*Function calculates the floor from the division of a by b.*
 Input arguments are pointers to the long_int sources "a" and "b" (lil_t *src_a and lil_t *src_b) and pointer to the destination variable (lil_t *dst).  
 Result is stored in the destination variable (dst).  
+**Warning**: function arguments must be of the same length.
 
 ### 6. Modulus (lil_mod)
-Function calculates the remainder after division of a by b.  
+*Function calculates the remainder after division of a by b.*
 Input arguments are pointers to the long_int sources "a" and "b" (lil_t *src_a and lil_t *src_b) and pointer to the destination variable (lil_t *dst).  
 Result is stored in the destination variable (dst).
+**Warning**: function arguments must be of the same length.
+
+### 7. Greatest Common Divisor (lil_gcd)
+*Function calculates the greatest common divisor of a by b.*
+Input arguments are pointers to the long_int sources "a" and "b" (lil_t *src_a and lil_t *src_b) and pointer to the destination variable (lil_t *dst).  
+Result is stored in the destination variable (dst).
+**Warning**: function arguments must be of the same length.
 
 ## Unary math functions
 
@@ -358,3 +400,48 @@ Result is stored in the source variable (src).
 *Function performs a right shift by n bits.*  
 Input arguments are a pointer to the long_int source (lil_t *src) and the number of bits to shift (uint64_t n).  
 Result is stored in the source variable (src).  
+
+### Short operations
+
+### 1. Short addition (lil_short_add)
+*Function adds a short absolute value of b to the absolute value of long a.*  
+Input arguments are a pointer to the long_int source "a" (lil_t *src_a) and a short value "b" (uint64_t src_b).  
+Result is stored in the first argument (src_a).  
+
+### 2. Short subtraction (lil_short_sub)
+*Function subtracts a short absolute value of b from the absolute value of long a.*  
+Input arguments are a pointer to the long_int source "a" (lil_t *src_a) and a short value "b" (uint64_t src_b).  
+Result is stored in the first argument (src_a).  
+
+### 3. Short multiplication (lil_short_mul)
+*Function multiplies the absolute value of long a by a short absolute value of b.*  
+Input arguments are a pointer to the long_int source "a" (lil_t *src_a) and a short value "b" (uint64_t src_b).  
+Result is stored in the first argument (src_a).  
+**Warning**: the most significant digit of source value "a" should be zero, otherwise an overflow can occur during multiplication.
+
+### 4. Short division (lil_short_div)
+*Function calculates the floor from the division of long a by a short value b.*  
+Input arguments are pointers to the long_int source "a" (lil_t *src_a) and a short value "b" (uint64_t src_b), and a pointer to the destination variable (lil_t *dst).  
+Result is stored in the destination variable (dst).  
+**Note**: it is recommended to use `lil_div` whenever it is possible to avoid using the `lil_short_div` due to is dynamic memory consumption. 
+
+### 5. Short modulo (lil_short_mod)
+*Function calculates the short remainder after the division of long a by a short value b.*  
+Input arguments are a pointer to the destination variable (uint64_t *dst), a pointer to the long_int source "a" (lil_t *src_a), and a short value "b" (uint64_t val_b).  
+Result is stored in the destination variable (dst).  
+**Note**: it is recommended to use `lil_div` whenever it is possible to avoid using the `lil_short_div` due to is dynamic memory consumption.
+**Note**: since the remainder after the division by a single digit is also a single digit, destination variable is a *uint64_t* value.
+
+### 6. Short power modulo (lil_short_pow_mod)
+*Function raises the long a to the power of short n modulo long m.*  
+Input arguments are a pointer to the long_int source "a" (lil_t *src_a), a short value "n" (uint64_t n), and a pointer to the long_int source "m" (lil_t *src_m).  
+Result is stored in the first argument (src_a).  
+
+### Custom functions
+
+### 7. Fast GCD (lil_fast_gcd)
+*Function calculates the greatest common divisor of a by b.*
+Input arguments are pointers to the long_int sources "a" and "b" (lil_t *src_a and lil_t *src_b) and pointer to the destination variable (lil_t *dst).  
+Result is stored in the destination variable (dst).
+**Warning**: function arguments must be of the same length.
+**Warning**: currently, the function doesn't work properly when the most significant digits of both terms are not zeroes due to the overflow, so the values should have some extra length.

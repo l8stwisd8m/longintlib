@@ -6,7 +6,7 @@ The **longintlib** is a lightweight dynamic arbitrary-precision arithmetic libra
 A brief introduction is provided below. See [documentation](https://github.com/l8stwisd8m/longintlib/blob/main/docs/Documentation.md) in the `docs` folder for more detailed types & functions description.
 
 ## Quick start
-You can download a headers & precompiled dynamic library file in the **Releases** (currently, for Linux users only — if you're running MacOS or Windows, you have to change the target platform in the `Makefile` and build a shared library file with `make`).
+You can download a headers & precompiled dynamic library file in the **Releases** (currently, for Linux users only — if you're running MacOS or Windows, you have to change the target platform in the `Makefile` and build shared library file with `make`).
 
 The `longintlib.h`contains all the necessary prototypes and type definitions. The header can be included manually; to compile a file you need to link it with one of the following shared objects:
 

@@ -28,7 +28,7 @@ void test_scan_bin(lil_t *a) {
     const char *beginnings[] = { "zero_", "empty_", "leading_zero_", "single_digit_" };
     const char *msg_prefixes[] = { "", "negative ", "prefixed ", "negative prefixed " };
     const char *msg_beginnings[] = { "zero ", "empty ", "leading zero ", "single digit " };
-    const char dir[] = "assets/bin/"; // change to absolute path if it doesn't work
+    const char dir[] = "/home/siegfried/c/longintlib/test/assets/bin/"; // change to absolute path if it doesn't work
     const char input[] = "input.txt\0";
     const char msg_input[] = "Input of ";
     const char msg_end[] = "file \n";

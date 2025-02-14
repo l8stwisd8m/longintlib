@@ -50,6 +50,7 @@ void lil_sum(lil_t *dst, lil_t *src_a, lil_t *src_b); // arithmetic sum of a and
 void lil_mul(lil_t *dst, lil_t *src_a, lil_t *src_b); // multiplication of a and b
 void lil_div(lil_t *dst, lil_t *src_a, lil_t *src_b); // floor from division of a by b
 void lil_mod(lil_t *dst, lil_t *src_a, lil_t *src_b); // remainder after division of a by b
+void lil_gcd(lil_t *dst, lil_t *src_a, lil_t *src_b); // greatest commond divisor of a and b
 
 // UNARY MATH FUNCTIONS
 void lil_inc(lil_t *src); // increment source value
@@ -66,13 +67,17 @@ void lil_shrn(lil_t *src, uint64_t n); // right shift by n bits
 // MODULAR ARITHMETIC FUNCTIONS
 void lil_mul_mod(lil_t *src_a, lil_t *src_b, lil_t *src_m); // multiplication of a and b modulo m
 void lil_pow_mod(lil_t *src_a, lil_t *src_n, lil_t *src_m); // raising a to the power n modulo m
+void lil_inv(lil_t *dst, lil_t *src_a, lil_t *src_m); // inverse element a modulo m
 
 // SHORT OPERATIONS
 void lil_short_add(lil_t *src_a, uint64_t src_b); // add short abs(b) to abs(values) of long a
 void lil_short_sub(lil_t *src_a, uint64_t src_b); // subtract short abs(b) from abs(values) of long a
 void lil_short_mul(lil_t *src_a, uint64_t src_b); // multiply abs(values) of long a by short abs(b)
 void lil_short_div(lil_t *dst, lil_t *src_a, uint64_t src_b); // return floor from division of long a by short b
-uint64_t lil_short_mod(lil_t *src_a, uint64_t val_b); // return short remainder after division of long a by short b
+void lil_short_mod(uint64_t *dst, lil_t *src_a, uint64_t val_b); // short remainder after division of long a by short b
 void lil_short_pow_mod(lil_t *src_a, uint64_t n, lil_t *src_m); // raising a to the power n modulo m
+
+// CUSTOM FUNCTIONS
+void lil_fast_gcd(lil_t *dst, lil_t *src_a, lil_t *src_b); // greatest commond divisor of a and b
 
 #endif // _LONG_INT_LIB_
