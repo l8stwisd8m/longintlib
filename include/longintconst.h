@@ -15,6 +15,7 @@
 
 // bitmasks etc.
 #define LIL_BASE 64
+#define LIL_SPLIT 32
 #define LIL_RH 0x00000000ffffffff
 #define LIL_LH 0xffffffff00000000
 #define LIL_MSBIT 0x8000000000000000

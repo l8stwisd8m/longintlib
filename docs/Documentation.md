@@ -182,12 +182,13 @@ LIL_MALLOC(var, LIL_256_BIT);
 These constants are critical for bitwise operations and data manipulation. They help in isolating specific bits or bytes from data structures.
 
 1. **LIL_BASE**: Represents bit length of a single digit number.
-2. **LIL_RH**: Mask for the right half of a 64-bit value.
-3. **LIL_LH**: Mask for the left half of a 64-bit value.
-4. **LIL_MSBIT**: Represents the most significant bit in a 64-bit integer.
-5. **LIL_LSBIT**: Represents the least significant bit in a 64-bit integer.
-6. **LIL_MSBYTE**: Represents the most significant byte in a 64-bit integer.
-7. **LIL_LSBYTE**: Represents the least significant byte in a 64-bit integer.
+2. **LIL_SPLIT**: Represents half bit length of a single digit numbers.
+3. **LIL_RH**: Mask for the right half of a 64-bit value.
+4. **LIL_LH**: Mask for the left half of a 64-bit value.
+5. **LIL_MSBIT**: Represents the most significant bit in a 64-bit integer.
+6. **LIL_LSBIT**: Represents the least significant bit in a 64-bit integer.
+7. **LIL_MSBYTE**: Represents the most significant byte in a 64-bit integer.
+8. **LIL_LSBYTE**: Represents the least significant byte in a 64-bit integer.
 
 ## Macros
 The `longintmacro.h` header file contains a collection of macros designed to simplify and streamline operations with long integers. Among these macros, you'll find utilities for copying values, setting source values to null, and allocating memory efficiently. Additionally, it includes various bitwise operation macros for performing AND, OR, NOT and XOR operations seamlessly. 
@@ -201,6 +202,7 @@ Result is stored in the destination argument - source "DST" (DST).
 *Macro sets the source value to null.*  
 Input argument is a pointer to the long_int source (lil_t *SRC).  
 Result is stored in the source argument - source "SRC" (SRC).  
+**Note**: there is a similar macro called 'LIL_STATIC_SET_NULL' which performs the sama action, but it's input argument is long_int (not a pointer).
 
 ### 3. Memory allocation (LIL_MALLOC)
 *Macro allocates memory for the source.*  
@@ -423,13 +425,13 @@ Result is stored in the first argument (src_a).
 *Function calculates the floor from the division of long a by a short value b.*  
 Input arguments are pointers to the long_int source "a" (lil_t *src_a) and a short value "b" (uint64_t src_b), and a pointer to the destination variable (lil_t *dst).  
 Result is stored in the destination variable (dst).  
-**Note**: it is recommended to use `lil_div` whenever it is possible to avoid using the `lil_short_div` due to is dynamic memory consumption. 
+**Note**: it is recommended to use `lil_div` whenever it is possible to avoid using the `lil_short_div` due to its dynamic memory consumption. 
 
 ### 5. Short modulo (lil_short_mod)
 *Function calculates the short remainder after the division of long a by a short value b.*  
 Input arguments are a pointer to the destination variable (uint64_t *dst), a pointer to the long_int source "a" (lil_t *src_a), and a short value "b" (uint64_t val_b).  
 Result is stored in the destination variable (dst).  
-**Note**: it is recommended to use `lil_div` whenever it is possible to avoid using the `lil_short_div` due to is dynamic memory consumption.
+**Note**: it is recommended to use `lil_div` whenever it is possible to avoid using the `lil_short_div` due to its dynamic memory consumption.
 **Note**: since the remainder after the division by a single digit is also a single digit, destination variable is a *uint64_t* value.
 
 ### 6. Short power modulo (lil_short_pow_mod)

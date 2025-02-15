@@ -65,8 +65,8 @@ void lil_shln(lil_t *src, uint64_t n); // left shift by n bits
 void lil_shrn(lil_t *src, uint64_t n); // right shift by n bits
 
 // MODULAR ARITHMETIC FUNCTIONS
-void lil_mul_mod(lil_t *src_a, lil_t *src_b, lil_t *src_m); // multiplication of a and b modulo m
-void lil_pow_mod(lil_t *src_a, lil_t *src_n, lil_t *src_m); // raising a to the power n modulo m
+void lil_mul_mod(lil_t *dst, lil_t *src_a, lil_t *src_b, lil_t *src_m); // multiplication of a and b modulo m
+void lil_pow_mod(lil_t *dst, lil_t *src_a, lil_t *src_n, lil_t *src_m); // raising a to the power n modulo m
 void lil_inv(lil_t *dst, lil_t *src_a, lil_t *src_m); // inverse element a modulo m
 
 // SHORT OPERATIONS

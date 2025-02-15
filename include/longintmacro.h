@@ -41,8 +41,8 @@
 
 // bitwise exclusive or
 #define LIL_XOR(SRC_A, SRC_B) \
-    size_t LIM = (SRC_A->size < SRC_B->size) ? SRC_A->size : SRC_B->size; \
-    for (int i = 0; i < LIM; i++) { \
+    assert(SRC_A->size >= SRC_B->size); \
+    for (int i = 0; i < SRC_B->size; i++) { \
         SRC_A->val[i] = SRC_A->val[i] ^ SRC_B->val[i]; \
     }
 
@@ -54,15 +54,15 @@
 
 // bitwise conjunction
 #define LIL_AND(SRC_A, SRC_B) \
-    assert(DST->size >= SRC->size); \
-    for (int i = 0; i < LIM; i++) { \
+    assert(SRC_A->size >= SRC_B->size); \
+    for (int i = 0; i < SRC_B->size; i++) { \
         SRC_A->val[i] = SRC_A->val[i] & SRC_B->val[i]; \
     }
 
 // bitwise disjunction
 #define LIL_OR(SRC_A, SRC_B) \
-    assert(DST->size >= SRC->size); \
-    for (int i = 0; i < LIM; i++) { \
+    assert(SRC_A->size >= SRC_B->size); \
+    for (int i = 0; i < SRC_B->size; i++) { \
         SRC_A->val[i] = SRC_A->val[i] | SRC_B->val[i]; \
     }
 

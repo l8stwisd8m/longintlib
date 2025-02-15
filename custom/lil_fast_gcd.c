@@ -5,8 +5,7 @@
 #include "../include/longintlib.h"
 #include "../include/longintconst.h"
 #include "../include/longintmacro.h"
-#define GCD_LEN_DIF 16 // value in range [0, 32), recommended option - between 8 and 16
-#define GCD_SPLIT 32
+#define GCD_LEN_DIF 16 // value in range [0, 32), recommended option - between 4 and 16
 
 static uint64_t short_gcd(uint64_t a, uint64_t b);
 static void binary_reduction(lil_t *a, lil_t *b);
@@ -233,19 +232,19 @@ static void extended_reduction(lil_t *a, lil_t *b) {
             denominator = b->val[msd_b];
         }
         else {
-            numerator = ((a->val[msd_a] & LIL_RH) << GCD_SPLIT) | ((a->val[msd_a - 1] & LIL_LH) >> GCD_SPLIT);
-            denominator = ((b->val[msd_a] & LIL_RH) << GCD_SPLIT) | ((b->val[msd_b - 1] & LIL_LH) >> GCD_SPLIT);
+            numerator = ((a->val[msd_a] & LIL_RH) << LIL_SPLIT) | ((a->val[msd_a - 1] & LIL_LH) >> LIL_SPLIT);
+            denominator = ((b->val[msd_a] & LIL_RH) << LIL_SPLIT) | ((b->val[msd_b - 1] & LIL_LH) >> LIL_SPLIT);
         }
     }
     if (msd_a > msd_b) {
         // most significant digits are located in the adjacent positions (a > b)
-        numerator = ((a->val[msd_a] & LIL_RH) << GCD_SPLIT) | ((a->val[msd_a - 1] & LIL_LH) >> GCD_SPLIT);
-        denominator = ((b->val[msd_a] & LIL_RH) << GCD_SPLIT) | ((b->val[msd_a - 1] & LIL_LH) >> GCD_SPLIT);
+        numerator = ((a->val[msd_a] & LIL_RH) << LIL_SPLIT) | ((a->val[msd_a - 1] & LIL_LH) >> LIL_SPLIT);
+        denominator = ((b->val[msd_a] & LIL_RH) << LIL_SPLIT) | ((b->val[msd_a - 1] & LIL_LH) >> LIL_SPLIT);
     }
     if (msd_a < msd_b) {
         // most significant digits are located in the adjacent positions (a < b)
-        numerator = ((a->val[msd_b] & LIL_RH) << GCD_SPLIT) | ((a->val[msd_b - 1] & LIL_LH) >> GCD_SPLIT);
-        denominator = ((b->val[msd_b] & LIL_RH) << GCD_SPLIT) | ((b->val[msd_b - 1] & LIL_LH) >> GCD_SPLIT);
+        numerator = ((a->val[msd_b] & LIL_RH) << LIL_SPLIT) | ((a->val[msd_b - 1] & LIL_LH) >> LIL_SPLIT);
+        denominator = ((b->val[msd_b] & LIL_RH) << LIL_SPLIT) | ((b->val[msd_b - 1] & LIL_LH) >> LIL_SPLIT);
     }
     
     // set Bezout coefficients
