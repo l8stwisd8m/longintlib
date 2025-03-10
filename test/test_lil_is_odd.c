@@ -1,32 +1,33 @@
-#include <stdio.h>
 #include <stdint.h>
-#include "test_utils.h"
+#include <limits.h>
+#include <criterion/criterion.h>
 #include "../include/longintlib.h"
+#include "../include/longintconst.h"
 
-void test_is_odd(lil_t *a) {
-    PRINT_ARG(a);
-    int flag = lil_is_odd(a);
-    if (flag) printf("Value is odd\n");
-    else printf("Value is not odd\n");
+Test(test_lil_is_odd, empty_value_is_odd) {
+    uint64_t arr_a[LIL_256_BIT] = {0};
+    long_int a = {PLUS, arr_a, LIL_256_BIT};
+    int flag = lil_is_odd(&a);
+    cr_expect_eq(flag, 0);
 }
 
-int main(int argc, char *argv[]) {
-    // is odd test
-    uint64_t arr_a[N] = {0};
-    long_int a = {PLUS, arr_a, N};
-    
-    printf("Function \"is odd\" test \n");
-    
-    printf("Empty value \n");
-    test_is_odd(&a);
-    
-    printf("Least significant digit is odd \n");
-    a.val[0] = 1;
-    test_is_odd(&a);
-    
-    printf("Most significant digit is even \n");
-    a.val[0] = 2;
-    test_is_odd(&a);
-    
-    return 0;
+Test(test_lil_is_odd, most_significant_digit_value_is_odd) {
+    uint64_t arr_a[LIL_256_BIT] = {0, 0, 0, 0x1234567};
+    long_int a = {PLUS, arr_a, LIL_256_BIT};
+    int flag = lil_is_odd(&a);
+    cr_expect_eq(flag, 0);
+}
+
+Test(test_lil_is_odd, least_significant_digit_value_is_odd) {
+    uint64_t arr_a[LIL_256_BIT] = {0x1234567};
+    long_int a = {PLUS, arr_a, LIL_256_BIT};
+    int flag = lil_is_odd(&a);
+    cr_expect_eq(flag, 1);
+}
+
+Test(test_lil_is_odd, all_digits_are_set_value_is_odd) {
+    uint64_t arr_a[LIL_256_BIT] = {UINT64_MAX, UINT64_MAX, UINT64_MAX, UINT64_MAX};
+    long_int a = {PLUS, arr_a, LIL_256_BIT};
+    int flag = lil_is_odd(&a);
+    cr_expect_eq(flag, 1);
 }

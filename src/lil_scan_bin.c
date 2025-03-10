@@ -1,13 +1,13 @@
+#include <errno.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <iso646.h>
-#include <assert.h>
 #include <stdbool.h>
 #include "../include/longintlib.h"
 #include "../include/longintconst.h"
 #include "../include/longintmacro.h"
 
-void lil_scan_bin(lil_t *src) {
+int lil_scan_bin(lil_t *src) {
     // scan binary representation of source
     
     bool sign_check = true; // true when "sign input" check is required
@@ -20,6 +20,7 @@ void lil_scan_bin(lil_t *src) {
     char ch = 0;
     
     // default input
+    src->sign = LIL_PLUS;
     LIL_SET_NULL(src);
 
     while (ctr <= lim) {
@@ -71,6 +72,11 @@ void lil_scan_bin(lil_t *src) {
         
         // digit input 
         if ((not sign_check) and (not prefix_check) and (not leading_zero_check)) {
+            if ((ch != '0') and (ch != '1')) {
+                errno = ERR_INVALID_INPUT;
+                perror("An invalid character entered");
+                exit(EXIT_FAILURE);
+            }
             assert((ch == '0') or (ch == '1'));
             lil_shl(src);
             src->val[0] = src->val[0] | (uint64_t)(ch - '0');
@@ -80,4 +86,5 @@ void lil_scan_bin(lil_t *src) {
     
     // correct result sign
     if (lil_is_null(src)) src->sign = LIL_PLUS;
+    return 0;
 }

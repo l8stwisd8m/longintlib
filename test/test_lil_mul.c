@@ -1,85 +1,142 @@
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include "test_utils.h"
+#include <limits.h>
+#include <unistd.h>
+#include <sys/wait.h>
+#include <sys/types.h>
+#include <criterion/criterion.h>
 #include "../include/longintlib.h"
 #include "../include/longintconst.h"
-#define M 8
 
-void mul(lil_t *a, lil_t *b, lil_t *c) {
-    lil_mul(c, a, b);
-    printf("a * b:\t");
-    lil_print_hex(c);
-    if (c->sign) printf("Result sign is minus \n");
-    else printf("Result sign is plus \n");
+Test(test_lil_mul, multiplication_of_empty_values) {
+    uint64_t arr_a[LIL_256_BIT] = {0};
+    uint64_t arr_b[LIL_256_BIT] = {0};
+    uint64_t arr_c[LIL_512_BIT] = {0};
+    long_int a = {MINUS, arr_a, LIL_256_BIT};
+    long_int b = {PLUS, arr_b, LIL_256_BIT};
+    long_int c = {PLUS, arr_c, LIL_512_BIT};
+    int flag = lil_mul(&c, &a, &b);
+    cr_expect_eq(flag, LIL_NO_ERROR);
+    cr_expect_eq(c.sign, LIL_PLUS);
+    uint64_t expected_arr[LIL_512_BIT] = {0};
+    cr_expect_arr_eq(c.val, expected_arr, c.size);
 }
 
-void test_mul(lil_t *a, lil_t *b, lil_t *c) {
-    PRINT_ARG(a);
-    PRINT_ARG(b);
-    
-    printf("Both terms are positive \n");
-    a->sign = LIL_PLUS; b->sign = LIL_PLUS;
-    mul(a, b, c);
-        
-    printf("First term is positive, second one is negative \n");
-    b->sign = LIL_MINUS;
-    mul(a, b, c);
-    
-    printf("First term is negative, second one is positive \n");
-    a->sign = LIL_MINUS; b->sign = LIL_PLUS;
-    mul(a, b, c);
-    
-    printf("Both terms are negative \n");
-    b->sign = LIL_MINUS;
-    mul(a, b, c);
+void fork_test_lil_mul(void) {
+    pid_t pid;
+    if ((pid = fork()) == 0) {
+        uint64_t arr_a[LIL_256_BIT] = {UINT64_MAX, UINT64_MAX, UINT64_MAX, UINT64_MAX};
+        uint64_t arr_b[LIL_256_BIT] = {1};
+        uint64_t arr_c[LIL_256_BIT + 2] = {0};
+        long_int a = {PLUS, arr_a, LIL_256_BIT};
+        long_int b = {PLUS, arr_b, LIL_256_BIT};
+        long_int c = {PLUS, arr_c, LIL_256_BIT + 2};
+        lil_mul(&c, &a, &b);
+        exit(EXIT_SUCCESS); // default exit status if the function didn't crashed
+    }
 }
 
-int main(int argc, char *argv[]) {
-    // multiplication test
-    uint64_t arr_a[N] = {0};
-    uint64_t arr_b[N] = {0};
-    uint64_t arr_c[M] = {0};
-    long_int a = {PLUS, arr_a, N};
-    long_int b = {PLUS, arr_b, N};
-    long_int c = {PLUS, arr_c, M};
-    
-    printf("Multiplication test \n");
-    
-    printf("Multiplication of terms both equal to zero \n");
-    printf("a:\t");
-    lil_print_hex(&a);
-    printf("b:\t");
-    lil_print_hex(&b);
-    mul(&a, &b, &c);
-     
-    printf("Multiplication of a term equal to zero and a non-zero value \n");
-    a.val[0] = 0x01234567;
-    test_mul(&a, &b, &c);
-    
-    printf("Multiplication of two equal terms of same size \n");
-    a.val[1] = BASE_MAX; a.val[0] = 0xfedcba9876543210;
-    b.val[1] = BASE_MAX; b.val[0] = 0xfedcba9876543210;
-    test_mul(&a, &b, &c);
-    
-    printf("Multiplication of two equal terms of same size \n");
-    a.val[0] = 0x0123456776543210;
-    test_mul(&a, &b, &c);
-    
-    printf("Valid multiplication of different sized terms \n");
-    b.size = N - 1;
-    uint64_t *new_arr_b = (uint64_t *)malloc(b.size * sizeof(uint64_t));
-    b.val = new_arr_b;
-    for (int i = 0; i < b.size; b.val[i++] = BASE_MAX);
-    test_mul(&a, &b, &c);
-    
-    printf("Invalid multiplication of different sized terms \n");
-    b.size = N + 1;
-    uint64_t *another_arr_b = (uint64_t *)realloc(new_arr_b, b.size * sizeof(uint64_t));
-    b.val = another_arr_b;
-    for (int i = 0; i < b.size; b.val[i++] = BASE_MAX);
-    test_mul(&a, &b, &c);
-    
-    free(another_arr_b);
-    return 0;
+Test(test_lil_mul, invalid_sized_terms_multiplication) {
+    int status;
+    fork_test_lil_mul();
+    wait(&status);
+    if(WEXITSTATUS(status) == EXIT_FAILURE) cr_assert(1);
+    else cr_assert_fail();
+}
+
+Test(test_lil_mul, multiplication_of_empty_and_not_empty_values) {
+    uint64_t arr_a[LIL_256_BIT] = {1, 2, 3, 4};
+    uint64_t arr_b[LIL_256_BIT] = {0};
+    uint64_t arr_c[LIL_512_BIT] = {0};
+    long_int a = {PLUS, arr_a, LIL_256_BIT};
+    long_int b = {PLUS, arr_b, LIL_256_BIT};
+    long_int c = {PLUS, arr_c, LIL_512_BIT};
+    // both terms are positive
+    int flag = lil_mul(&c, &a, &b);
+    cr_expect_eq(flag, LIL_NO_ERROR);
+    cr_expect_eq(c.sign, LIL_PLUS);
+    uint64_t expected_arr[LIL_512_BIT] = {0};
+    cr_expect_arr_eq(c.val, expected_arr, c.size);
+    // first term is positive, second one is negative
+    b.sign = LIL_MINUS;
+    flag = lil_mul(&c, &a, &b);
+    cr_expect_eq(flag, LIL_NO_ERROR);
+    cr_expect_eq(c.sign, LIL_PLUS);
+    cr_expect_arr_eq(c.val, expected_arr, c.size);
+    // second term is positive, first one is negative
+    b.sign = LIL_PLUS; a.sign = LIL_MINUS;
+    flag = lil_mul(&c, &a, &b);
+    cr_expect_eq(flag, LIL_NO_ERROR);
+    cr_expect_eq(c.sign, LIL_PLUS);
+    cr_expect_arr_eq(c.val, expected_arr, c.size);
+    // both terms are negative 
+    b.sign = LIL_MINUS;
+    flag = lil_mul(&c, &a, &b);
+    cr_expect_eq(flag, LIL_NO_ERROR);
+    cr_expect_eq(c.sign, LIL_PLUS);
+    cr_expect_arr_eq(c.val, expected_arr, c.size);
+}
+
+Test(test_lil_mul, multiplication_of_two_equal_terms) {
+    uint64_t arr_a[LIL_128_BIT] = {0xfedcba9876543210, UINT64_MAX};
+    uint64_t arr_b[LIL_128_BIT] = {0xfedcba9876543210, UINT64_MAX};
+    uint64_t arr_c[LIL_256_BIT] = {0};
+    long_int a = {PLUS, arr_a, LIL_128_BIT};
+    long_int b = {PLUS, arr_b, LIL_128_BIT};
+    long_int c = {PLUS, arr_c, LIL_256_BIT};
+    // both terms are positive
+    int flag = lil_mul(&c, &a, &b);
+    cr_expect_eq(flag, LIL_NO_ERROR);
+    cr_expect_eq(c.sign, LIL_PLUS);
+    uint64_t expected_arr[LIL_256_BIT] = {0xdeec6cd7a44a4100, 0x00014b66dc33f6ac, 0xfdb97530eca86420, UINT64_MAX};
+    cr_expect_arr_eq(c.val, expected_arr, c.size);
+    // first term is positive, second one is negative
+    b.sign = LIL_MINUS;
+    flag = lil_mul(&c, &a, &b);
+    cr_expect_eq(flag, LIL_NO_ERROR);
+    cr_expect_eq(c.sign, LIL_MINUS);
+    cr_expect_arr_eq(c.val, expected_arr, c.size);
+    // second term is positive, first one is negative
+    b.sign = LIL_PLUS; a.sign = LIL_MINUS;
+    flag = lil_mul(&c, &a, &b);
+    cr_expect_eq(flag, LIL_NO_ERROR);
+    cr_expect_eq(c.sign, LIL_MINUS);
+    cr_expect_arr_eq(c.val, expected_arr, c.size);
+    // both terms are negative 
+    b.sign = LIL_MINUS;
+    flag = lil_mul(&c, &a, &b);
+    cr_expect_eq(flag, LIL_NO_ERROR);
+    cr_expect_eq(c.sign, LIL_PLUS);
+    cr_expect_arr_eq(c.val, expected_arr, c.size);
+}
+
+Test(test_lil_mul, multiplication_of_two_unequal_terms) {
+    uint64_t arr_a[LIL_128_BIT] = {0xfedcba9876543210, UINT64_MAX};
+    uint64_t arr_b[LIL_128_BIT] = {0x0123456776543210, UINT64_MAX};
+    uint64_t arr_c[LIL_256_BIT] = {0};
+    long_int a = {PLUS, arr_a, LIL_128_BIT};
+    long_int b = {PLUS, arr_b, LIL_128_BIT};
+    long_int c = {PLUS, arr_c, LIL_256_BIT};
+    // both terms are positive
+    int flag = lil_mul(&c, &a, &b);
+    cr_expect_eq(flag, LIL_NO_ERROR);
+    cr_expect_eq(c.sign, LIL_PLUS);
+    uint64_t expected_arr[LIL_256_BIT] = {0xc05d87c7a44a4100, 0x0121fa00ad8dd917, 0xffffffffeca86420, UINT64_MAX - 1};
+    cr_expect_arr_eq(c.val, expected_arr, c.size);
+    // first term is positive, second one is negative
+    b.sign = LIL_MINUS;
+    flag = lil_mul(&c, &a, &b);
+    cr_expect_eq(flag, LIL_NO_ERROR);
+    cr_expect_eq(c.sign, LIL_MINUS);
+    cr_expect_arr_eq(c.val, expected_arr, c.size);
+    // second term is positive, first one is negative
+    b.sign = LIL_PLUS; a.sign = LIL_MINUS;
+    flag = lil_mul(&c, &a, &b);
+    cr_expect_eq(flag, LIL_NO_ERROR);
+    cr_expect_eq(c.sign, LIL_MINUS);
+    cr_expect_arr_eq(c.val, expected_arr, c.size);
+    // both terms are negative 
+    b.sign = LIL_MINUS;
+    flag = lil_mul(&c, &a, &b);
+    cr_expect_eq(flag, LIL_NO_ERROR);
+    cr_expect_eq(c.sign, LIL_PLUS);
+    cr_expect_arr_eq(c.val, expected_arr, c.size);
 }

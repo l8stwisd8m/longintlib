@@ -1,24 +1,42 @@
 # compiler and flags
 CC := gcc
-CFLAGS := -fPIC
+CFLAGS := -fPIC -fprofile-arcs -ftest-coverage
+WFLAGS = -Wall -Wpedantic -Wextra
+LDFLAGS = -Llib -llongint
+RPATH = -Wl,-rpath=./lib
 
 # directories
 LIB_DIR = lib
 SRC_DIR = src
 OBJ_DIR = obj
+BIN_DIR = bin
+DEV_DIR = dev
+EXX_DIR = example
+TEST_DIR = test
 
-# source files
-SRC_FILES = $(wildcard $(SRC_DIR)/*.c)
-OBJ_FILES = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/%.o, $(SRC_FILES))
+# environment variables
+INPUT_DIR = $(shell pwd)/$(TEST_DIR)/assets/scan/
+OUTPUT_DIR = $(shell pwd)/$(TEST_DIR)/assets/print/
 
-# target names
+# library files
+LIB_SRC_FILES = $(wildcard $(SRC_DIR)/*.c)
+LIB_OBJ_FILES = $(patsubst $(SRC_DIR)/%.c, $(OBJ_DIR)/$(SRC_DIR)/%.o, $(LIB_SRC_FILES))
+# example files
+EXX_SRC_FILES = $(wildcard $(EXX_DIR)/ex_*.c)
+EXX_OBJ_FILES = $(patsubst $(EXX_DIR)/%.c, $(OBJ_DIR)/$(EXX_DIR)/%.o, $(EXX_SRC_FILES))
+EXX_TARGETS = $(patsubst $(EXX_DIR)/%.c, $(BIN_DIR)/%, $(EXX_SRC_FILES))
+# test files
+TEST_SRC_FILES = $(wildcard $(TEST_DIR)/test_*.c)
+TEST_OBJ_FILES = $(patsubst $(TEST_DIR)/%.c, $(OBJ_DIR)/$(TEST_DIR)/%.o, $(TEST_SRC_FILES))
+TEST_TARGET = $(BIN_DIR)/test_all
+
+# library target names
 LIB_NAME_LINUX = $(LIB_DIR)/liblongint.so
 LIB_NAME_WINDOWS = $(LIB_DIR)/liblongint.dll
 LIB_NAME_MACOS = $(LIB_DIR)/liblongint.dylib
 
-# target platform
+# library target platform
 TARGET_PLATFORM := linux	# change to 'windows' or 'macos'
-
 ifeq ($(TARGET_PLATFORM), windows)
 	CC := mingw-w64-gcc
 	LIB_NAME := $(LIB_NAME_WINDOWS)
@@ -31,22 +49,41 @@ else
 	LDFLAGS := -shared
 endif
 
-.PHONY: all clean
+.PHONY: clean examples tests
 
 all: $(OBJ_DIR) $(LIB_DIR) $(LIB_NAME)
 
+examples: $(OBJ_DIR) $(BIN_DIR) $(EXX_TARGETS)
+
+tests: $(OBJ_DIR) $(BIN_DIR) $(TEST_TARGET)
+	INPUT_DIR=$(INPUT_DIR) OUTPUT_DIR=$(OUTPUT_DIR) $(TEST_TARGET)
+
 $(OBJ_DIR):
-	mkdir -p $(OBJ_DIR)
+	mkdir -p $(OBJ_DIR)/{$(SRC_DIR),$(EXX_DIR),$(TEST_DIR)}
 
 $(LIB_DIR):
 	mkdir -p $(LIB_DIR)
 
-$(LIB_NAME): $(OBJ_FILES)
-	$(CC) $(LDFLAGS) -o $@ $^
+$(BIN_DIR):
+	mkdir -p $(BIN_DIR)
 
-# object files
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c | $(OBJ_DIR)
-	$(CC) $(CFLAGS) -c -o $@ $<
-  
+$(LIB_NAME): $(LIB_OBJ_FILES)
+	$(CC) $(LDFLAGS) -o $@ $^ -lgcov
+
+$(EXX_TARGETS): $(EXX_OBJ_FILES)
+	$(CC) -o $@ $< -L$(LIB_DIR) -llongint $(RPATH)
+
+$(TEST_TARGET): $(TEST_OBJ_FILES)
+	$(CC) -fprofile-arcs -ftest-coverage -o $@ $^ -L$(LIB_DIR) -llongint $(RPATH) -lcriterion -lgcov
+
+$(OBJ_DIR)/$(SRC_DIR)/%.o: $(SRC_DIR)/%.c
+	$(CC) $(CFLAGS) $(WFLAGS) -c -o $@ $<
+
+$(OBJ_DIR)/$(EXX_DIR)/%.o: $(EXX_DIR)/%.c
+	$(CC) $(WFLAGS) -c -o $@ $<
+
+$(OBJ_DIR)/$(TEST_DIR)/%.o: $(TEST_DIR)/%.c
+	$(CC) $(WFLAGS) -c -o $@ $< -lcriterion -lgcov
+
 clean:
-	rm -f $(LIB_NAME) $(OBJ_FILES)
+	rm -rf $(LIB_DIR) $(OBJ_DIR) $(BIN_DIR)

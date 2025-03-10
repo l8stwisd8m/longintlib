@@ -1,46 +1,52 @@
-#include <stdio.h>
 #include <stdint.h>
-#include <stdlib.h>
-#include "test_utils.h"
+#include <limits.h>
+#include <unistd.h>
+#include <sys/wait.h>
+#include <sys/types.h>
+#include <criterion/criterion.h>
 #include "../include/longintlib.h"
+#include "../include/longintconst.h"
 
-void test_cpy(lil_t *a, lil_t *b) {
-    PRINT_ARG(a);
-    PRINT_ARG(b);
-    lil_cpy(a, b);
-    printf("a <- b:\t");
-    lil_print_hex(a);
+Test(test_lil_cpy, same_sized_terms_copy) {
+    uint64_t arr_a[LIL_256_BIT] = {0};
+    uint64_t arr_b[LIL_256_BIT] = {UINT64_MAX, UINT64_MAX, UINT64_MAX, UINT64_MAX};
+    long_int a = {PLUS, arr_a, LIL_256_BIT};
+    long_int b = {MINUS, arr_b, LIL_256_BIT};
+    int flag = lil_cpy(&a, &b);
+    cr_expect_eq(flag, LIL_NO_ERROR);
+    cr_expect_eq(a.sign, LIL_MINUS);
+    cr_expect_eq(a.size, b.size);
+    cr_expect_arr_eq(a.val, b.val, b.size);
 }
 
-int main(int argc, char *argv[]) {
-    // copy test
-    uint64_t arr_a[N] = {0};
-    uint64_t *arr_b = (uint64_t *)malloc(N * sizeof(uint64_t));
-    for (int i = 0; i < N; arr_b[i++] = BASE_MAX);
-    long_int a = {PLUS, arr_a, N};
-    long_int b = {PLUS, arr_b, N};
-    
-    printf("Copy test \n");
-    
-    printf("Copy b to a (arguments have same size) \n");
-    test_cpy(&a, &b);
-    
-    printf("Valid copy b to a (arguments have different sizes) \n");
-    b.size = N - 1;
-    uint64_t *new_arr_b = (uint64_t *)realloc(arr_b, b.size * sizeof(uint64_t));
-    b.val = new_arr_b;
-    for (int i = 0; i < b.size; b.val[i++] = BASE_MAX);
-    for (int i = 0; i < a.size; a.val[i++] = 0);
-    test_cpy(&a, &b);
-    
-    printf("Invalid copy b to a (arguments have different sizes) \n");
-    b.size = N + 1;
-    uint64_t *another_arr_b = (uint64_t *)realloc(new_arr_b, b.size * sizeof(uint64_t));
-    b.val = another_arr_b;
-    for (int i = 0; i < b.size; b.val[i++] = BASE_MAX);
-    for (int i = 0; i < a.size; a.val[i++] = 0);
-    test_cpy(&a, &b);
-    
-    free(another_arr_b);
-    return 0;
+Test(test_lil_cpy, valid_different_sized_terms_copy) {
+    uint64_t arr_a[LIL_256_BIT] = {0};
+    uint64_t arr_b[LIL_256_BIT - 1] = {UINT64_MAX, UINT64_MAX, UINT64_MAX};
+    long_int a = {PLUS, arr_a, LIL_256_BIT};
+    long_int b = {MINUS, arr_b, LIL_256_BIT - 1};
+    int flag = lil_cpy(&a, &b);
+    cr_expect_eq(flag, LIL_TRUNCATED);
+    cr_expect_eq(a.sign, LIL_MINUS);
+    cr_expect_eq(a.size, b.size);
+    cr_expect_arr_eq(a.val, b.val, b.size);
+}
+
+void fork_test_lil_cpy(void) {
+    pid_t pid;
+    if ((pid = fork()) == 0) {
+        uint64_t arr_a[LIL_256_BIT] = {0};
+        uint64_t arr_b[LIL_256_BIT + 1] = {1};
+        long_int a = {PLUS, arr_a, LIL_256_BIT};
+        long_int b = {PLUS, arr_b, LIL_256_BIT + 1};
+        lil_cpy(&a, &b);
+        exit(EXIT_SUCCESS); // default exit status if the function didn't crashed
+    }
+}
+
+Test(test_lil_cpy, invalid_different_sized_terms_copy) {
+    int status;
+    fork_test_lil_cpy();
+    wait(&status);
+    if(WEXITSTATUS(status) == EXIT_FAILURE) cr_assert(1);
+    else cr_assert_fail();
 }

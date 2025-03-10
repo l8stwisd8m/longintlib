@@ -1,49 +1,129 @@
-#include <stdio.h>
-#include <stdint.h>
+#include <limits.h>
+#include <unistd.h>
+#include <sys/wait.h>
+#include <sys/types.h>
+#include <criterion/criterion.h>
 #include "../include/longintlib.h"
-#include "test_utils.h"
+#include "../include/longintconst.h"
 
-void test_gcd(lil_t *a, lil_t *b, lil_t *c) {
-    PRINT_ARG(a);
-    PRINT_ARG(b);
-    lil_gcd(c, a, b);
-    printf("gcd:\t");
-    lil_print_hex(c);
+Test(test_lil_gcd, gcd_of_not_empty_value_and_zero) {
+    uint64_t arr_a[LIL_256_BIT] = {0x1234567};
+    uint64_t arr_b[LIL_256_BIT] = {0};
+    uint64_t arr_c[LIL_256_BIT] = {0};
+    long_int a = {MINUS, arr_a, LIL_256_BIT};
+    long_int b = {PLUS, arr_b, LIL_256_BIT};
+    long_int c = {PLUS, arr_c, LIL_256_BIT};
+    int flag = lil_gcd(&c, &a, &b);
+    cr_expect_eq(flag, LIL_NO_ERROR);
+    cr_expect_eq(c.sign, LIL_PLUS);
+    uint64_t expected_arr[LIL_256_BIT] = {0x1234567};
+    cr_expect_arr_eq(c.val, expected_arr, c.size);
+    flag = lil_gcd(&c, &b, &a);
+    cr_expect_eq(flag, LIL_NO_ERROR);
+    cr_expect_eq(c.sign, LIL_PLUS);
+    cr_expect_arr_eq(c.val, expected_arr, c.size);
 }
 
-int main(int argc, char *argv[]) {
-    // gcd test
-    uint64_t arr_a[N] = {0};
-    uint64_t arr_b[N] = {0};
-    uint64_t arr_c[N] = {0};
-    long_int a = {PLUS, arr_a, N};
-    long_int b = {PLUS, arr_b, N};
-    long_int c = {PLUS, arr_c, N};
-    
-    printf("Greatest common divisor calculation test \n");
-    
-    printf("GCD of a term equal to zero and a non-zero value \n");
-    b.val[0] = 0x01234567;
-    test_gcd(&a, &b, &c);
-    
-    printf("GCD of two equal terms of same size \n");
-    a.val[1] = BASE_MAX; a.val[0] = 0xfedcba9876543210;
-    b.val[1] = BASE_MAX; b.val[0] = 0xfedcba9876543210;
-    test_gcd(&a, &b, &c);
-    
-    printf("GCD of two unequal terms \n");
-    a.val[2] = BASE_MAX; b.val[0] = 0x1234567; b.val[1] = 0;
-    test_gcd(&a, &b, &c);
-    
-    printf("GCD of two unequal terms \n");
-    a.val[2] = BASE_MAX; b.val[1] = BASE_MAX; b.val[0] = 0xfedcba9876543210;
-    test_gcd(&a, &b, &c);
-    
-    printf("GCD of invalid terms both equal to zero \n");
-    for (int i = 0; i < N; i++) {
-        a.val[i] = 0; b.val[i] = 0;
+void fork_test_lil_gcd_empty_values(void) {
+    pid_t pid;
+    if ((pid = fork()) == 0) {
+        uint64_t arr_a[LIL_256_BIT] = {0};
+        uint64_t arr_b[LIL_256_BIT] = {0};
+        uint64_t arr_c[LIL_256_BIT] = {0};
+        long_int a = {PLUS, arr_a, LIL_256_BIT};
+        long_int b = {PLUS, arr_b, LIL_256_BIT};
+        long_int c = {PLUS, arr_c, LIL_256_BIT};
+        lil_gcd(&c, &a, &b);
+        exit(EXIT_SUCCESS); // default exit status if the function didn't crashed
     }
-    test_gcd(&a, &b, &c);
-    
-    return 0;
+}
+
+Test(test_lil_gcd, gcd_of_two_empty_values) {
+    int status;
+    fork_test_lil_gcd_empty_values();
+    wait(&status);
+    if(WEXITSTATUS(status) == EXIT_FAILURE) cr_assert(1);
+    else cr_assert_fail();
+}
+
+Test(test_lil_gcd, gcd_of_two_short_equal_values) {
+    uint64_t arr_a[LIL_256_BIT] = {0x1234567};
+    uint64_t arr_b[LIL_256_BIT] = {0x1234567};
+    uint64_t arr_c[LIL_256_BIT] = {0};
+    long_int a = {MINUS, arr_a, LIL_256_BIT};
+    long_int b = {PLUS, arr_b, LIL_256_BIT};
+    long_int c = {PLUS, arr_c, LIL_256_BIT};
+    int flag = lil_gcd(&c, &a, &b);
+    cr_expect_eq(flag, LIL_NO_ERROR);
+    cr_expect_eq(c.sign, LIL_PLUS);
+    uint64_t expected_arr[LIL_256_BIT] = {0x1234567};
+    cr_expect_arr_eq(c.val, expected_arr, c.size);
+}
+
+Test(test_lil_gcd, gcd_of_two_short_unequal_values) {
+    uint64_t arr_a[LIL_256_BIT] = {UINT64_MAX};
+    uint64_t arr_b[LIL_256_BIT] = {0x1234567};
+    uint64_t arr_c[LIL_256_BIT] = {0};
+    long_int a = {MINUS, arr_a, LIL_256_BIT};
+    long_int b = {PLUS, arr_b, LIL_256_BIT};
+    long_int c = {PLUS, arr_c, LIL_256_BIT};
+    int flag = lil_gcd(&c, &a, &b);
+    cr_expect_eq(flag, LIL_NO_ERROR);
+    cr_expect_eq(c.sign, LIL_PLUS);
+    uint64_t expected_arr[LIL_256_BIT] = {1};
+    cr_expect_arr_eq(c.val, expected_arr, c.size);
+}
+
+Test(test_lil_gcd, gcd_of_short_and_long_values) {
+    uint64_t arr_a[LIL_256_BIT] = {0xfedcba9876543210, UINT64_MAX, UINT64_MAX};
+    uint64_t arr_b[LIL_256_BIT] = {0x1234567};
+    uint64_t arr_c[LIL_256_BIT] = {0};
+    long_int a = {MINUS, arr_a, LIL_256_BIT};
+    long_int b = {PLUS, arr_b, LIL_256_BIT};
+    long_int c = {PLUS, arr_c, LIL_256_BIT};
+    int flag = lil_gcd(&c, &a, &b);
+    cr_expect_eq(flag, LIL_NO_ERROR);
+    cr_expect_eq(c.sign, LIL_PLUS);
+    uint64_t expected_arr[LIL_256_BIT] = {1};
+    cr_expect_arr_eq(c.val, expected_arr, c.size);
+    flag = lil_gcd(&c, &b, &a);
+    cr_expect_eq(flag, LIL_NO_ERROR);
+    cr_expect_eq(c.sign, LIL_PLUS);
+    cr_expect_arr_eq(c.val, expected_arr, c.size);
+}
+
+Test(test_lil_gcd, gcd_of_two_long_equal_values) {
+    uint64_t arr_a[LIL_256_BIT] = {0xfedcba9876543210, UINT64_MAX};
+    uint64_t arr_b[LIL_256_BIT] = {0xfedcba9876543210, UINT64_MAX};
+    uint64_t arr_c[LIL_256_BIT] = {0};
+    long_int a = {MINUS, arr_a, LIL_256_BIT};
+    long_int b = {PLUS, arr_b, LIL_256_BIT};
+    long_int c = {PLUS, arr_c, LIL_256_BIT};
+    int flag = lil_gcd(&c, &a, &b);
+    cr_expect_eq(flag, LIL_NO_ERROR);
+    cr_expect_eq(c.sign, LIL_PLUS);
+    uint64_t expected_arr[LIL_256_BIT] = {0xfedcba9876543210, UINT64_MAX};
+    cr_expect_arr_eq(c.val, expected_arr, c.size);
+    flag = lil_gcd(&c, &b, &a);
+    cr_expect_eq(flag, LIL_NO_ERROR);
+    cr_expect_eq(c.sign, LIL_PLUS);
+    cr_expect_arr_eq(c.val, expected_arr, c.size);
+}
+
+Test(test_lil_gcd, gcd_of_two_long_unequal_values) {
+    uint64_t arr_a[LIL_256_BIT] = {0xfedcba9876543210, UINT64_MAX, UINT64_MAX};
+    uint64_t arr_b[LIL_256_BIT] = {0xfedcba9876543210, UINT64_MAX};
+    uint64_t arr_c[LIL_256_BIT] = {0};
+    long_int a = {MINUS, arr_a, LIL_256_BIT};
+    long_int b = {PLUS, arr_b, LIL_256_BIT};
+    long_int c = {PLUS, arr_c, LIL_256_BIT};
+    int flag = lil_gcd(&c, &a, &b);
+    cr_expect_eq(flag, LIL_NO_ERROR);
+    cr_expect_eq(c.sign, LIL_PLUS);
+    uint64_t expected_arr[LIL_256_BIT] = {0xf0};
+    cr_expect_arr_eq(c.val, expected_arr, c.size);
+    flag = lil_gcd(&c, &b, &a);
+    cr_expect_eq(flag, LIL_NO_ERROR);
+    cr_expect_eq(c.sign, LIL_PLUS);
+    cr_expect_arr_eq(c.val, expected_arr, c.size);
 }

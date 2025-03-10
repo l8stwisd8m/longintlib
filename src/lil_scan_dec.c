@@ -1,15 +1,16 @@
+#include <errno.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <iso646.h>
-#include <assert.h>
 #include <stdbool.h>
 #include "../include/longintlib.h"
 #include "../include/longintconst.h"
 #include "../include/longintmacro.h"
 
-void lil_scan_dec(lil_t *src) {
+int lil_scan_dec(lil_t *src) {
     // scan decimal representation of source
     
+    int sign = LIL_PLUS;
     bool sign_check = true; // true when "sign input" check is required
     bool leading_zero_check = true; // true when "leading zero(es) check" is required
     
@@ -18,7 +19,7 @@ void lil_scan_dec(lil_t *src) {
     
     // default input
     LIL_SET_NULL(src);
-
+    
     while (lil_len(src) < lim) {
         ch = getchar();
         
@@ -33,7 +34,7 @@ void lil_scan_dec(lil_t *src) {
         // first symbol input
         if (sign_check) {
             if (ch == '-') {
-                src->sign = LIL_MINUS;
+                sign = LIL_MINUS;
                 leading_zero_check = true; // continue "leading zero(es) input" check
             }
             else {
@@ -45,12 +46,17 @@ void lil_scan_dec(lil_t *src) {
         
         // digit input 
         if ((not sign_check) and (not leading_zero_check)) {
-            assert((ch >= '0') and (ch <= '9'));
-            lil_short_mul(src, 10);
+            if ((ch < '0') or (ch > '9')) {
+                errno = ERR_INVALID_INPUT;
+                perror("An invalid character entered");
+                exit(EXIT_FAILURE);
+            }
+            lil_short_mul(src, 10); // NOTE: operation sets positive sign
             lil_short_add(src, (uint64_t)(ch - '0'));
         }
     }
     
     // correct result sign
-    if (lil_is_null(src)) src->sign = LIL_PLUS;
+    src->sign = (lil_is_null(src)) ? LIL_PLUS : sign;
+    return 0;
 }

@@ -1,40 +1,28 @@
-#include <stdio.h>
 #include <stdint.h>
-#include <stdlib.h>
+#include <criterion/criterion.h>
 #include "../include/longintlib.h"
-#include "test_utils.h"
+#include "../include/longintconst.h"
 
-void test_rev(lil_t *a) {
-    PRINT_ARG(a);
-    lil_rev(a);
-    printf("rev(a):\t");
-    lil_print_hex(a);
-}
-
-int main(int argc, char *argv[]) {
-    // reverse test
+Test(test_lil_rev, single_digit_value_reversed_digits_order) {
     uint64_t arr_a[1] = {1};
     long_int a = {PLUS, arr_a, 1};
-    
-    printf("Value reverse test \n");
-    
-    printf("Single digit value \n");
-    test_rev(&a);
-    
-    printf("Odd amount of digits \n");
-    a.size = 3;
-    uint64_t *new_arr_a = (uint64_t *)malloc(a.size * sizeof(uint64_t));
-    for (int i = 0; i < a.size; i++) new_arr_a[i] = 1 + i;
-    a.val = new_arr_a;
-    test_rev(&a);
-    
-    printf("Even amount of digits \n");
-    a.size = 4;
-    uint64_t *another_arr_a = (uint64_t *)realloc(new_arr_a, a.size * sizeof(uint64_t));
-    for (int i = 0; i < a.size; i++) another_arr_a[i] = 1 + i;
-    a.val = another_arr_a;
-    test_rev(&a);
-    
-    free(another_arr_a);
-    return 0;
+    lil_rev(&a);
+    uint64_t expected_arr[1] = {1};
+    cr_expect_arr_eq(a.val, expected_arr, a.size);
+}
+
+Test(test_lil_rev, odd_amount_of_digits_value_reversed_digits_order) {
+    uint64_t arr_a[LIL_256_BIT - 1] = {1, 2, 3};
+    long_int a = {PLUS, arr_a, LIL_256_BIT - 1};
+    lil_rev(&a);
+    uint64_t expected_arr[LIL_256_BIT - 1] = {3, 2, 1};
+    cr_expect_arr_eq(a.val, expected_arr, a.size);
+}
+
+Test(test_lil_rev, even_amount_of_digits_value_reversed_digits_order) {
+    uint64_t arr_a[LIL_256_BIT] = {1, 2, 3, 4};
+    long_int a = {PLUS, arr_a, LIL_256_BIT};
+    lil_rev(&a);
+    uint64_t expected_arr[LIL_256_BIT] = {4, 3, 2, 1};
+    cr_expect_arr_eq(a.val, expected_arr, a.size);
 }

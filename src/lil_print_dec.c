@@ -9,11 +9,11 @@
 #define NEW_LINE
 #define PRINT_SIGN
 
-void lil_print_dec(lil_t *src) {
+int lil_print_dec(lil_t *src) {
     // print decimal representation of source
     
     #ifdef PRINT_SIGN
-    if (src->sign == LIL_MINUS) putchar('-');
+    if ((src->sign == LIL_MINUS) and (not lil_is_null(src))) putchar('-');
     #endif /* ifdef PRINT_SIGN */
     
     uint64_t value_len = lil_len(src);
@@ -23,7 +23,7 @@ void lil_print_dec(lil_t *src) {
         #ifdef NEW_LINE
         putchar('\n');
         #endif /* ifdef NEW_LINE */
-        return; // single digit
+        return 0; // single digit
     }
     
     // temporary structures
@@ -71,4 +71,6 @@ void lil_print_dec(lil_t *src) {
     #ifdef NEW_LINE
     putchar('\n');
     #endif /* ifdef NEW_LINE */
+    
+    return 0;
 }

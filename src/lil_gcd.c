@@ -1,3 +1,5 @@
+#include <errno.h>
+#include <stdio.h>
 #include <stdint.h>
 #include <iso646.h>
 #include <assert.h>
@@ -8,7 +10,7 @@
 static uint64_t short_gcd(uint64_t a, uint64_t b);
 static void binary_reduction(lil_t *a, lil_t *b);
 
-void lil_gcd(lil_t *dst, lil_t *src_a, lil_t *src_b) {
+int lil_gcd(lil_t *dst, lil_t *src_a, lil_t *src_b) {
     // greatest common divisor of sources a and b
     
     // default result
@@ -17,18 +19,22 @@ void lil_gcd(lil_t *dst, lil_t *src_a, lil_t *src_b) {
     dst->val[0] = 1; // set gcd = 1
     
     // exceptions
-    assert((lil_is_null(src_a) == 0) or (lil_is_null(src_b) == 0));
+    if (lil_is_null(src_a) and lil_is_null(src_b)) {
+        errno = ERR_ZERO_DIVISION;
+        perror("Division by zero is not a valid operation; gcd calculation can not be performed");
+        exit(EXIT_FAILURE); // invalid value
+    }
     if (lil_is_null(src_b)) {
         LIL_CPY_VAL(dst, src_a);
-        return; // gcd(a, 0) = a
+        return 0; // gcd(a, 0) = a
     }
     if (lil_is_null(src_a)) {
         LIL_CPY_VAL(dst, src_b);
-        return; // gcd(b, 0) = b
+        return 0; // gcd(b, 0) = b
     }
     if (lil_cmp_val(src_a, src_b) == 0) {
         LIL_CPY_VAL(dst, src_a);
-        return; // gcd(a, a) = a
+        return 0; // gcd(a, a) = a
     }
     
     uint64_t a_len = lil_len(src_a);
@@ -37,7 +43,7 @@ void lil_gcd(lil_t *dst, lil_t *src_a, lil_t *src_b) {
     // a and b values are short
     if ((a_len <= LIL_BASE) and (b_len <= LIL_BASE)) {
         dst->val[0] = short_gcd(src_a->val[0], src_b->val[0]);
-        return;
+        return 0;
     }
     
     // value of a or b is short 
@@ -45,13 +51,13 @@ void lil_gcd(lil_t *dst, lil_t *src_a, lil_t *src_b) {
         uint64_t tmp = 0;
         lil_short_mod(&tmp, src_a, src_b->val[0]);
         dst->val[0] = short_gcd(tmp, src_b->val[0]);
-        return;
+        return 0;
     }
     if (a_len <= LIL_BASE) {
         uint64_t tmp = 0;
         lil_short_mod(&tmp, src_b, src_a->val[0]);
         dst->val[0] = short_gcd(tmp, src_a->val[0]);
-        return;
+        return 0;
     }
     
     // both a and b are long integers 
@@ -64,7 +70,7 @@ void lil_gcd(lil_t *dst, lil_t *src_a, lil_t *src_b) {
     
     // primary length reducing 
     uint64_t shift_amount = 0;
-    while (lil_is_even(tmp_a) and lil_is_even(tmp_b)) {
+    while (LIL_IS_EVEN(tmp_a) and (LIL_IS_EVEN(tmp_b))) {
         lil_shr(tmp_a); // a /= 2
         lil_shr(tmp_b); // b /= 2
         shift_amount += 1;
@@ -72,19 +78,15 @@ void lil_gcd(lil_t *dst, lil_t *src_a, lil_t *src_b) {
     
     // further length reducing operations, until it's possible to perform short gcd
     // assuming a and b are long integers at this point
-    int cmp_flag = 0;
     while ((a_len > LIL_BASE) or (b_len > LIL_BASE)) {
         // edge cases
         if (lil_is_null(tmp_a)) {
-            //LIL_CPY_VAL(dst, tmp_b);
             break; // a = 0 => gcd(a, b) = b
         }
         if (lil_is_null(tmp_b)) {
-            //LIL_CPY_VAL(dst, tmp_a);
             break; // b = 0 => gcd(a, b) = a
         }
         if (lil_cmp_val(tmp_a, tmp_b) == 0) {
-            //LIL_CPY_VAL(dst, tmp_a);
             break; // a = b => gcd(a, b) = a
         }
         
@@ -100,21 +102,21 @@ void lil_gcd(lil_t *dst, lil_t *src_a, lil_t *src_b) {
         lil_shln(dst, shift_amount); // multiply gcd by power of 2, if necessary
         LIL_FREE(tmp_a);
         LIL_FREE(tmp_b);
-        return; // a = 0 => gcd(a, b) = b
+        return 0; // a = 0 => gcd(a, b) = b
     }
     if (lil_is_null(tmp_b)) {
         LIL_CPY_VAL(dst, tmp_a);
         lil_shln(dst, shift_amount); // multiply gcd by power of 2, if necessary
         LIL_FREE(tmp_a);
         LIL_FREE(tmp_b);
-        return; // b = 0 => gcd(a, b) = a
+        return 0; // b = 0 => gcd(a, b) = a
     }
     if (lil_cmp_val(tmp_a, tmp_b) == 0) {
         LIL_CPY_VAL(dst, tmp_a);
         lil_shln(dst, shift_amount); // multiply gcd by power of 2, if necessary
         LIL_FREE(tmp_a);
         LIL_FREE(tmp_b);
-        return; // a = b => gcd(a, b) = a
+        return 0; // a = b => gcd(a, b) = a
     }
 
     a_len = lil_len(tmp_a);
@@ -126,7 +128,7 @@ void lil_gcd(lil_t *dst, lil_t *src_a, lil_t *src_b) {
         lil_shln(dst, shift_amount); // multiply gcd by power of 2, if necessary
         LIL_FREE(tmp_a);
         LIL_FREE(tmp_b);
-        return;
+        return 0;
     }
      
     // value of a or b is short 
@@ -137,7 +139,7 @@ void lil_gcd(lil_t *dst, lil_t *src_a, lil_t *src_b) {
         lil_shln(dst, shift_amount); // multiply gcd by power of 2, if necessary
         LIL_FREE(tmp_a);
         LIL_FREE(tmp_b);
-        return;
+        return 0;
     }
     if (a_len <= LIL_BASE) {
         uint64_t tmp = 0;
@@ -146,12 +148,13 @@ void lil_gcd(lil_t *dst, lil_t *src_a, lil_t *src_b) {
         lil_shln(dst, shift_amount); // multiply gcd by power of 2, if necessary
         LIL_FREE(tmp_a);
         LIL_FREE(tmp_b);
-        return;
+        return 0;
     }
     
     LIL_FREE(tmp_a);
     LIL_FREE(tmp_b);
     assert((a_len > LIL_BASE) and (b_len > LIL_BASE)); // something went wrong
+    return 0;
 }
 
 static uint64_t short_gcd(uint64_t a, uint64_t b) {
@@ -172,10 +175,10 @@ static uint64_t short_gcd(uint64_t a, uint64_t b) {
 
 static void binary_reduction(lil_t *a, lil_t *b) {
     // assuming a and b are not equal to zero
-    while (lil_is_even(a)) {
+    while (LIL_IS_EVEN(a)) {
         lil_shr(a); // a /= 2
     }
-    while (lil_is_even(b)) {
+    while (LIL_IS_EVEN(b)) {
         lil_shr(b); // b /= 2
     }
     int cmp_flag = lil_cmp_val(a, b);

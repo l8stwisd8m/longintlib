@@ -1,30 +1,40 @@
 # Long Integer Library
 
+[![docs](https://img.shields.io/badge/docs-blue)](https://github.com/l8stwisd8m/longintlib/blob/main/docs/Documentation.md)
+![coverage - 92.5%](https://img.shields.io/badge/coverage-92.5%-bluegreen)
+![release - v0.0](https://img.shields.io/badge/release-v0.0-blueviolet)
+
 ## Overview
+
 The **longintlib** is a lightweight dynamic arbitrary-precision arithmetic library providing basic functions for operating long integers. Syntax is pretty straightforward making it simple and highly customisible. This project consists of the library itself, tests and examples.
 
 A brief introduction is provided below. See [documentation](https://github.com/l8stwisd8m/longintlib/blob/main/docs/Documentation.md) in the `docs` folder for more detailed types & functions description.
 
+**Requirments**:  
+
+• `GCC` and `Make` to compile the library;  
+• [`Criterion`](https://github.com/Snaipe/Criterion) is used for unit tests [optional];  
+• [`LCOV/GCOV`](https://github.com/linux-test-project/lcov) for coverage info [optional].  
+
 ## Quick start
+
 You can download a headers & precompiled dynamic library file in the **Releases** (currently, for Linux users only — if you're running MacOS or Windows, you have to change the target platform in the `Makefile` and build shared library file with `make`).
 
-The `longintlib.h`contains all the necessary prototypes and type definitions. The header can be included manually; to compile a file you need to link it with one of the following shared objects:
+The `longintlib.h`contains all the necessary prototypes and type definitions. The header can be included manually; to compile a file you need to link it with one of the following shared objects:  
 
-• `liblongint.so` for Linux;
+• `liblongint.so` for Linux;  
+• `liblongint.dll` for Windows;  
+• `liblongint.dylib` for MacOS.  
 
-• `liblongint.dll` for Windows;
+To run any tests or examples `git clone` this project and build executables:  
 
-• `liblongint.dylib` for MacOS.
+• `make tests` for tests;  
+• `make examples` for examples.  
 
-To run any tests or examples `git clone` this project and build executables:
-
-`make -f MakefileTest` for tests;
-
-`make -f MakefileExample` for examples.
-
-Default `Makefile` is intended for compiling shared object file, so it can be modified and executed with `make` command to recompile it when necessary.
+Default `Makefile` target is intended for compiling shared object file, so it can be modified and executed with `make` command to recompile it when necessary.
 
 ## Usage
+
 The library provides one basic type called `lil_t` or `long_int`:
 
 ```
@@ -37,11 +47,11 @@ typedef struct {
 
 An array for value storing should be allocated before variable initialization.
 
-The `sign` value can be left uninitialized (most of the functions doesn't use it).
+The `sign` value can be left uninitialized (most of the functions doesn't use it).  
 **Note**: enumerations `PLUS` and `MINUS` can be used only while initialization (inside braces); constants `LIL_PLUS` and `LIL_MINUS` from `longintconst.h` may be used instead.
 
-Each `val` array element represents a single digit of the value. Functions treat `val` arrays as little-endian numbers, so you have to input numbers in reversed order or use `lil_rev` to change the order of a value. The only exceptions are `scan` functions, which expect numbers to be entered in direct order.
-**Warning**: value array lenght must always corresond to the `size` value and be greater than zero. There are no assertions or `size` checks in library functions.
+Each `val` array element represents a single digit of the value. Functions treat `val` arrays as little-endian numbers, so you have to input numbers in reversed order or use `lil_rev` to change the order of a value. The only exceptions are `scan` functions, which expect numbers to be entered in direct order.  
+**Warning**: value array length must always corresond to the `size` value and be greater than zero. There are no assertions or `size` checks in library functions.
 
 **Note**: avoid using different sized variables. Arguments of certain functions, such as `div` and `mod`, must the same size.
 
@@ -73,6 +83,6 @@ There are plenty useful constants and macros in `longintconst` and `longintmacro
 
 ## Issues, contributing etc.
 
-Feel free to fork and modify the project! You can contribute anything to the `dev` branch. Good examples will be added to the main branch; however, the amount of source files is limited to reasonable limits to keep the library less bloated.
+Feel free to fork and modify the project! You can contribute anything to the `main` branch. Good examples and new functions will be added to the branch; however, the amount of library functions (source files) is limited to reasonable limits to keep the library less bloated.
 
 I would also appreciate recieving suggestions for improving any features, found bugs, patches, etc - open an [issue](https://github.com/l8stwisd8m/longintlib/issues) to submit it. Please, provide bug reports information how to reproduce it.

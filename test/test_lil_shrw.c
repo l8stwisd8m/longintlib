@@ -1,37 +1,41 @@
-#include <stdio.h>
 #include <stdint.h>
-#include "test_utils.h"
+#include <limits.h>
+#include <criterion/criterion.h>
 #include "../include/longintlib.h"
+#include "../include/longintconst.h"
 
-void test_shrw(lil_t *a) {
-    PRINT_ARG(a);
-    lil_shrw(a);
-    printf("a >> 1:\t");
-    lil_print_hex(a);
+Test(test_lil_shrw, empty_value_right_wordsize_shift) {
+    uint64_t arr_a[LIL_256_BIT] = {0};
+    long_int a = {PLUS, arr_a, LIL_256_BIT};
+    int flag = lil_shrw(&a);
+    cr_expect_eq(flag, LIL_NO_ERROR);
+    uint64_t expected_arr[LIL_256_BIT] = {0};
+    cr_expect_arr_eq(a.val, expected_arr, a.size);
 }
 
-int main(int argc, char *argv[]) {
-    // bitwise right shift by word size test
-    uint64_t arr_a[N] = {0};
-    long_int a = {PLUS, arr_a, N};
-    
-    printf("Right shift by word size test \n");
-    
-    printf("Shift of an empty value \n");
-    test_shrw(&a);
-    
-    printf("Most significant digit is not null \n");
-    a.val[N - 1] = 0x1234567;
-    test_shrw(&a);
-    
-    printf("Least significant digit is not null \n");
-    a.val[N - 2] = 0;
-    a.val[0] = 0x1234567;
-    test_shrw(&a);
-    
-    printf("All digits are \"full\" \n");
-    for (int i = 0; i < N; a.val[i++] = BASE_MAX);
-    test_shrw(&a);
-    
-    return 0;
+Test(test_lil_shrw, most_significant_digit_right_wordsize_shift) {
+    uint64_t arr_a[LIL_256_BIT] = {0, 0, 0, UINT64_MAX};
+    long_int a = {PLUS, arr_a, LIL_256_BIT};
+    int flag = lil_shrw(&a);
+    cr_expect_eq(flag, LIL_NO_ERROR);
+    uint64_t expected_arr[LIL_256_BIT] = {0, 0, UINT64_MAX, 0};
+    cr_expect_arr_eq(a.val, expected_arr, a.size);
+}
+
+Test(test_lil_shrw, least_significant_digit_right_wordsize_shift) {
+    uint64_t arr_a[LIL_256_BIT] = {UINT64_MAX};
+    long_int a = {PLUS, arr_a, LIL_256_BIT};
+    int flag = lil_shrw(&a);
+    cr_expect_eq(flag, LIL_OVERFLOW);
+    uint64_t expected_arr[LIL_256_BIT] = {0};
+    cr_expect_arr_eq(a.val, expected_arr, a.size);
+}
+
+Test(test_lil_shrw, middle_digits_right_wordsize_shift) {
+    uint64_t arr_a[LIL_256_BIT] = {0, UINT64_MAX, UINT64_MAX, 0};
+    long_int a = {PLUS, arr_a, LIL_256_BIT};
+    int flag = lil_shrw(&a);
+    cr_expect_eq(flag, LIL_NO_ERROR);
+    uint64_t expected_arr[LIL_256_BIT] = {UINT64_MAX, UINT64_MAX, 0, 0};
+    cr_expect_arr_eq(a.val, expected_arr, a.size);
 }

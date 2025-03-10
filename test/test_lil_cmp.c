@@ -1,76 +1,73 @@
-#include <stdio.h>
 #include <stdint.h>
-#include <stdlib.h>
-#include "test_utils.h"
+#include <criterion/criterion.h>
 #include "../include/longintlib.h"
+#include "../include/longintconst.h"
 
-void verbose_cmp(int flag) {
-    if (flag == -1) printf("a is less than b\n");
-    if (flag == 1) printf("a is greater than b\n");
-    if (flag == 0) printf("a is equal to b\n");
+Test(test_lil_cmp, two_empty_values_comparison) {
+    uint64_t arr_a[LIL_256_BIT] = {0};
+    uint64_t arr_b[LIL_256_BIT - 1] = {0};
+    long_int a = {PLUS, arr_a, LIL_256_BIT};
+    long_int b = {MINUS, arr_b, LIL_256_BIT - 1};
+    int flag = lil_cmp(&a, &b);
+    cr_expect_eq(flag, 0);
 }
 
-void comparison(lil_t *a, lil_t *b, int flag) {
-    PRINT_ARG(a);
-    PRINT_ARG(b);
-    
-    printf("Both values are positive \n");
-    a->sign = PLUS; b->sign = PLUS;
-    flag = lil_cmp(a, b);
-    verbose_cmp(flag);
-    
-    printf("First value is negative, second one is positive \n");
-    a->sign = MINUS;
-    flag = lil_cmp(a, b);
-    verbose_cmp(flag);
-    
-    printf("Both values are negative \n");
-    b->sign = MINUS;
-    flag = lil_cmp(a, b);
-    verbose_cmp(flag);
+Test(test_lil_cmp, two_equal_values_of_the_same_size_comparison) {
+    uint64_t arr_a[LIL_256_BIT] = {0x1234567};
+    uint64_t arr_b[LIL_256_BIT] = {0x1234567};
+    long_int a = {PLUS, arr_a, LIL_256_BIT};
+    long_int b = {PLUS, arr_b, LIL_256_BIT};
+    int flag = lil_cmp(&a, &b);
+    cr_expect_eq(flag, 0);
+    b.sign = LIL_MINUS;
+    flag = lil_cmp(&a, &b);
+    cr_expect_eq(flag, 1);
+    a.sign = LIL_MINUS;
+    flag = lil_cmp(&a, &b);
+    cr_expect_eq(flag, 0);
 }
 
-int main(int argc, char *argv[]) {
-    // comparison test
-    uint64_t arr_a[N] = {0};
-    uint64_t arr_b[N] = {0};
-    long_int a = {PLUS, arr_a, N};
-    long_int b = {PLUS, arr_b, N};
-    
-    printf("Comparison test \n");
-    
-    printf("Comparison between two equal arguments \n");
-    printf("a:\t");
-    lil_print_hex(&a);
-    printf("b:\t");
-    lil_print_hex(&b);
-    int cmp_flag = lil_cmp(&a, &b);
-    verbose_cmp(cmp_flag);
-    
-    printf("Comparison between two equal arguments \n");
-    a.val[0] = 0x1234567;
-    b.val[0] = 0x1234567;
-    comparison(&a, &b, cmp_flag);
-    
-    printf("Comparison between two unequal arguments \n");
-    b.val[0] = 0x7654321;
-    comparison(&a, &b, cmp_flag);
-    
-    printf("Comparison between two equal arguments of different size \n");
-    b.size = N - 1;
-    uint64_t *new_arr_b = (uint64_t *)calloc(b.size, sizeof(uint64_t));
-    b.val = new_arr_b;
-    b.val[0] = 0x1234567;
-    comparison(&a, &b, cmp_flag);
-    
-    printf("Comparison between two unequal arguments of different size \n");
-    b.size = N + 1;
-    uint64_t *another_arr_b = (uint64_t *)realloc(new_arr_b, b.size * sizeof(uint64_t));
-    b.val = another_arr_b;
-    for (int i = 0; i < a.size; a.val[i++] = BASE_MAX);
-    for (int i = 0; i < b.size; b.val[i++] = BASE_MAX);
-    comparison(&a, &b, cmp_flag);
-    
-    free(another_arr_b);
-    return 0;
+Test(test_lil_cmp, two_unequal_values_of_the_same_size_comparison) {
+    uint64_t arr_a[LIL_256_BIT] = {0x1234567};
+    uint64_t arr_b[LIL_256_BIT] = {0x7654321};
+    long_int a = {PLUS, arr_a, LIL_256_BIT};
+    long_int b = {PLUS, arr_b, LIL_256_BIT};
+    int flag = lil_cmp(&a, &b);
+    cr_expect_eq(flag, -1);
+    b.sign = LIL_MINUS;
+    flag = lil_cmp(&a, &b);
+    cr_expect_eq(flag, 1);
+    a.sign = LIL_MINUS;
+    flag = lil_cmp(&a, &b);
+    cr_expect_eq(flag, 1);
+}
+
+Test(test_lil_cmp, two_equal_values_of_different_size_comparison) {
+    uint64_t arr_a[LIL_256_BIT] = {0x1234567};
+    uint64_t arr_b[LIL_256_BIT - 1] = {0x1234567};
+    long_int a = {PLUS, arr_a, LIL_256_BIT};
+    long_int b = {PLUS, arr_b, LIL_256_BIT - 1};
+    int flag = lil_cmp(&a, &b);
+    cr_expect_eq(flag, 0);
+    b.sign = LIL_MINUS;
+    flag = lil_cmp(&a, &b);
+    cr_expect_eq(flag, 1);
+    a.sign = LIL_MINUS;
+    flag = lil_cmp(&a, &b);
+    cr_expect_eq(flag, 0);
+}
+
+Test(test_lil_cmp, two_unequal_values_of_different_size_comparison) {
+    uint64_t arr_a[LIL_256_BIT] = {0x1234567};
+    uint64_t arr_b[LIL_256_BIT - 1] = {0x7654321};
+    long_int a = {PLUS, arr_a, LIL_256_BIT};
+    long_int b = {PLUS, arr_b, LIL_256_BIT - 1};
+    int flag = lil_cmp(&a, &b);
+    cr_expect_eq(flag, -1);
+    b.sign = LIL_MINUS;
+    flag = lil_cmp(&a, &b);
+    cr_expect_eq(flag, 1);
+    a.sign = LIL_MINUS;
+    flag = lil_cmp(&a, &b);
+    cr_expect_eq(flag, 1);
 }

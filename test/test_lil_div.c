@@ -1,48 +1,98 @@
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
-#include "test_utils.h"
+#include <limits.h>
+#include <unistd.h>
+#include <sys/wait.h>
+#include <sys/types.h>
+#include <criterion/criterion.h>
 #include "../include/longintlib.h"
+#include "../include/longintconst.h"
 
-void test_div(lil_t *a, lil_t *b, lil_t *c) {
-    PRINT_ARG(a);
-    PRINT_ARG(b);
-    lil_div(c, a, b);
-    printf("a / b:\t");
-    lil_print_hex(c);
+Test(test_lil_div, division_of_an_empty_value) {
+    uint64_t arr_a[LIL_256_BIT] = {0};
+    uint64_t arr_b[LIL_256_BIT] = {0x1234567};
+    uint64_t arr_c[LIL_256_BIT] = {0};
+    long_int a = {MINUS, arr_a, LIL_256_BIT};
+    long_int b = {PLUS, arr_b, LIL_256_BIT};
+    long_int c = {PLUS, arr_c, LIL_256_BIT};
+    int flag = lil_div(&c, &a, &b);
+    cr_expect_eq(flag, LIL_NO_ERROR);
+    cr_expect_eq(c.sign, LIL_PLUS);
+    uint64_t expected_arr[LIL_256_BIT] = {0};
+    cr_expect_arr_eq(c.val, expected_arr, c.size);
 }
 
-int main(int argc, char *argv[]) {
-    // division test
-    uint64_t arr_a[N] = {0};
-    uint64_t arr_b[N] = {0};
-    uint64_t arr_c[N] = {0};
-    long_int a = {PLUS, arr_a, N};
-    long_int b = {PLUS, arr_b, N};
-    long_int c = {PLUS, arr_c, N};
-    
-    printf("Division test \n");
-    
-    printf("Division of a term equal to zero and a non-zero value \n");
-    b.val[0] = 0x01234567;
-    test_div(&a, &b, &c);
-    
-    printf("Division of two equal terms of same size \n");
-    a.val[1] = BASE_MAX; a.val[0] = 0xfedcba9876543210;
-    b.val[1] = BASE_MAX; b.val[0] = 0xfedcba9876543210;
-    test_div(&a, &b, &c);
-    
-    printf("Division of two unequal terms of same size \n");
-    a.val[2] = BASE_MAX; b.val[0] = 0x1234567; b.val[1] = 0;
-    test_div(&a, &b, &c);
-    
-    printf("Invalid division of different sized terms \n");
-    b.size = N - 1;
-    uint64_t *new_arr_b = (uint64_t *)malloc(b.size * sizeof(uint64_t));
-    b.val = new_arr_b;
-    for (int i = 0; i < b.size; b.val[i++] = BASE_MAX);
-    test_div(&a, &b, &c);
-    
-    free(new_arr_b);
-    return 0;
+void fork_test_lil_div_zero_division(void) {
+    pid_t pid;
+    if ((pid = fork()) == 0) {
+        uint64_t arr_a[LIL_256_BIT] = {UINT64_MAX, UINT64_MAX, UINT64_MAX, UINT64_MAX};
+        uint64_t arr_b[LIL_256_BIT] = {0};
+        uint64_t arr_c[LIL_256_BIT] = {0};
+        long_int a = {PLUS, arr_a, LIL_256_BIT};
+        long_int b = {PLUS, arr_b, LIL_256_BIT};
+        long_int c = {PLUS, arr_c, LIL_256_BIT};
+        lil_div(&c, &a, &b);
+        exit(EXIT_SUCCESS); // default exit status if the function didn't crashed
+    }
+}
+
+Test(test_lil_div, invalid_zero_division) {
+    int status;
+    fork_test_lil_div_zero_division();
+    wait(&status);
+    if(WEXITSTATUS(status) == EXIT_FAILURE) cr_assert(1);
+    else cr_assert_fail();
+}
+
+void fork_test_lil_div_invalid_terms(void) {
+    pid_t pid;
+    if ((pid = fork()) == 0) {
+        uint64_t arr_a[LIL_256_BIT + 1] = {UINT64_MAX, UINT64_MAX, UINT64_MAX, UINT64_MAX, UINT64_MAX};
+        uint64_t arr_b[LIL_256_BIT - 1] = {0x1234567};
+        uint64_t arr_c[LIL_256_BIT] = {0};
+        long_int a = {PLUS, arr_a, LIL_256_BIT + 1};
+        long_int b = {PLUS, arr_b, LIL_256_BIT - 1};
+        long_int c = {PLUS, arr_c, LIL_256_BIT};
+        lil_div(&c, &a, &b);
+        exit(EXIT_SUCCESS); // default exit status if the function didn't crashed
+    }
+}
+
+Test(test_lil_div, invalid_sized_terms_division) {
+    int status;
+    fork_test_lil_div_invalid_terms();
+    wait(&status);
+    if(WEXITSTATUS(status) == EXIT_FAILURE) cr_assert(1);
+    else cr_assert_fail();
+}
+
+Test(test_lil_div, division_of_two_equal_terms) {
+    uint64_t arr_a[LIL_256_BIT] = {0xfedcba9876543210, UINT64_MAX};
+    uint64_t arr_b[LIL_256_BIT] = {0xfedcba9876543210, UINT64_MAX};
+    uint64_t arr_c[LIL_256_BIT] = {0};
+    long_int a = {MINUS, arr_a, LIL_256_BIT};
+    long_int b = {MINUS, arr_b, LIL_256_BIT};
+    long_int c = {PLUS, arr_c, LIL_256_BIT};
+    int flag = lil_div(&c, &a, &b);
+    cr_expect_eq(flag, LIL_NO_ERROR);
+    cr_expect_eq(c.sign, LIL_PLUS);
+    uint64_t expected_arr[LIL_256_BIT] = {1};
+    cr_expect_arr_eq(c.val, expected_arr, c.size);
+}
+
+Test(test_lil_div, division_of_two_unequal_terms) {
+    uint64_t arr_a[LIL_256_BIT] = {0xfedcba9876543210, UINT64_MAX, UINT64_MAX};
+    uint64_t arr_b[LIL_256_BIT] = {0x1234567};
+    uint64_t arr_c[LIL_256_BIT] = {0};
+    long_int a = {MINUS, arr_a, LIL_256_BIT};
+    long_int b = {PLUS, arr_b, LIL_256_BIT};
+    long_int c = {PLUS, arr_c, LIL_256_BIT};
+    int flag = lil_div(&c, &a, &b);
+    cr_expect_eq(flag, LIL_NO_ERROR);
+    cr_expect_eq(c.sign, LIL_MINUS);
+    uint64_t expected_arr[LIL_256_BIT] = {0x3ac6d58ec7faf07c, 0x0032441117c22c14, 0x000000e100006a59};
+    cr_expect_arr_eq(c.val, expected_arr, c.size);
+    flag = lil_div(&c, &b, &a);
+    cr_expect_eq(flag, LIL_NO_ERROR);
+    cr_expect_eq(c.sign, LIL_PLUS);
+    uint64_t empty_arr[LIL_256_BIT] = {0};
+    cr_expect_arr_eq(c.val, empty_arr, c.size);
 }

@@ -1,33 +1,33 @@
-#include <stdio.h>
 #include <stdint.h>
-#include "test_utils.h"
+#include <limits.h>
+#include <criterion/criterion.h>
 #include "../include/longintlib.h"
+#include "../include/longintconst.h"
 
-void test_is_null(lil_t *a) {
-    PRINT_ARG(a);
-    int flag = lil_is_null(a);
-    if (flag) printf("Value is null\n");
-    else printf("Value is not null\n");
+Test(test_lil_is_null, empty_value_is_null) {
+    uint64_t arr_a[LIL_256_BIT] = {0};
+    long_int a = {PLUS, arr_a, LIL_256_BIT};
+    int flag = lil_is_null(&a);
+    cr_expect_eq(flag, 1);
 }
 
-int main(int argc, char *argv[]) {
-    // decrement test
-    uint64_t arr_a[N] = {0};
-    long_int a = {PLUS, arr_a, N};
-    
-    printf("Function \"is null\" test \n");
-    
-    printf("Empty value \n");
-    test_is_null(&a);
-    
-    printf("Most significant digit is not null \n");
-    a.val[N - 1] = 1;
-    test_is_null(&a);
-    
-    printf("Least significant digit is not null \n");
-    a.val[N - 1] = 0;
-    a.val[0] = 1;
-    test_is_null(&a);
-    
-    return 0;
+Test(test_lil_is_null, most_significant_digit_value_is_null) {
+    uint64_t arr_a[LIL_256_BIT] = {0, 0, 0, 0x1234567};
+    long_int a = {PLUS, arr_a, LIL_256_BIT};
+    int flag = lil_is_null(&a);
+    cr_expect_eq(flag, 0);
+}
+
+Test(test_lil_is_null, least_significant_digit_value_is_null) {
+    uint64_t arr_a[LIL_256_BIT] = {0x1234567};
+    long_int a = {PLUS, arr_a, LIL_256_BIT};
+    int flag = lil_is_null(&a);
+    cr_expect_eq(flag, 0);
+}
+
+Test(test_lil_is_null, all_digits_are_set_value_is_null) {
+    uint64_t arr_a[LIL_256_BIT] = {UINT64_MAX, UINT64_MAX, UINT64_MAX, UINT64_MAX};
+    long_int a = {PLUS, arr_a, LIL_256_BIT};
+    int flag = lil_is_null(&a);
+    cr_expect_eq(flag, 0);
 }

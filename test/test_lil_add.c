@@ -1,54 +1,61 @@
-#include <stdio.h>
 #include <stdint.h>
-#include <stdlib.h>
-#include "test_utils.h"
+#include <limits.h>
+#include <unistd.h>
+#include <sys/wait.h>
+#include <sys/types.h>
+#include <criterion/criterion.h>
 #include "../include/longintlib.h"
+#include "../include/longintconst.h"
 
-void test_add(lil_t *a, lil_t *b) {
-    PRINT_ARG(a);
-    PRINT_ARG(b);
-    lil_add(a, b);
-    printf("a + b:\t");
-    lil_print_hex(a);
+Test(test_lil_add, same_sized_terms_addition) {
+    uint64_t arr_a[LIL_256_BIT] = {UINT64_MAX, 0, UINT64_MAX, 0};
+    uint64_t arr_b[LIL_256_BIT] = {0, UINT64_MAX, UINT64_MAX, 0};
+    long_int a = {PLUS, arr_a, LIL_256_BIT};
+    long_int b = {PLUS, arr_b, LIL_256_BIT};
+    int flag = lil_add(&a, &b);
+    cr_expect_eq(flag, LIL_NO_ERROR);
+    uint64_t expected_arr[LIL_256_BIT] = {UINT64_MAX, UINT64_MAX, UINT64_MAX - 1, 1};
+    cr_expect_arr_eq(a.val, expected_arr, a.size);
 }
 
-int main(int argc, char *argv[]) {
-    // addition test
-    uint64_t arr_a[N] = {BASE_MAX, 0, BASE_MAX, 0};
-    uint64_t arr_b[N] = {0, BASE_MAX, BASE_MAX, 0};
-    long_int a = {PLUS, arr_a, N};
-    long_int b = {PLUS, arr_b, N};
-    
-    printf("Addition test \n");
-    
-    printf("Addition of same sized arguments \n");
-    test_add(&a, &b);
-     
-    printf("An overflow caused by addition \n");
-    for (int i = 0; i < N; i++) {
-        a.val[i] = BASE_MAX;
-        b.val[i] = 0;
+Test(test_lil_add, overflow_while_addition) {
+    uint64_t arr_a[LIL_256_BIT] = {UINT64_MAX, UINT64_MAX, UINT64_MAX, UINT64_MAX};
+    uint64_t arr_b[LIL_256_BIT] = {1};
+    long_int a = {PLUS, arr_a, LIL_256_BIT};
+    long_int b = {PLUS, arr_b, LIL_256_BIT};
+    int flag = lil_add(&a, &b);
+    cr_expect_eq(flag, LIL_OVERFLOW);
+    uint64_t expected_arr[LIL_256_BIT] = {0};
+    cr_expect_arr_eq(a.val, expected_arr, a.size);
+}
+
+Test(test_lil_add, valid_different_sized_terms_addition) {
+    uint64_t arr_a[LIL_256_BIT + 1] = {UINT64_MAX, UINT64_MAX, UINT64_MAX, UINT64_MAX};
+    uint64_t arr_b[LIL_256_BIT] = {1};
+    long_int a = {PLUS, arr_a, LIL_256_BIT + 1};
+    long_int b = {PLUS, arr_b, LIL_256_BIT};
+    int flag = lil_add(&a, &b);
+    cr_expect_eq(flag, LIL_NO_ERROR);
+    uint64_t expected_arr[LIL_256_BIT + 1] = {0, 0, 0, 0, 1};
+    cr_expect_arr_eq(a.val, expected_arr, a.size);
+}
+
+void fork_test_lil_add(void) {
+    pid_t pid;
+    if ((pid = fork()) == 0) {
+        uint64_t arr_a[LIL_256_BIT] = {UINT64_MAX, UINT64_MAX, UINT64_MAX, UINT64_MAX};
+        uint64_t arr_b[LIL_256_BIT + 1] = {1};
+        long_int a = {PLUS, arr_a, LIL_256_BIT};
+        long_int b = {PLUS, arr_b, LIL_256_BIT + 1};
+        lil_add(&a, &b);
+        exit(EXIT_SUCCESS); // default exit status if the function didn't crashed
     }
-    b.val[0] = 1;
-    test_add(&a, &b);
-    
-    printf("Valid addition of different sized arguments \n");
-    b.size = N - 1;
-    uint64_t *new_arr_b = (uint64_t *)malloc(b.size * sizeof(uint64_t));
-    b.val = new_arr_b;
-    for (int i = 0; i < b.size; i++) {
-        a.val[i] = BASE_MAX;
-        b.val[i] = BASE_MAX;
-    }
-    test_add(&a, &b);
-    
-    printf("Invalid addition of different sized arguments \n");
-    b.size = N + 1;
-    uint64_t *another_arr_b = (uint64_t *)realloc(new_arr_b, b.size * sizeof(uint64_t));
-    b.val = another_arr_b;
-    for (int i = 0; i < b.size; b.val[i++] = BASE_MAX);
-    test_add(&a, &b);
-    
-    free(another_arr_b);
-    return 0;
+}
+
+Test(test_lil_add, invalid_different_sized_terms_addition) {
+    int status;
+    fork_test_lil_add();
+    wait(&status);
+    if(WEXITSTATUS(status) == EXIT_FAILURE) cr_assert(1);
+    else cr_assert_fail();
 }

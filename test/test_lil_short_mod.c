@@ -1,43 +1,57 @@
-#include <stdio.h>
-#include <stdint.h>
-#include <inttypes.h>
+#include <limits.h>
+#include <unistd.h>
+#include <sys/wait.h>
+#include <sys/types.h>
+#include <criterion/criterion.h>
 #include "../include/longintlib.h"
-#include "test_utils.h"
+#include "../include/longintconst.h"
 
-void test_short_mod(lil_t *a, uint64_t b, uint64_t *c) {
-    PRINT_ARG(a);
-    printf("b:\t0x %"PRIx64"\n", b);
-    lil_short_mod(c, a, b);
-    printf("a %% b:\t0x %"PRIx64"\n", *c);
-}
-
-int main(int argc, char *argv[]) {
-    // short modulus test
-    uint64_t arr_a[N] = {0};
-    long_int a = {PLUS, arr_a, N};
+Test(test_lil_short_mod, short_modulus_of_an_empty_value) {
+    uint64_t arr_a[LIL_256_BIT] = {0};
+    long_int a = {MINUS, arr_a, LIL_256_BIT};
     uint64_t b = 0x1234567;
     uint64_t c = 0;
-    
-    printf("Short modulus calculation test \n");
-    
-    printf("Modulus of a term equal to zero and a non-zero value \n");
-    test_short_mod(&a, b, &c);
-    
-    printf("Modulus of two equal terms \n");
-    a.val[0] = 0x1234567;
-    test_short_mod(&a, b, &c);
-    
-    printf("Modulus of two unequal terms \n");
-    a.val[0] = 0x1234321;
-    test_short_mod(&a, b, &c);
-    
-    printf("Modulus of two unequal terms \n");
-    for (int i = 0; i < N; a.val[i++] = BASE_MAX);
-    test_short_mod(&a, b, &c);
-    
-    printf("Invalid modulus \n");
-    b = 0;
-    test_short_mod(&a, b, &c);
-    
-    return 0;
+    int flag = lil_short_mod(&c, &a, b);
+    cr_expect_eq(flag, LIL_NO_ERROR);
+    cr_expect_eq(c, (uint64_t)0);
+}
+
+void fork_test_lil_short_mod_zero_modulus(void) {
+    pid_t pid;
+    if ((pid = fork()) == 0) {
+        uint64_t arr_a[LIL_256_BIT] = {UINT64_MAX, UINT64_MAX, UINT64_MAX, UINT64_MAX};
+        long_int a = {PLUS, arr_a, LIL_256_BIT};
+        uint64_t b = 0;
+        uint64_t c = 0;
+        lil_short_mod(&c, &a, b);
+        exit(EXIT_SUCCESS); // default exit status if the function didn't crashed
+    }
+}
+
+Test(test_lil_short_mod, invalid_zero_short_modulus) {
+    int status;
+    fork_test_lil_short_mod_zero_modulus();
+    wait(&status);
+    if(WEXITSTATUS(status) == EXIT_FAILURE) cr_assert(1);
+    else cr_assert_fail();
+}
+
+Test(test_lil_short_mod, modulus_of_two_equal_terms) {
+    uint64_t arr_a[LIL_256_BIT] = {0x1234567};
+    long_int a = {MINUS, arr_a, LIL_256_BIT};
+    uint64_t b = 0x1234567;
+    uint64_t c = 0;
+    int flag = lil_short_mod(&c, &a, b);
+    cr_expect_eq(flag, LIL_NO_ERROR);
+    cr_expect_eq(c, (uint64_t)0);
+}
+
+Test(test_lil_short_mod, short_modulus_of_two_unequal_terms) {
+    uint64_t arr_a[LIL_256_BIT] = {UINT64_MAX, UINT64_MAX, UINT64_MAX, UINT64_MAX};
+    long_int a = {MINUS, arr_a, LIL_256_BIT};
+    uint64_t b = 0x1234567;
+    uint64_t c = 0;
+    int flag = lil_short_mod(&c, &a, b);
+    cr_expect_eq(flag, LIL_NO_ERROR);
+    cr_expect_eq(c, (uint64_t)0x529e8d);
 }

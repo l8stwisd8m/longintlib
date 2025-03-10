@@ -1,21 +1,30 @@
-#include <iso646.h>
+#include <errno.h>
+#include <stdio.h>
+#include <stddef.h>
 #include <stdint.h>
-#include <assert.h>
+#include <iso646.h>
 #include "../include/longintlib.h"
 #include "../include/longintconst.h"
 #include "../include/longintmacro.h"
 
-void lil_short_div(lil_t *dst, lil_t *src_a, uint64_t val_b) {
+int lil_short_div(lil_t *dst, lil_t *src_a, uint64_t val_b) {
     // return floor from division of long a by short b
     
     // default result
-    dst->sign = LIL_PLUS;
     LIL_SET_NULL(dst);
     
     // exceptions
-    if (lil_is_null(src_a)) return; // a = 0 => a / b = 0
-    assert(dst->size == src_a->size);
-    assert(val_b);
+    if (lil_is_null(src_a)) return 0; // a = 0 => floor(a/b) = 0
+    if (val_b == 0) {
+        errno = ERR_ZERO_DIVISION;
+        perror("Division by zero is not a valid operation; division can not be performed");
+        exit(EXIT_FAILURE); // invalid b value
+    }
+    if (src_a->size != dst->size) {
+        errno = ERR_SIZE_MISMATCH;
+        perror("Invalid terms sizes; division can not be performed");
+        exit(EXIT_FAILURE); // operand sizes mismatch error
+    }
     
     dst->sign = src_a->sign; // save sign(a)
 
@@ -26,13 +35,15 @@ void lil_short_div(lil_t *dst, lil_t *src_a, uint64_t val_b) {
     
     int cmp_flag = lil_cmp_val(src_a, src_b);
     if (cmp_flag == -1) {
+        dst->sign = LIL_PLUS;
         LIL_FREE(src_b);
-        return; // abs(a) < b => floor(a/b) = 0
+        return 0; // abs(a) < b => floor(a/b) = 0
     }
     if (cmp_flag == 0) {
+        dst->sign = src_a->sign;
         dst->val[0] = 1;
         LIL_FREE(src_b);
-        return; // abs(a) = b => floor(a/b) = 1
+        return 0; // abs(a) = b => floor(a/b) = 1
     }
     
     uint64_t a_len = lil_len(src_a);
@@ -58,7 +69,7 @@ void lil_short_div(lil_t *dst, lil_t *src_a, uint64_t val_b) {
     // div calculation
     src_a->sign = LIL_PLUS;
     src_b->sign = LIL_MINUS;
-    for (int i = 0; i <= offset; i++) {
+    for (size_t i = 0; i <= offset; i++) {
         lil_shl(dst); // dst *= 2
         lil_sum(src_t, src_a, src_b); // t = a - b
         if ((src_t->sign == LIL_PLUS) or lil_is_null(src_t)) {
@@ -74,4 +85,5 @@ void lil_short_div(lil_t *dst, lil_t *src_a, uint64_t val_b) {
     
     LIL_FREE(src_t);
     LIL_FREE(src_b);
+    return 0;
 }

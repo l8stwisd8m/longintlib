@@ -1,46 +1,115 @@
-#include <stdio.h>
 #include <stdint.h>
-#include <inttypes.h>
-#include "test_utils.h"
+#include <limits.h>
+#include <criterion/criterion.h>
 #include "../include/longintlib.h"
+#include "../include/longintconst.h"
 
-void shln(lil_t *a, uint64_t n) {
-    printf("Shift by n = %"PRIu64" bits\n", n);
-    lil_shln(a, n);
-    printf("a << n:\t");
-    lil_print_hex(a);
+Test(test_lil_shln, empty_value_left_n_bits_shift) {
+    uint64_t arr_a[LIL_256_BIT] = {0};
+    long_int a = {PLUS, arr_a, LIL_256_BIT};
+    uint64_t n = 48;
+    int flag = lil_shln(&a, n);
+    cr_expect_eq(flag, LIL_NO_ERROR);
+    uint64_t expected_arr[LIL_256_BIT] = {0};
+    cr_expect_arr_eq(a.val, expected_arr, a.size);
 }
 
-void test_shln(lil_t *a) {
-    PRINT_ARG(a);
-    shln(a, 0);
-    shln(a, 16);
-    shln(a, 48);
-    shln(a, 32);
+Test(test_lil_shln, most_significant_digit_left_0_bits_shift) {
+    uint64_t arr_a[LIL_256_BIT] = {0, 0, 0, 0x000012345678abcd};
+    long_int a = {PLUS, arr_a, LIL_256_BIT};
+    uint64_t n = 0;
+    int flag = lil_shln(&a, n);
+    cr_expect_eq(flag, LIL_NO_ERROR);
+    uint64_t expected_arr[LIL_256_BIT] = {0, 0, 0, 0x000012345678abcd};
+    cr_expect_arr_eq(a.val, expected_arr, a.size);
 }
 
-int main(int argc, char *argv[]) {
-    // bitwise left shift by n bits test
-    uint64_t arr_a[N] = {0};
-    long_int a = {PLUS, arr_a, N};
-    
-    printf("Left shift by n bits test \n");
-    
-    printf("Shift of an empty value \n");
-    test_shln(&a);
-    
-    printf("Most significant digit is not null \n");
-    a.val[N - 1] = 0x12345678abcd;
-    test_shln(&a);
-    
-    printf("Least significant digit is not null \n");
-    a.val[N - 1] = 0; 
-    a.val[0] = 0x12345678abcd;
-    test_shln(&a);
-    
-    printf("All digits are \"full\" \n");
-    for (int i = 0; i < N; a.val[i++] = BASE_MAX);
-    test_shln(&a);
-    
-    return 0;
+Test(test_lil_shln, most_significant_digit_left_16_bits_shift) {
+    uint64_t arr_a[LIL_256_BIT] = {0, 0, 0, 0x000012345678abcd};
+    long_int a = {PLUS, arr_a, LIL_256_BIT};
+    uint64_t n = 16;
+    int flag = lil_shln(&a, n);
+    cr_expect_eq(flag, LIL_NO_ERROR);
+    uint64_t expected_arr[LIL_256_BIT] = {0, 0, 0, 0x12345678abcd0000};
+    cr_expect_arr_eq(a.val, expected_arr, a.size);
+}
+
+Test(test_lil_shln, most_significant_digit_left_64_bits_shift) {
+    uint64_t arr_a[LIL_256_BIT] = {0, 0, 0, 0x000012345678abcd};
+    long_int a = {PLUS, arr_a, LIL_256_BIT};
+    uint64_t n = 64;
+    int flag = lil_shln(&a, n);
+    cr_expect_eq(flag, LIL_OVERFLOW);
+    uint64_t expected_arr[LIL_256_BIT] = {0};
+    cr_expect_arr_eq(a.val, expected_arr, a.size);
+}
+
+Test(test_lil_shln, least_significant_digit_left_0_bits_shift) {
+    uint64_t arr_a[LIL_256_BIT] = {0x000012345678abcd};
+    long_int a = {PLUS, arr_a, LIL_256_BIT};
+    uint64_t n = 0;
+    int flag = lil_shln(&a, n);
+    cr_expect_eq(flag, LIL_NO_ERROR);
+    uint64_t expected_arr[LIL_256_BIT] = {0x000012345678abcd};
+    cr_expect_arr_eq(a.val, expected_arr, a.size);
+}
+
+Test(test_lil_shln, least_significant_digit_left_16_bits_shift) {
+    uint64_t arr_a[LIL_256_BIT] = {0x000012345678abcd};
+    long_int a = {PLUS, arr_a, LIL_256_BIT};
+    uint64_t n = 16;
+    int flag = lil_shln(&a, n);
+    cr_expect_eq(flag, LIL_NO_ERROR);
+    uint64_t expected_arr[LIL_256_BIT] = {0x12345678abcd0000};
+    cr_expect_arr_eq(a.val, expected_arr, a.size);
+}
+
+Test(test_lil_shln, least_significant_digit_left_64_bits_shift) {
+    uint64_t arr_a[LIL_256_BIT] = {0x000012345678abcd};
+    long_int a = {PLUS, arr_a, LIL_256_BIT};
+    uint64_t n = 64;
+    int flag = lil_shln(&a, n);
+    cr_expect_eq(flag, LIL_NO_ERROR);
+    uint64_t expected_arr[LIL_256_BIT] = {0, 0x000012345678abcd, 0, 0};
+    cr_expect_arr_eq(a.val, expected_arr, a.size);
+}
+
+Test(test_lil_shln, least_significant_digit_left_96_bits_shift) {
+    uint64_t arr_a[LIL_256_BIT] = {0x000012345678abcd};
+    long_int a = {PLUS, arr_a, LIL_256_BIT};
+    uint64_t n = 96;
+    int flag = lil_shln(&a, n);
+    cr_expect_eq(flag, LIL_NO_ERROR);
+    uint64_t expected_arr[LIL_256_BIT] = {0, 0x5678abcd00000000, 0x0000000000001234, 0};
+    cr_expect_arr_eq(a.val, expected_arr, a.size);
+}
+
+Test(test_lil_shln, all_digits_are_set_left_16_bits_shift) {
+    uint64_t arr_a[LIL_256_BIT] = {UINT64_MAX, UINT64_MAX, UINT64_MAX, UINT64_MAX};
+    long_int a = {PLUS, arr_a, LIL_256_BIT};
+    uint64_t n = 16;
+    int flag = lil_shln(&a, n);
+    cr_expect_eq(flag, LIL_OVERFLOW);
+    uint64_t expected_arr[LIL_256_BIT] = {0xffffffffffff0000, UINT64_MAX, UINT64_MAX, UINT64_MAX};
+    cr_expect_arr_eq(a.val, expected_arr, a.size);
+}
+
+Test(test_lil_shln, all_digits_are_set_left_48_bits_shift) {
+    uint64_t arr_a[LIL_256_BIT] = {UINT64_MAX, UINT64_MAX, UINT64_MAX, UINT64_MAX};
+    long_int a = {PLUS, arr_a, LIL_256_BIT};
+    uint64_t n = 64;
+    int flag = lil_shln(&a, n);
+    cr_expect_eq(flag, LIL_OVERFLOW);
+    uint64_t expected_arr[LIL_256_BIT] = {0, UINT64_MAX, UINT64_MAX, UINT64_MAX};
+    cr_expect_arr_eq(a.val, expected_arr, a.size);
+}
+
+Test(test_lil_shln, all_digits_are_set_left_96_bits_shift) {
+    uint64_t arr_a[LIL_256_BIT] = {UINT64_MAX, UINT64_MAX, UINT64_MAX, UINT64_MAX};
+    long_int a = {PLUS, arr_a, LIL_256_BIT};
+    uint64_t n = 96;
+    int flag = lil_shln(&a, n);
+    cr_expect_eq(flag, LIL_OVERFLOW);
+    uint64_t expected_arr[LIL_256_BIT] = {0, 0xffffffff00000000, UINT64_MAX, UINT64_MAX};
+    cr_expect_arr_eq(a.val, expected_arr, a.size);
 }

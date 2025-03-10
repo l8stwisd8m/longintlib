@@ -1,13 +1,25 @@
+#include <errno.h>
+#include <stdio.h>
+#include <stddef.h>
 #include <stdint.h>
-#include <assert.h>
+#include <stdlib.h>
 #include "../include/longintlib.h"
+#include "../include/longintconst.h"
 
-void lil_add(lil_t *src_a, lil_t *src_b) {
+int lil_add(lil_t *src_a, lil_t *src_b) {
     // addition of a and b
+    
     uint64_t carry_flag = 0;
     uint64_t tmp = 0;
-    assert(src_a->size >= src_b->size);
-    for (int i = 0; i < src_a->size; i++) {
+    
+    // invalid operand sizes
+    if (src_a->size < src_b->size) {
+        errno = ERR_SIZE_MISMATCH;
+        perror("Invalid sizes of subtraction terms");
+        exit(EXIT_FAILURE);
+    }
+    
+    for (size_t i = 0; i < src_a->size; i++) {
         // check carry
         tmp = src_a->val[i];
         src_a->val[i] += carry_flag;
@@ -19,4 +31,8 @@ void lil_add(lil_t *src_a, lil_t *src_b) {
             if (tmp > src_a->val[i]) carry_flag += 1;
         }
     }
+    
+    // check overflow
+    if (carry_flag > 0) return LIL_OVERFLOW; 
+    else return 0;
 }

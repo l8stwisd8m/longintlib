@@ -1,56 +1,38 @@
-#include <stdio.h>
 #include <stdint.h>
-#include <stdlib.h>
+#include <limits.h>
+#include <unistd.h>
+#include <sys/wait.h>
+#include <sys/types.h>
+#include <criterion/criterion.h>
 #include "../include/longintlib.h"
-#include "test_utils.h"
+#include "../include/longintconst.h"
 
-void short_print_args(lil_t *a, uint64_t b) {
-    printf("a:\t");
-    lil_print_hex(a);
-    printf("b:\t0x %"PRIx64"\n", b);
+Test(test_lil_short_add, most_significant_digit_addition) {
+    uint64_t arr_a[LIL_256_BIT] = {0, 0, 0, UINT64_MAX};
+    long_int a = {PLUS, arr_a, LIL_256_BIT};
+    uint64_t b = 0x1234567;
+    int flag = lil_short_add(&a, b);
+    cr_expect_eq(flag, LIL_NO_ERROR);
+    uint64_t expected_arr[LIL_256_BIT] = {0x1234567, 0, 0, UINT64_MAX};
+    cr_expect_arr_eq(a.val, expected_arr, a.size);
 }
 
-void test_short_add(lil_t *a, uint64_t b) {
-    short_print_args(a, b);
-    lil_short_add(a, b);
-    printf("a + b:\t");
-    lil_print_hex(a);
+Test(test_lil_short_add, least_significant_digit_addition) {
+    uint64_t arr_a[LIL_256_BIT] = {UINT64_MAX};
+    long_int a = {PLUS, arr_a, LIL_256_BIT};
+    uint64_t b = 0x1234567;
+    int flag = lil_short_add(&a, b);
+    cr_expect_eq(flag, LIL_NO_ERROR);
+    uint64_t expected_arr[LIL_256_BIT] = {0x1234567 - 1, 1};
+    cr_expect_arr_eq(a.val, expected_arr, a.size);
 }
 
-int main(int argc, char *argv[]) {
-    // short addition test
-    uint64_t arr_a[1] = {1};
-    long_int a = {PLUS, arr_a, 1};
+Test(test_lil_short_add, overflow_while_addition) {
+    uint64_t arr_a[LIL_256_BIT] = {UINT64_MAX, UINT64_MAX, UINT64_MAX, UINT64_MAX};
+    long_int a = {PLUS, arr_a, LIL_256_BIT};
     uint64_t b = 1;
-    
-    printf("Short addition test \n");
-    
-    printf("Single digit value \n");
-    printf("Addition without overflow \n");
-    test_short_add(&a, b);
-    printf("Overflow caused by addtion \n");
-    a.val[0] = BASE_MAX;
-    test_short_add(&a, b);
-    
-    a.size = 4;
-    uint64_t *new_arr_a = (uint64_t *)calloc(a.size, sizeof(uint64_t));
-    a.val = new_arr_a;
-    b = BASE_MAX;
-    
-    printf("Most significant digit is not null \n");
-    a.val[N - 1] = 0x1234567;
-    test_short_add(&a, b);
-    
-    printf("Least significant digit is not null \n");
-    a.val[N - 1] = 0;
-    a.val[0] = 0x1234567;
-    test_short_add(&a, b);
-    
-    printf("All digits are \"full\" \n");
-    for (int i = 0; i < N; a.val[i++] = BASE_MAX);
-    b = 1;
-    test_short_add(&a, b);
-
-    free(new_arr_a);
-    return 0;
+    int flag = lil_short_add(&a, b);
+    cr_expect_eq(flag, LIL_OVERFLOW);
+    uint64_t expected_arr[LIL_256_BIT] = {0};
+    cr_expect_arr_eq(a.val, expected_arr, a.size);
 }

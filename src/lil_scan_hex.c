@@ -1,13 +1,13 @@
+#include <errno.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <iso646.h>
-#include <assert.h>
 #include <stdbool.h>
 #include "../include/longintlib.h"
 #include "../include/longintconst.h"
 #include "../include/longintmacro.h"
 
-void lil_scan_hex(lil_t *src) {
+int lil_scan_hex(lil_t *src) {
     // scan hexadecimal representation of source
     
     bool sign_check = true; // true when "sign input" check is required
@@ -20,8 +20,9 @@ void lil_scan_hex(lil_t *src) {
     char ch = 0;
     
     // default input
+    src->sign = LIL_PLUS;
     LIL_SET_NULL(src);
-
+    
     while (ctr <= lim) {
         ch = getchar();
         
@@ -52,13 +53,15 @@ void lil_scan_hex(lil_t *src) {
                 src->sign = LIL_MINUS;
                 leading_zero_check = true; // continue "leading zero(es) input" check
             }
-            if (ch == '0') {
-                prefix_condition = true; // condition for "prefix input" check
-                leading_zero_check = true; // continue "leading zero(es) input" check
-            }
-            if (ch == '1') {
-                prefix_check = false; // stop "prefix input" check
-                leading_zero_check = false; // stop "leading zero(es) input" check
+            else {
+                if (ch == '0') {
+                    prefix_condition = true; // condition for "prefix input" check
+                    leading_zero_check = true; // continue "leading zero(es) input" check
+                }
+                else {
+                    prefix_check = false; // stop "prefix input" check
+                    leading_zero_check = false; // stop "leading zero(es) input" check
+                }
             }
             sign_check = false; // stop "sign input" check
         }
@@ -141,11 +144,14 @@ void lil_scan_hex(lil_t *src) {
                     src->val[0] = src->val[0] | (uint64_t)0xf;
                     break;
                 default:
-                    assert(false and "invalid character");
+                    errno = ERR_INVALID_INPUT;
+                    perror("An invalid character entered");
+                    exit(EXIT_FAILURE);
             }
         }
     }
     
     // correct result sign
     if (lil_is_null(src)) src->sign = LIL_PLUS;
+    return 0;
 }

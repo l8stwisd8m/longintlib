@@ -1,19 +1,25 @@
-#include <iso646.h>
+#include <errno.h>
+#include <stdio.h>
+#include <stddef.h>
 #include <stdint.h>
-#include <assert.h>
+#include <iso646.h>
 #include "../include/longintlib.h"
 #include "../include/longintconst.h"
 #include "../include/longintmacro.h"
 
-void lil_short_mod(uint64_t *dst, lil_t *src_a, uint64_t val_b) {
+int lil_short_mod(uint64_t *dst, lil_t *src_a, uint64_t val_b) {
     // return short remainder after division of long a by short b
     
     // exceptions
     if (lil_is_null(src_a)) {
         *dst = 0;
-        return; // a = 0 => a mod b = 0
+        return 0; // a = 0 => a mod b = 0
     }
-    assert(val_b);
+    if (val_b == 0) {
+        errno = ERR_ZERO_DIVISION;
+        perror("Division by zero is not a valid operation; modulus calculation can not be performed");
+        exit(EXIT_FAILURE); // invalid b value
+    }
     
     // casting b value to long_int
     lil_t *src_b;
@@ -22,16 +28,14 @@ void lil_short_mod(uint64_t *dst, lil_t *src_a, uint64_t val_b) {
     
     int cmp_flag = lil_cmp_val(src_a, src_b);
     if (cmp_flag == -1) {
-        free(src_b->val);
-        free(src_b);
+        LIL_FREE(src_b);
         *dst = src_a->val[0];
-        return; // abs(a) < b => a mod b = a
+        return 0; // abs(a) < b => a mod b = a
     }
     if (cmp_flag == 0) {
-        free(src_b->val);
-        free(src_b);
+        LIL_FREE(src_b);
         *dst = 0;
-        return; // abs(a) = b => a mod b = 0
+        return 0; // abs(a) = b => a mod b = 0
     }
     
     uint64_t a_len = lil_len(src_a);
@@ -57,7 +61,7 @@ void lil_short_mod(uint64_t *dst, lil_t *src_a, uint64_t val_b) {
     // mod calculation
     src_a->sign = LIL_PLUS;
     src_b->sign = LIL_MINUS;
-    for (int i = 0; i <= offset; i++) {
+    for (size_t i = 0; i <= offset; i++) {
         lil_sum(src_t, src_a, src_b); // t = a - b
         if ((src_t->sign == LIL_PLUS) or lil_is_null(src_t)) {
             lil_cpy(src_a, src_t); // a = t
@@ -73,4 +77,5 @@ void lil_short_mod(uint64_t *dst, lil_t *src_a, uint64_t val_b) {
     LIL_FREE(src_a_initial);
     LIL_FREE(src_t);
     LIL_FREE(src_b);
+    return 0;
 }
