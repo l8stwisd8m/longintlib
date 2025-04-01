@@ -71,9 +71,10 @@ int lil_shln(lil_t *src, uint64_t n); // left shift by n bits
 int lil_shrn(lil_t *src, uint64_t n); // right shift by n bits
 
 // MODULAR ARITHMETIC FUNCTIONS
+int lil_inv(lil_t *dst, lil_t *src_a, lil_t *src_m); // inverse element a modulo m
+int lil_sum_mod(lil_t *dst, lil_t *src_a, lil_t *src_b, lil_t *src_m); // arithmetic sum of a and b modulo m
 int lil_mul_mod(lil_t *dst, lil_t *src_a, lil_t *src_b, lil_t *src_m); // multiplication of a and b modulo m
 int lil_pow_mod(lil_t *dst, lil_t *src_a, lil_t *src_n, lil_t *src_m); // raising a to the power n modulo m
-int lil_inv(lil_t *dst, lil_t *src_a, lil_t *src_m); // inverse element a modulo m
 
 // SHORT OPERATIONS
 int lil_short_add(lil_t *src_a, uint64_t src_b); // add short abs(b) to abs(values) of long a
@@ -84,6 +85,17 @@ int lil_short_mod(uint64_t *dst, lil_t *src_a, uint64_t val_b); // short remaind
 int lil_short_pow_mod(lil_t *src_a, uint64_t n, lil_t *src_m); // raising a to the power n modulo m
 
 // CUSTOM FUNCTIONS
+// source files located in the "dev" folder
+
+// ADDITIONAL MATH FUNCTIONS
+int lil_sqrt(lil_t *dst, lil_t *src); // raising source to the power of two
+int lil_root(lil_t *dst, lil_t *src); // floor from square root of source
+
+// FAST OPERATIONS
 int lil_fast_gcd(lil_t *dst, lil_t *src_a, lil_t *src_b); // greatest commond divisor of a and b
+int lil_fast_div(lil_t *dst, lil_t *src_a, lil_t *src_b); // floor from division of a by b
+int lil_fast_mod(lil_t *dst, lil_t *src_a, lil_t *src_b); // remainder after division of a by b
+int lil_fast_mul(lil_t *dst, lil_t *src_a, lil_t *src_b); // fast multiplication of a and b
+int lil_fast_mul2(lil_t *dst, lil_t *src_a, lil_t *src_b); // multiplication of a and b, both terms sizes are power of two
 
 #endif // _LONG_INT_LIB_

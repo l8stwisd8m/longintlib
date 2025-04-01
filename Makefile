@@ -71,7 +71,11 @@ $(LIB_NAME): $(LIB_OBJ_FILES)
 	$(CC) $(LDFLAGS) -o $@ $^ -lgcov
 
 $(EXX_TARGETS): $(EXX_OBJ_FILES)
-	$(CC) -o $@ $< -L$(LIB_DIR) -llongint $(RPATH)
+	@for obj in $^; do \
+		exe_name=$(BIN_DIR)/$$(basename $$(basename $$obj .o) .c); \
+		$(CC) -o $$exe_name $$obj -L$(LIB_DIR) -llongint $(RPATH); \
+		echo $(CC) -o $$exe_name $$obj -L$(LIB_DIR) -llongint $(RPATH); \
+	done
 
 $(TEST_TARGET): $(TEST_OBJ_FILES)
 	$(CC) -fprofile-arcs -ftest-coverage -o $@ $^ -L$(LIB_DIR) -llongint $(RPATH) -lcriterion -lgcov

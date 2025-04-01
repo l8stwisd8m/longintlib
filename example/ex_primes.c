@@ -5,7 +5,7 @@
 #define VAL_SIZE 20
 #define PRIME_AMNT 15
 
-int main(int argc, char *argv[]) {
+int main(void) {
     // Fermat & Mersenne primes
     
     uint64_t fermat_exp = 0;

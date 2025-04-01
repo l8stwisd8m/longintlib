@@ -12,19 +12,25 @@
 
 ### [Constants](#constants-1)
 1. [Sign constants](#1-sign-constants)  
-2. [Size constants](#2-size-constants)  
-3. [Bitmasks & other practical constants](#3-bitmasks--other-practical-constants)
+2. [Utility constants](#2-utility-constants)
+3. [Size constants](#3-size-constants)  
+4. [Bitmask constants](#4-bitmask-constants) 
+5. [Error constants](#5-error-constants)
 
 ### [Macros](#macros-1)
-1. [Copy value (LIL_CPY_VAL)](#1-copy-value-lil_cpy_val) 
-2. [Set null (LIL_SET_NULL)](#2-set-null-lil_set_null) 
-3. [Memory allocation (LIL_MALLOC)](#3-memory-allocation-lil_malloc) 
-4. [Clean memory allocation (LIL_CALLOC)](#4-clean-memory-allocation-lil_calloc) 
-5. [Free memory (LIL_FREE)](#5-free-memory-lil_free) 
-6. [Bitwise exclusive or (LIL_BIT_XOR)](#6-bitwise-exclusive-or-lil_bit_xor) 
-7. [Bitwise inversion (LIL_BIT_NOT)](#7-bitwise-inversion-lil_bit_not)
-8. [Bitwise conjunction (LIL_BIT_AND)](#8-bitwise-conjunction-lil_bit_and) 
-9. [Bitwise disjunction (LIL_BIT_OR)](#9-bitwise-disjunction-lil_bit_or)
+1. [Check if even (LIL_IS_EVEN)](#1-check-if-even-lil_is_even)  
+2. [Check if odd (LIL_IS_ODD)](#2-check-if-odd-lil_is_odd)  
+3. [Most significant digit (LIL_MSD)](#3-most-significant-digit-lil_msd)  
+4. [Least significant digit (LIL_LSD)](#4-least-significant-digit-lil_lsd)  
+5. [Copy value (LIL_CPY_VAL)](#5-copy-value-lil_cpy_val)  
+6. [Set null (LIL_SET_NULL)](#6-set-null-lil_set_null)  
+7. [Memory allocation (LIL_MALLOC)](#7-memory-allocation-lil_malloc)  
+8. [Clean memory allocation (LIL_CALLOC)](#8-clean-memory-allocation-lil_calloc)  
+9. [Free memory (LIL_FREE)](#9-free-memory-lil_free)  
+10. [Bitwise exclusive or (LIL_BIT_XOR)](#10-bitwise-exclusive-or-lil_bit_xor)  
+11. [Bitwise inversion (LIL_BIT_NOT)](#11-bitwise-inversion-lil_bit_not)  
+12. [Bitwise conjunction (LIL_BIT_AND)](#12-bitwise-conjunction-lil_bit_and)  
+13. [Bitwise disjunction (LIL_BIT_OR)](#13-bitwise-disjunction-lil_bit_or)  
 
 ### [Basic functions](#basic-functions-1)
 1. [Reverse value (lil_rev)](#1-reverse-value-lil_rev)
@@ -190,23 +196,32 @@ The `LIL_CALLOC` macro can be used the same way.
 
 ## Constants 
 
-The `longintconst.h` header file defines key constants crucial for managing long integers effectively. This includes `Sign` constants that help determine the positivity or negativity of values, `Size` constants that specify the maximum and minimum limits of long integers, and various `Bitmasks` used for effective data manipulation.
+The `longintconst.h` header file defines key constants crucial for managing long integers effectively. This includes `Sign` constants that help determine the positivity or negativity of values, `Size` constants that specify the amount of digits of a certain number, and various `Bitmasks` used for effective data manipulation. There are also some `Utils` (useful constants for different purposes) and `Error constants`.
 
 ### 1. Sign constants
-The sign constants are used to represent basic arithmetic signs of variables. The enumerations `PLUS` and `MINUS`, used in `lil_t` type definition, are undefined to avoid conflicts with eponymous constants from other libraries, so they can be used only inside variable initializations. To change the sign of a variable, one can use `0` for *plus* and `1` for *minus*, or the following constants:
+The sign constants are used to represent basic arithmetic signs of variables. The enumerations `PLUS` and `MINUS`, used in lilt type definition, are undefined to avoid conflicts with eponymous constants from other libraries, so they can be used only inside variable initializations. To change the sign of a variable, one can use 0 for *plus* and 1 for *minus*, or the following constants:
 
 1. **LIL_PLUS**: Represents the positive sign.
 2. **LIL_MINUS**: Represents the negative sign.
 
-### 2. Size constants
-Size constants define various bit sizes used in memory allocation. Each constant represent the amount of digits used to store a number of certain bit length.
+### 2. Utility constants
+Utility constants provide basic values used in mathematical computations and data manipulation. These constants are essential for encoding and processing data.
 
-1. **LIL_128_BIT**: Represents a data size of 128 bits.
-2. **LIL_256_BIT**: Represents a data size of 256 bits.
-3. **LIL_512_BIT**: Represents a data size of 512 bits.
-4. **LIL_1024_BIT**: Represents a data size of 1024 bits.
-5. **LIL_2048_BIT**: Represents a data size of 2048 bits.
-6. **LIL_4096_BIT**: Represents a data size of 4096 bits.
+1. **LIL_BASE**: Represents bit length of a single digit number.
+2. **LIL_SPLIT**: Represents half bit length of a single digit numbers.
+
+### 3. Size constants
+Size constants define various bit sizes used in memory allocation. Each constant represents the amount of digits used to store a number of certain bit length.  
+
+1. **LIL_KB**: Represents a data size of one kilobyte.  
+2. **LIL_MB**: Represents a data size of one megabyte.  
+3. **LIL_GB**: Represents a data size of one gigabyte.  
+4. **LIL_128_BIT**: Represents a data size of 128 bits.  
+5. **LIL_256_BIT**: Represents a data size of 256 bits.  
+6. **LIL_512_BIT**: Represents a data size of 512 bits.  
+7. **LIL_1024_BIT**: Represents a data size of 1024 bits.  
+8. **LIL_2048_BIT**: Represents a data size of 2048 bits.  
+9. **LIL_4096_BIT**: Represents a data size of 4096 bits.  
 
 Here's an example of using a size constant:
 ```
@@ -214,67 +229,91 @@ lil_t *var;
 LIL_MALLOC(var, LIL_256_BIT);
 ```
 
-### 3. Bitmasks & other practical constants
-These constants are critical for bitwise operations and data manipulation. They help in isolating specific bits or bytes from data structures.
+### 4. Bitmask constants
+Bitmask constants are used in bitwise operations to manipulate data at the bit level. These constants are crucial for tasks involving flags and specific bits in data structures.
 
-1. **LIL_BASE**: Represents bit length of a single digit number.
-2. **LIL_SPLIT**: Represents half bit length of a single digit numbers.
-3. **LIL_RH**: Mask for the right half of a 64-bit value.
-4. **LIL_LH**: Mask for the left half of a 64-bit value.
-5. **LIL_MSBIT**: Represents the most significant bit in a 64-bit integer.
-6. **LIL_LSBIT**: Represents the least significant bit in a 64-bit integer.
-7. **LIL_MSBYTE**: Represents the most significant byte in a 64-bit integer.
-8. **LIL_LSBYTE**: Represents the least significant byte in a 64-bit integer.
+1. **LIL_RH**: Represents a bitmask for the right half of a 64-bit integer, with all lower bits set to 1.
+2. **LIL_LH**: Represents a bitmask for the left half of a 64-bit integer, with all upper bits set to 1.
+3. **LIL_MSBIT**: Represents the most significant bit in a 64-bit integer, used for identifying the highest value bit.
+4. **LIL_LSBIT**: Represents the least significant bit in a 64-bit integer, used for identifying the lowest value bit.
+5. **LIL_MSBYTE**: Similar to **LIL_MSBIT** but operates at the byte level for the most significant byte.  
+6. **LIL_LSBYTE**: Similar to **LIL_LSBIT** but operates at the byte level for the least significant byte.  
+
+### 5. Error constants
+Error constants define error codes used in the library to represent various states of operation. These constants help in error handling and debugging.
+
+1. **LIL_NO_ERROR**: Indicates that no error has occurred.  
+2. **LIL_OVERFLOW**: Represents an overflow error, indicating that a computation has exceeded the storage capacity.
+3. **LIL_TRUNCATED**: Indicates that data has been truncated during processing, leading to potential loss of information.
 
 ## Macros
 
 The `longintmacro.h` header file contains a collection of macros designed to simplify and streamline operations with long integers. Among these macros, you'll find utilities for copying values, setting source values to null, and allocating memory efficiently. Additionally, it includes various bitwise operation macros for performing AND, OR, NOT and XOR operations seamlessly. 
 
-### 1. Copy value (LIL_CPY_VAL)
+### 1. Check if even (LIL_IS_EVEN)
+*Macro checks if the source value is even.*  
+Input argument is a pointer to the long_int source (lil_t *SRC).  
+Returns true if the least significant digit is even.
+
+### 2. Check if odd (LIL_IS_ODD)
+*Macro checks if the source value is odd.*  
+Input argument is a pointer to the long_int source (lil_t *SRC).  
+Returns true if the least significant digit is odd.
+
+### 3. Most significant digit (LIL_MSD)
+*Macro retrieves the most significant digit of the source value.*  
+Input argument is a pointer to the long_int source (lil_t *SRC).  
+Result is the most significant digit stored in `SRC`.
+
+### 4. Least significant digit (LIL_LSD)
+*Macro retrieves the least significant digit of the source value.*  
+Input argument is a pointer to the long_int source (lil_t *SRC).  
+Result is the least significant digit stored in `SRC`.
+
+### 5. Copy value (LIL_CPY_VAL)
 *Macro copies the source value to the destination value.*  
 Input arguments are pointers to the long_int destination and source (lil_t *DST and lil_t *SRC).  
-Result is stored in the destination argument - source `DST` (DST).  
+Result is stored in the destination argument - source `DST` (DST).
 
-### 2. Set null (LIL_SET_NULL)
+### 6. Set null (LIL_SET_NULL)
 *Macro sets the source value to null.*  
 Input argument is a pointer to the long_int source (lil_t *SRC).  
 Result is stored in the source argument - source `SRC` (SRC).  
-**Note**: there is a similar macro called 'LIL_STATIC_SET_NULL' which performs the sama action, but it's input argument is long_int (not a pointer).
 
-### 3. Memory allocation (LIL_MALLOC)
+### 7. Memory allocation (LIL_MALLOC)
 *Macro allocates memory for the source.*  
 Input arguments are a pointer to the long_int source pointer and the size (long_int **SRC and size_t SIZE).  
-Result is stored in the source pointer argument - source pointer `SRC` (SRC).  
+Result is stored in the source pointer argument - source pointer `SRC` (SRC).
 
-### 4. Clean memory allocation (LIL_CALLOC)
-*Macro performs a clean memory allocation for the source.*  
+### 8. Clean memory allocation (LIL_CALLOC)
+*Macro allocates memory for the source and initializes it to zero.*  
 Input arguments are a pointer to the long_int source pointer and the size (long_int **SRC and size_t SIZE).  
-Result is stored in the source pointer argument - source pointer `SRC` (SRC).  
+Result is stored in the source pointer argument - source pointer `SRC` (SRC).
 
-### 5. Free memory (LIL_FREE)
-*Macro frees the memory allocated for the source.*  
-Input argument is a pointer to the long_int source pointer (lil_t *SRC).  
-Result is that the memory associated with the source argument `SRC` is freed.  
+### 9. Free memory (LIL_FREE)
+*Macro frees memory allocated for the source.*  
+Input argument is a pointer to the long_int source (lil_t *SRC).  
+It frees both the value array and the source structure itself.
 
-### 6. Bitwise exclusive or (LIL_BIT_XOR)
-*Macro performs a bitwise exclusive or operation.*  
-Input arguments are pointers to the long_int sources `a` and `b` (lil_t *SRC_A and lil_t *SRC_B).  
-Result is stored in the first argument - source `a` (SRC_A).  
+### 10. Bitwise exclusive or (LIL_BIT_XOR)
+*Macro performs bitwise exclusive or on the source values.*  
+Input arguments are pointers to the long_int source values (lil_t *SRC_A and lil_t *SRC_B).  
+Results are stored in the first source argument - `SRC_A`.
 
-### 7. Bitwise inversion (LIL_BIT_NOT)
-*Macro performs a bitwise inversion operation.*
-Input argument is pointer to the long_int source `src` (lil_t *SRC).
-Result is stored in the source argument - source pointer `SRC` (SRC).
+### 11. Bitwise inversion (LIL_BIT_NOT)
+*Macro performs bitwise inversion on the source value.*  
+Input argument is a pointer to the long_int source (lil_t *SRC).  
+Results are stored in the source argument itself.
 
-### 8. Bitwise conjunction (LIL_BIT_AND)
-*Macro performs a bitwise conjunction operation.*  
-Input arguments are pointers to the long_int sources `a` and `b` (lil_t *SRC_A and lil_t *SRC_B).  
-Result is stored in the first argument - source `a` (SRC_A).  
+### 12. Bitwise conjunction (LIL_BIT_AND)
+*Macro performs bitwise conjunction on the source values.*  
+Input arguments are pointers to the long_int source values (lil_t *SRC_A and lil_t *SRC_B).  
+Results are stored in the first source argument - `SRC_A`.
 
-### 9. Bitwise disjunction (LIL_BIT_OR)
-*Macro performs a bitwise disjunction operation.*  
-Input arguments are pointers to the long_int sources `a` and `b` (lil_t *SRC_A and lil_t *SRC_B).  
-Result is stored in the first argument - source `a` (SRC_A).
+### 13. Bitwise disjunction (LIL_BIT_OR)
+*Macro performs bitwise disjunction on the source values.*  
+Input arguments are pointers to the long_int source values (lil_t *SRC_A and lil_t *SRC_B).  
+Results are stored in the first source argument - `SRC_A`.  
 
 ## Basic functions
 

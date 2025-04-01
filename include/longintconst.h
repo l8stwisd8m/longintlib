@@ -5,7 +5,14 @@
 #define LIL_PLUS 0
 #define LIL_MINUS 1
 
+// utils
+#define LIL_BASE 64
+#define LIL_SPLIT 32
+
 // size
+#define LIL_KB 16U
+#define LIL_MB 16384U 
+#define LIL_GB 16777216U
 #define LIL_128_BIT 2U
 #define LIL_256_BIT 4U
 #define LIL_512_BIT 8U
@@ -20,12 +27,6 @@
 #define LIL_LSBIT 0x0000000000000001ULL
 #define LIL_MSBYTE 0x8000000000000000ULL
 #define LIL_LSBYTE 0x00000000000000fULL
-
-// utils
-enum lil_util {
-    LIL_BASE = 64,
-    LIL_SPLIT = 32
-};
 
 // errors 
 enum lil_error {
