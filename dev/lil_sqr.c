@@ -7,7 +7,7 @@
 #include "../include/longintconst.h"
 #include "../include/longintmacro.h"
 
-int lil_sqrt(lil_t *dst, lil_t *src) {
+int lil_sqr(lil_t *dst, lil_t *src) {
     // raising source to the power of two
     
     // default result

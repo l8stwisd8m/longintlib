@@ -9,15 +9,15 @@
 
 int lil_mod(lil_t *dst, lil_t *src_a, lil_t *src_b) {
     // return remainder after division of a by b
-
+    
     uint64_t a_len = 0;
     uint64_t b_len = 0;
     uint64_t offset = 0;
-
+    
     // default result
     dst->sign = LIL_PLUS;
     LIL_SET_NULL(dst);
-
+    
     // exceptions
     if (lil_is_null(src_a)) return 0; // a = 0 => a mod b = 0
     if (lil_is_null(src_b)) {

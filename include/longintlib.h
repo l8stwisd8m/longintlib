@@ -72,8 +72,10 @@ int lil_shrn(lil_t *src, uint64_t n); // right shift by n bits
 
 // MODULAR ARITHMETIC FUNCTIONS
 int lil_inv(lil_t *dst, lil_t *src_a, lil_t *src_m); // inverse element a modulo m
+int lil_val_mod(lil_t *src_a, lil_t *src_m); // update a so it belongs to the range from zero to m
 int lil_sum_mod(lil_t *dst, lil_t *src_a, lil_t *src_b, lil_t *src_m); // arithmetic sum of a and b modulo m
 int lil_mul_mod(lil_t *dst, lil_t *src_a, lil_t *src_b, lil_t *src_m); // multiplication of a and b modulo m
+int lil_div_mod(lil_t *dst, lil_t *src_a, lil_t *src_b, lil_t *src_m); // multiplication of a and inverted b modulo m
 int lil_pow_mod(lil_t *dst, lil_t *src_a, lil_t *src_n, lil_t *src_m); // raising a to the power n modulo m
 
 // SHORT OPERATIONS
@@ -88,8 +90,8 @@ int lil_short_pow_mod(lil_t *src_a, uint64_t n, lil_t *src_m); // raising a to t
 // source files located in the "dev" folder
 
 // ADDITIONAL MATH FUNCTIONS
-int lil_sqrt(lil_t *dst, lil_t *src); // raising source to the power of two
-int lil_root(lil_t *dst, lil_t *src); // floor from square root of source
+int lil_sqr(lil_t *dst, lil_t *src); // raising source to the power of two
+int lil_sqr_root(lil_t *dst, lil_t *src); // floor from square root of source
 
 // FAST OPERATIONS
 int lil_fast_gcd(lil_t *dst, lil_t *src_a, lil_t *src_b); // greatest commond divisor of a and b
@@ -97,5 +99,12 @@ int lil_fast_div(lil_t *dst, lil_t *src_a, lil_t *src_b); // floor from division
 int lil_fast_mod(lil_t *dst, lil_t *src_a, lil_t *src_b); // remainder after division of a by b
 int lil_fast_mul(lil_t *dst, lil_t *src_a, lil_t *src_b); // fast multiplication of a and b
 int lil_fast_mul2(lil_t *dst, lil_t *src_a, lil_t *src_b); // multiplication of a and b, both terms sizes are power of two
+
+// NUMBER THEORETIC FUNCTIONS
+int lil_etf(lil_t *dst, lil_t *src); // euler's totient function
+int lil_jacobi(lil_t *src_a, lil_t *src_m); // legendre/jacobi symbol
+
+// RANDOM NUMBER GENERATION
+int lil_rng(lil_t *src); // set source value to a random number
 
 #endif // _LONG_INT_LIB_

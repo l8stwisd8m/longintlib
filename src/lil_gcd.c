@@ -61,7 +61,6 @@ int lil_gcd(lil_t *dst, lil_t *src_a, lil_t *src_b) {
     }
     
     // both a and b are long integers 
-    assert(src_a->size == src_b->size);
     long_int *tmp_a, *tmp_b;
     LIL_MALLOC(tmp_a, src_a->size);
     LIL_MALLOC(tmp_b, src_b->size);
