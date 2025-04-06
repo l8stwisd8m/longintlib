@@ -1,12 +1,16 @@
 #ifndef _LONG_INT_LIB_
 #define _LONG_INT_LIB_
 
-#include <stdint.h>
-#include <stddef.h>
+// longintlib v0.1
+// https://github.com/l8stwisd8m/longintlib
 
+#include <stddef.h>
+#include <stdint.h>
 #ifndef uint128_t
 #define uint128_t __uint128_t
 #endif // uint128_t
+
+// LONG INTEGER TYPE
 
 typedef struct {
     enum {PLUS, MINUS} sign;
@@ -21,8 +25,10 @@ typedef union {
 
 #undef PLUS
 #undef MINUS
-
+// long integer pseudonym
 #define long_int lil_t
+
+// ERROR HANDLING
 
 enum lil_perror {
     ERR_SIZE_MISMATCH = -1,
@@ -30,12 +36,30 @@ enum lil_perror {
     ERR_INVALID_INPUT = -3
 };
 
+// CONFIGURATION
+
+// EXCEPTIONS CONFIG
+#define LIL_OPERAND_SIZES       // check if operand sizes mismatch
+#define LIL_DIVISION_BY_ZERO    // check if a certain operand is equal to zero
+#define COPRIME_TERMS_INVERSION // definition can be removed for certain purposes,
+                                // for example in some factorization algorithms, 
+                                // however it's highly recommended not to do it
+
+// OUTPUT OPTIONS CONFIG
+#define LIL_PRINT_SIGN
+#define LIL_PRINT_PREFIX    // 0b for binary; 0x for hexadecimal
+#define LIL_PRINT_SEPARATOR // space between digits (bin and hex)
+#define LIL_PRINT_NEW_LINE
+
 // BASIC FUNCTIONS
+// source files are located in the "src" folder
+
+// UTILITY FUNCTIONS
 int lil_rev(lil_t *src); // reverse source values order
 int lil_cpy(lil_t *dst, lil_t *src); // copy source structure to destination
 uint64_t lil_len(lil_t *src); // return bit length of source
 int lil_cmp(lil_t *src_a, lil_t *src_b); // return 0 if a = b, -1 if a < b, 1 if a > b
-int lil_cmp_len(lil_t *src_a, lil_t *src_b); // return 0 if length(a) = length(b), -1 if length(a) < length(b), 1 if length(a) > length(b)
+int lil_cmp_len(lil_t *src_a, lil_t *src_b); // return 0 if len(a) = len(b), -1 if len(a) < len(b), 1 if len(a) > len(b)
 int lil_cmp_val(lil_t *src_a, lil_t *src_b); // return 0 if abs(a) = abs(b), -1 if abs(a) < abs(b), 1 if abs(a) > abs(b)
 int lil_is_null(lil_t *src); // return 1 if source is empty, 0 otherwise
 int lil_is_even(lil_t *src); // return 1 if source is even, 0 otherwise
@@ -98,7 +122,6 @@ int lil_fast_gcd(lil_t *dst, lil_t *src_a, lil_t *src_b); // greatest commond di
 int lil_fast_div(lil_t *dst, lil_t *src_a, lil_t *src_b); // floor from division of a by b
 int lil_fast_mod(lil_t *dst, lil_t *src_a, lil_t *src_b); // remainder after division of a by b
 int lil_fast_mul(lil_t *dst, lil_t *src_a, lil_t *src_b); // fast multiplication of a and b
-int lil_fast_mul2(lil_t *dst, lil_t *src_a, lil_t *src_b); // multiplication of a and b, both terms sizes are power of two
 
 // NUMBER THEORETIC FUNCTIONS
 int lil_etf(lil_t *dst, lil_t *src); // euler's totient function
@@ -106,5 +129,6 @@ int lil_jacobi(lil_t *src_a, lil_t *src_m); // legendre/jacobi symbol
 
 // RANDOM NUMBER GENERATION
 int lil_rng(lil_t *src); // set source value to a random number
+int lil_prng(lil_t *src, uint64_t seed); // set source value to a pseudorandom number
 
 #endif // _LONG_INT_LIB_

@@ -10,6 +10,7 @@
 int lil_mul(lil_t *dst, lil_t *src_a, lil_t *src_b) {
     // multiplication of a and b
     
+    // default result
     LIL_SET_NULL(dst);
     if (lil_is_null(src_a) or lil_is_null(src_b)){
         dst->sign = LIL_PLUS;
@@ -17,11 +18,13 @@ int lil_mul(lil_t *dst, lil_t *src_a, lil_t *src_b) {
     }
     dst->sign = src_a->sign ^ src_b->sign;
     
+    #ifdef LIL_OPERAND_SIZES
     if (dst->size < (src_a->size + src_b->size)) {
         errno = ERR_SIZE_MISMATCH;
         perror("Invalid size of destination value; multiplication can not be performed");
         exit(EXIT_FAILURE);
     }
+    #endif /* LIL_OPERAND_SIZES */
     
     uint64_t tmp_val = 0;
     lil_chunk_t _chunk;

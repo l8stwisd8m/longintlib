@@ -1,6 +1,6 @@
 # compiler and flags
 CC := gcc
-CFLAGS := -fPIC -fprofile-arcs -ftest-coverage
+CFLAGS := -fPIC -fprofile-arcs -ftest-coverage #-march=native -mrdrnd
 WFLAGS = -Wall -Wpedantic -Wextra
 LDFLAGS = -Llib -llongint
 RPATH = -Wl,-rpath=./lib
@@ -11,6 +11,7 @@ SRC_DIR = src
 OBJ_DIR = obj
 BIN_DIR = bin
 DEV_DIR = dev
+INC_DIR = include
 EXX_DIR = example
 TEST_DIR = test
 
@@ -49,9 +50,16 @@ else
 	LDFLAGS := -shared
 endif
 
-.PHONY: clean examples tests
+.PHONY: clean dev examples tests
 
 all: $(OBJ_DIR) $(LIB_DIR) $(LIB_NAME)
+
+dev: 
+	bash -c "shopt -s nullglob; mv $(DEV_DIR)/ex_*.c $(EXX_DIR)/ 2>/dev/null || true"
+	bash -c "shopt -s nullglob; mv $(DEV_DIR)/*.h $(INC_DIR)/ 2>/dev/null || true"
+	bash -c "shopt -s nullglob; mv $(DEV_DIR)/lil_*.c $(SRC_DIR)/ 2>/dev/null || true"
+	bash -c "shopt -s nullglob; mv $(DEV_DIR)/test_*.c $(TEST_DIR)/ 2>/dev/null || true"
+	make
 
 examples: $(OBJ_DIR) $(BIN_DIR) $(EXX_TARGETS)
 

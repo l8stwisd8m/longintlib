@@ -1,6 +1,9 @@
 #ifndef _LONG_INT_CONST_
 #define _LONG_INT_CONST_
 
+// longintlib v0.1
+// https://github.com/l8stwisd8m/longintlib
+
 // sign 
 #define LIL_PLUS 0
 #define LIL_MINUS 1

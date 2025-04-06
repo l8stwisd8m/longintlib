@@ -1,6 +1,9 @@
 #ifndef _LONG_INT_MACRO_
 #define _LONG_INT_MACRO_ 
 
+// longintlib v0.1
+// https://github.com/l8stwisd8m/longintlib
+
 #include <stdlib.h>
 #include <stdint.h>
 #include <stddef.h>

@@ -1,14 +1,14 @@
 # Long Integer Library
 
 [![docs](https://img.shields.io/badge/docs-blue)](https://github.com/l8stwisd8m/longintlib/blob/main/docs/Documentation.md)
-![coverage - 92.5%](https://img.shields.io/badge/coverage-92.5%-bluegreen)
-![release - v0.0](https://img.shields.io/badge/release-v0.0-blueviolet)
+![release - v0.1](https://img.shields.io/badge/release-v0.1-violet)
+![coverage - 93.6%](https://img.shields.io/static/v1?label=coverage&message=93.6%&color=blueviolet)
 
 ## Overview
 
-The **longintlib** is a lightweight dynamic arbitrary-precision arithmetic library providing basic functions for operating long integers. Syntax is pretty straightforward making it simple and highly customisible. This project consists of the library itself, tests and examples.
+The **longintlib** is a lightweight dynamic arbitrary-precision arithmetic library for x86-64 providing basic functions for operating long integers. Syntax is pretty straightforward making it simple and highly customisible. This project consists of the library itself, tests and examples. There are also additional features, not provided in the main library file, but can be added separately.
 
-A brief introduction is provided below. See [documentation](https://github.com/l8stwisd8m/longintlib/blob/main/docs/Documentation.md) in the `docs` folder for more detailed types & functions description.
+A brief introduction is provided below. See [documentation](https://github.com/l8stwisd8m/longintlib/blob/main/docs/Documentation.md) for more detailed types & functions description.
 
 **Requirments**:  
 
@@ -18,7 +18,7 @@ A brief introduction is provided below. See [documentation](https://github.com/l
 
 ## Quick start
 
-You can download a headers & precompiled dynamic library file in the **Releases** (currently, for Linux users only — if you're running MacOS or Windows, you have to change the target platform in the `Makefile` and build shared library file with `make`).
+You can download a headers & precompiled dynamic library file in the [releases](https://github.com/l8stwisd8m/longintlib/releases) (currently, for Linux users only — if you're running MacOS or Windows, you have to change the target platform in the `Makefile` and build shared library file with `make`).
 
 The `longintlib.h`contains all the necessary prototypes and type definitions. The header can be included manually; to compile a file you need to link it with one of the following shared objects:  
 
@@ -31,7 +31,8 @@ To run any tests or examples `git clone` this project and build executables:
 • `make tests` for tests;  
 • `make examples` for examples.  
 
-Default `Makefile` target is intended for compiling shared object file, so it can be modified and executed with `make` command to recompile it when necessary.
+Default `Makefile` target is intended for compiling shared object file, so it can be modified and executed with `make` command to recompile it when necessary.  
+There are various additional functions, all of which can be used to update library with `made dev` command.
 
 ## Usage
 

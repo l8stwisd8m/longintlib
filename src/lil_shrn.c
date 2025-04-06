@@ -31,7 +31,7 @@ int lil_shrn(lil_t *src, uint64_t n) {
     for (size_t i = 0; i < src->size; i++) {
         tmp = src->val[src->size - i - 1] & carry_mask;
         src->val[src->size - i - 1] = (src->val[src->size - i - 1] >> b_shift) ^ carry_value;
-        carry_value = (carry_value ^ carry_value) ^ (tmp << (LIL_BASE - b_shift));
+        carry_value = 0 ^ (tmp << (LIL_BASE - b_shift));
     }
     if ((b_shift) and (carry_value)) flag = LIL_OVERFLOW;
     

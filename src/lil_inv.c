@@ -1,4 +1,5 @@
 #include <errno.h>
+#include <stddef.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <iso646.h>
@@ -6,9 +7,15 @@
 #include "../include/longintlib.h"
 #include "../include/longintconst.h"
 #include "../include/longintmacro.h"
-#define COPRIME_TERMS_INVERSION // definition can be removed for certain purposes,
-                                // for example in some factorization algorithms, 
-                                // however it's highly recommended not to do it
+
+#ifdef COPRIME_TERMS_INVERSION
+static int lil_is_not_one(lil_t *src) {
+    for(size_t i = 1; i < src->size; i++) {
+        if (src->val[i]) return 1;
+    }
+    return src->val[0] == 1 ? 0 : 1;
+}
+#endif /* ifdef COPRIME_TERMS_INVERSION */
 
 int lil_inv(lil_t *dst, lil_t *src_a, lil_t *src_m) {
     // inverse element a modulo m
@@ -22,35 +29,40 @@ int lil_inv(lil_t *dst, lil_t *src_a, lil_t *src_m) {
     src_m->sign = LIL_PLUS;
     
     // exceptions
-    if (lil_is_null(src_a)) {
-        errno = ERR_INVALID_INPUT;
-        perror("Zero is not coprime with the modulus; modulo inversion can not be performed");
-        exit(EXIT_FAILURE); // invalid a value
-    }
+    #ifdef LIL_DIVISION_BY_ZERO
     if (lil_is_null(src_m)) {
         errno = ERR_ZERO_DIVISION;
         perror("Division by zero is not a valid operation; modulo inversion can not be performed");
         exit(EXIT_FAILURE); // invalid modulus
     }
+    #endif /* LIL_DIVISION_BY_ZERO */
+    
+    if (lil_is_null(src_a)) {
+        errno = ERR_INVALID_INPUT;
+        perror("Zero is not relatively prime to the modulus; modulo inversion can not be performed");
+        exit(EXIT_FAILURE); // invalid a value
+    }
+    
+    #ifdef LIL_OPERAND_SIZES
     if ((src_a->size != dst->size) or (src_m->size != dst->size)) {
         errno = ERR_SIZE_MISMATCH;
         perror("Invalid terms sizes; modulo inversion can not be performed");
         exit(EXIT_FAILURE); // operand sizes mismatch error
     }
+    #endif /* LIL_OPERAND_SIZES_CHECK */
+    
     long_int *tmp;
     LIL_MALLOC(tmp, src_a->size);
+    
     #ifdef COPRIME_TERMS_INVERSION
     lil_gcd(tmp, src_a, src_m);
-    if (tmp->val[0] != 1) {
+    if (lil_is_not_one(tmp)) {
         errno = ERR_INVALID_INPUT;
-        perror("Given number is not coprime with the modulus; modulo inversion can not be performed");
+        perror("Given number is not relatively prime to the modulus; modulo inversion can not be performed");
         LIL_FREE(tmp);
         exit(EXIT_FAILURE); // invalid a value
     }
     #endif /* ifdef COPRIME_TERMS_INVERSION */
-    
-    // assuming a is not equal to zero at this point due to the coprime check
-    // when coprime check is disabled, it's neccessary to assert it 
     
     #ifndef COPRIME_TERMS_INVERSION // it can not be used in most applications so it can be removed
     while (LIL_IS_EVEN(src_a) and LIL_IS_EVEN(src_m)) {
@@ -91,16 +103,13 @@ int lil_inv(lil_t *dst, lil_t *src_a, lil_t *src_m) {
             }
         }
         else {
-            if (LIL_IS_EVEN(dst) and LIL_IS_EVEN(y)) {
-                // (x, y, h) /= 2
-                lil_shr(dst); lil_shr(y); lil_shr(h);
-            }
-            else {
+            if (not (LIL_IS_EVEN(dst) and LIL_IS_EVEN(y))) {
                 // (x, y, h) = ((x+m)/2, (y-a)/2, h/2)
                 LIL_CPY_VAL(tmp, src_m); tmp->sign = LIL_PLUS; lil_sum(res, dst, tmp); lil_cpy(dst, res);
                 LIL_CPY_VAL(tmp, src_a); tmp->sign = LIL_MINUS; lil_sum(res, y, tmp); lil_cpy(y, res);
-                lil_shr(dst); lil_shr(y); lil_shr(h);
             }
+            // (x, y, h) /= 2
+            lil_shr(dst); lil_shr(y); lil_shr(h);
         }
     }
     

@@ -12,16 +12,21 @@ int lil_mul_mod(lil_t *dst, lil_t *src_a, lil_t *src_b, lil_t *src_m) {
     // multiplication of a and b modulo m
     
     // exceptions
+    #ifdef LIL_DIVISION_BY_ZERO
     if (lil_is_null(src_m)) {
         errno = ERR_ZERO_DIVISION;
-        perror("Division by zero is not a valid operation; modulus calculation can not be performed");
-        exit(EXIT_FAILURE); // invalid b value
+        perror("Division by zero is not a valid operation; modulo multiplication can not be performed");
+        exit(EXIT_FAILURE); // invalid m value
     }
+    #endif /* LIL_DIVISION_BY_ZERO */
+    
+    #ifdef LIL_OPERAND_SIZES
     if ((dst->size != src_a->size) or (src_a->size != src_b->size) or (src_b->size != src_m->size)) {
         errno = ERR_SIZE_MISMATCH;
-        perror("Invalid terms sizes; modulus calculation can not be performed");
+        perror("Invalid terms sizes; modulo multiplication can not be performed");
         exit(EXIT_FAILURE); // operand sizes mismatch error
     }
+    #endif /* LIL_OPERAND_SIZES */
     
     // default: result
     dst->sign = LIL_PLUS;

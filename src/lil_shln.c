@@ -29,10 +29,10 @@ int lil_shln(lil_t *src, uint64_t n) {
         carry_mask = carry_mask | (LIL_MSBIT >> i);
     }
     for (size_t i = 0; i < src->size; i++) {
-        // shift by (n mow w) bits
+        // shift by (n mod w) bits
         tmp = src->val[i] & carry_mask;
         src->val[i] = (src->val[i] << b_shift) ^ carry_value;
-        carry_value = (carry_value ^ carry_value) ^ (tmp >> (LIL_BASE - b_shift));
+        carry_value = 0 ^ (tmp >> (LIL_BASE - b_shift));
     }
     if ((b_shift) and (carry_value)) flag = LIL_OVERFLOW;
     

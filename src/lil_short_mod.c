@@ -15,11 +15,14 @@ int lil_short_mod(uint64_t *dst, lil_t *src_a, uint64_t val_b) {
         *dst = 0;
         return 0; // a = 0 => a mod b = 0
     }
+    
+    #ifdef LIL_DIVISION_BY_ZERO
     if (val_b == 0) {
         errno = ERR_ZERO_DIVISION;
         perror("Division by zero is not a valid operation; modulus calculation can not be performed");
         exit(EXIT_FAILURE); // invalid b value
     }
+    #endif /* LIL_DIVISION_BY_ZERO */
     
     // casting b value to long_int
     lil_t *src_b;

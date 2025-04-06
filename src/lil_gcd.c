@@ -19,11 +19,22 @@ int lil_gcd(lil_t *dst, lil_t *src_a, lil_t *src_b) {
     dst->val[0] = 1; // set gcd = 1
     
     // exceptions
+    #ifdef LIL_DIVISION_BY_ZERO
     if (lil_is_null(src_a) and lil_is_null(src_b)) {
         errno = ERR_ZERO_DIVISION;
         perror("Division by zero is not a valid operation; gcd calculation can not be performed");
         exit(EXIT_FAILURE); // invalid value
     }
+    #endif /* LIL_DIVISION_BY_ZERO */
+    
+    #ifdef LIL_OPERAND_SIZES
+    if ((src_a->size != dst->size) or (src_b->size != dst->size)) {
+        errno = ERR_SIZE_MISMATCH;
+        perror("Invalid terms sizes; gcd calculation can not be performed");
+        exit(EXIT_FAILURE); // operand sizes mismatch error
+    }
+    #endif /* LIL_OPERAND_SIZES_CHECK */
+    
     if (lil_is_null(src_b)) {
         LIL_CPY_VAL(dst, src_a);
         return 0; // gcd(a, 0) = a

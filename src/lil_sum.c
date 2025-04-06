@@ -32,12 +32,14 @@ int lil_sum(lil_t *dst, lil_t *src_a, lil_t *src_b) {
     }
     
     // assetion for arithmetic sum calculation in other cases
+    #ifdef LIL_OPERAND_SIZES
     if (((src_a->size >= src_b->size) and (dst->size < src_a->size)) or 
         ((src_b->size >= src_a->size) and (dst->size < src_b->size))) {
         errno = ERR_SIZE_MISMATCH;
         perror("Invalid size of destination value; sum calculation can not be performed");
         exit(EXIT_FAILURE);
     }
+    #endif /* LIL_OPERAND_SIZES */
     
     // (-a) + (-b) = -(a + b)
     if (src_a->sign and src_b->sign) {

@@ -9,12 +9,13 @@
 int lil_cpy(lil_t *dst, lil_t *src) {
     // copy source structure to destination
     
-    // invalid operand sizes
+    #ifdef LIL_OPERAND_SIZES
     if (dst->size < src->size) {
         errno = ERR_SIZE_MISMATCH;
         perror("Invalid size of destination value; source value can not be copied");
-        exit(EXIT_FAILURE);
+        exit(EXIT_FAILURE); // invalid operand sizes
     }
+    #endif /* LIL_OPERAND_SIZES_CHECK */
     
     dst->sign = src->sign;
     for (size_t i = 0; i < src->size; i++) {

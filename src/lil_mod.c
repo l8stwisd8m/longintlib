@@ -20,21 +20,27 @@ int lil_mod(lil_t *dst, lil_t *src_a, lil_t *src_b) {
     
     // exceptions
     if (lil_is_null(src_a)) return 0; // a = 0 => a mod b = 0
+    
+    #ifdef LIL_DIVISION_BY_ZERO
     if (lil_is_null(src_b)) {
         errno = ERR_ZERO_DIVISION;
         perror("Division by zero is not a valid operation; modulus calculation can not be performed");
         exit(EXIT_FAILURE); // invalid b value
     }
+    #endif /* LIL_DIVISION_BY_ZERO */
+    
+    #ifdef LIL_OPERAND_SIZES
     if ((src_a->size != dst->size) or (src_b->size != dst->size)) {
         errno = ERR_SIZE_MISMATCH;
         perror("Invalid terms sizes; modulus calculation can not be performed");
         exit(EXIT_FAILURE); // operand sizes mismatch error
     }
+    #endif /* LIL_OPERAND_SIZES */
     
     a_len = lil_len(src_a);
     b_len = lil_len(src_b);
     offset = a_len - b_len;
-     
+    
     int cmp_flag = lil_cmp_val(src_a, src_b);
     if (cmp_flag == -1) {
         LIL_CPY_VAL(dst, src_a);

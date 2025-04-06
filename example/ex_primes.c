@@ -14,7 +14,7 @@ int main(void) {
     for (int i = 0; i < 5; i++) {
         fermat_exp = 1 << i;
         fermat_prime = (1 << fermat_exp) + 1;
-        printf("%"PRId64"\n", fermat_prime);
+        printf("%"PRIu64"\n", fermat_prime);
     }
     
     uint64_t mersenne_val[VAL_SIZE] = {0};

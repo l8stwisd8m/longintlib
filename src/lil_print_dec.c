@@ -6,23 +6,21 @@
 #include "../include/longintlib.h"
 #include "../include/longintconst.h"
 #include "../include/longintmacro.h"
-#define NEW_LINE
-#define PRINT_SIGN
 
 int lil_print_dec(lil_t *src) {
     // print decimal representation of source
     
-    #ifdef PRINT_SIGN
+    #ifdef LIL_PRINT_SIGN
     if ((src->sign == LIL_MINUS) and (not lil_is_null(src))) putchar('-');
-    #endif /* ifdef PRINT_SIGN */
+    #endif /* ifdef LIL_PRINT_SIGN */
     
     uint64_t value_len = lil_len(src);
     
     if (value_len <= LIL_BASE) {
         printf("%"PRIu64, src->val[0]);
-        #ifdef NEW_LINE
+        #ifdef LIL_PRINT_NEW_LINE
         putchar('\n');
-        #endif /* ifdef NEW_LINE */
+        #endif /* ifdef LIL_PRINT_NEW_LINE */
         return 0; // single digit
     }
     
@@ -68,9 +66,9 @@ int lil_print_dec(lil_t *src) {
     LIL_FREE(base);
     LIL_FREE(tmp);
     
-    #ifdef NEW_LINE
+    #ifdef LIL_PRINT_NEW_LINE
     putchar('\n');
-    #endif /* ifdef NEW_LINE */
+    #endif /* ifdef LIL_PRINT_NEW_LINE */
     
     return 0;
 }

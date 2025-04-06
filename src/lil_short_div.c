@@ -15,16 +15,22 @@ int lil_short_div(lil_t *dst, lil_t *src_a, uint64_t val_b) {
     
     // exceptions
     if (lil_is_null(src_a)) return 0; // a = 0 => floor(a/b) = 0
+    
+    #ifdef LIL_DIVISION_BY_ZERO
     if (val_b == 0) {
         errno = ERR_ZERO_DIVISION;
         perror("Division by zero is not a valid operation; division can not be performed");
         exit(EXIT_FAILURE); // invalid b value
     }
+    #endif /* LIL_DIVISION_BY_ZERO */
+    
+    #ifdef LIL_OPERAND_SIZES
     if (src_a->size != dst->size) {
         errno = ERR_SIZE_MISMATCH;
         perror("Invalid terms sizes; division can not be performed");
         exit(EXIT_FAILURE); // operand sizes mismatch error
     }
+    #endif /* LIL_OPERAND_SIZES */
     
     dst->sign = src_a->sign; // save sign(a)
 

@@ -24,6 +24,28 @@ Test(test_lil_gcd, gcd_of_not_empty_value_and_zero) {
     cr_expect_arr_eq(c.val, expected_arr, c.size);
 }
 
+void fork_test_lil_gcd_invalid_sized_terms(void) {
+    pid_t pid;
+    if ((pid = fork()) == 0) {
+        uint64_t arr_a[LIL_256_BIT - 1] = {0};
+        uint64_t arr_b[LIL_256_BIT + 1] = {1};
+        uint64_t arr_c[LIL_256_BIT] = {0x1234567};
+        long_int a = {PLUS, arr_a, LIL_256_BIT - 1};
+        long_int b = {PLUS, arr_b, LIL_256_BIT + 1};
+        long_int c = {PLUS, arr_c, LIL_256_BIT};
+        lil_gcd(&c, &a, &b);
+        exit(EXIT_SUCCESS); // default exit status if the function didn't crashed
+    }
+}
+
+Test(test_lil_gcd, gcd_of_invalid_sized_terms) {
+    int status;
+    fork_test_lil_gcd_invalid_sized_terms();
+    wait(&status);
+    if(WEXITSTATUS(status) == EXIT_FAILURE) cr_assert(1);
+    else cr_assert_fail();
+}
+
 void fork_test_lil_gcd_empty_values(void) {
     pid_t pid;
     if ((pid = fork()) == 0) {
