@@ -46,8 +46,8 @@ int lil_short_pow_mod(lil_t *src_a, uint64_t n, lil_t *src_m) {
     if (n == 1) return 0;
     
     lil_t *tmp, *res;
-    LIL_MALLOC(tmp, src_a->size); tmp->sign = LIL_PLUS;
-    LIL_MALLOC(res, src_a->size); res->sign = LIL_PLUS;
+    LIL_MALLOC(tmp, src_a->size);
+    LIL_MALLOC(res, src_a->size);
     LIL_CPY_VAL(res, src_a);
     
     size_t ctr = LIL_BASE - (1 +__builtin_clzll(n));
@@ -61,7 +61,7 @@ int lil_short_pow_mod(lil_t *src_a, uint64_t n, lil_t *src_m) {
     }
     
     lil_cpy(src_a, res);
-
+    
     LIL_FREE(tmp);
     LIL_FREE(res);
     return 0;

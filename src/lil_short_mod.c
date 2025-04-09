@@ -77,8 +77,6 @@ int lil_short_mod(uint64_t *dst, lil_t *src_a, uint64_t val_b) {
     // restore value of a
     lil_cpy(src_a, src_a_initial);
     
-    LIL_FREE(src_a_initial);
-    LIL_FREE(src_t);
-    LIL_FREE(src_b);
+    LIL_FREES(src_a_initial, src_t, src_b);
     return 0;
 }

@@ -18,7 +18,9 @@ Dynamic library file, `longintlib.so`provides the following features:
 7. Modular arithmetic (update value by modulus, modulo inversion / sum / multiplication / division, and exponentiation by modulo).
 
 Overall coverage rate:
-  source files: 42
-  lines.......: 93.6% (1032 of 1102 lines)
-  functions...: 100.0% (46 of 46 functions)
-  branches....: 80.7% (787 of 975 branches)
+```
+source files: 42
+lines.......: 93.6% (1032 of 1102 lines)
+functions...: 100.0% (46 of 46 functions)
+branches....: 80.7% (787 of 975 branches)
+```

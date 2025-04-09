@@ -35,7 +35,8 @@
 enum lil_error {
     LIL_NO_ERROR,
     LIL_OVERFLOW,
-    LIL_TRUNCATED
+    LIL_TRUNCATED,
+    LIL_NO_ANSWER
 };
 
 #endif // _LONG_INT_CONST_

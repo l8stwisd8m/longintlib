@@ -1,12 +1,13 @@
 # Long Integer Library
 
 [![docs](https://img.shields.io/badge/docs-blue)](https://github.com/l8stwisd8m/longintlib/blob/main/docs/Documentation.md)
-![release - v0.1](https://img.shields.io/badge/release-v0.1-violet)
-![coverage - 93.6%](https://img.shields.io/static/v1?label=coverage&message=93.6%&color=blueviolet)
+![release - v0.1](https://img.shields.io/badge/release-v0.1-blueviolet)
+![coverage - 93.6%](https://img.shields.io/static/v1?label=coverage&message=93.6%&color=violet)
 
 ## Overview
 
-The **longintlib** is a lightweight dynamic arbitrary-precision arithmetic library for x86-64 providing basic functions for operating long integers. Syntax is pretty straightforward making it simple and highly customisible. This project consists of the library itself, tests and examples. There are also additional features, not provided in the main library file, but can be added separately.
+The **longintlib** is a lightweight dynamic arbitrary-precision arithmetic library for x86-64 providing basic functions for operating long integers. Syntax is pretty straightforward making it simple and highly customizable. This project consists of the library itself, tests and examples.  
+There are also additional features, not provided in the main library file, but which can be added separately.
 
 A brief introduction is provided below. See [documentation](https://github.com/l8stwisd8m/longintlib/blob/main/docs/Documentation.md) for more detailed types & functions description.
 
@@ -32,7 +33,7 @@ To run any tests or examples `git clone` this project and build executables:
 • `make examples` for examples.  
 
 Default `Makefile` target is intended for compiling shared object file, so it can be modified and executed with `make` command to recompile it when necessary.  
-There are various additional functions, all of which can be used to update library with `made dev` command.
+There are various additional functions, all of which can be used to update library with `made dev`.
 
 ## Usage
 
@@ -54,7 +55,7 @@ The `sign` value can be left uninitialized (most of the functions doesn't use it
 Each `val` array element represents a single digit of the value. Functions treat `val` arrays as little-endian numbers, so you have to input numbers in reversed order or use `lil_rev` to change the order of a value. The only exceptions are `scan` functions, which expect numbers to be entered in direct order.  
 **Warning**: value array length must always corresond to the `size` value and be greater than zero. There are no assertions or `size` checks in library functions.
 
-**Note**: avoid using different sized variables. Arguments of certain functions, such as `div` and `mod`, must the same size.
+**Note**: avoid using different sized variables. Arguments of certain functions, such as `div` and `mod`, must have the same size.
 
 Here's recommended way of initializing a variable:
 
@@ -86,4 +87,4 @@ There are plenty useful constants and macros in `longintconst` and `longintmacro
 
 Feel free to fork and modify the project! You can contribute anything to the `main` branch. Good examples and new functions will be added to the branch; however, the amount of library functions (source files) is limited to reasonable limits to keep the library less bloated.
 
-I would also appreciate recieving suggestions for improving any features, found bugs, patches, etc - open an [issue](https://github.com/l8stwisd8m/longintlib/issues) to submit it. Please, provide bug reports information how to reproduce it.
+I would also appreciate recieving suggestions for improving any features, found bugs, patches, etc — open an [issue](https://github.com/l8stwisd8m/longintlib/issues) to submit it. Please, provide bug reports information how to reproduce it.

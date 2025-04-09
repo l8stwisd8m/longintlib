@@ -26,5 +26,5 @@ int lil_rng(lil_t *src) {
         if (flag) return RNG_FAIL;
     }
     
-    return 0;
+    return RNG_SUCCESS;
 }

@@ -124,12 +124,6 @@ int lil_inv(lil_t *dst, lil_t *src_a, lil_t *src_m) {
         lil_mod(dst, tmp, src_m);
     }
     
-    LIL_FREE(y);
-    LIL_FREE(h);
-    LIL_FREE(t1);
-    LIL_FREE(t2);
-    LIL_FREE(t3);
-    LIL_FREE(res);
-    LIL_FREE(tmp);
+    LIL_FREES(y, h, t1, t2, t3, res, tmp);
     return 0;
 }

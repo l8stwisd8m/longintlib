@@ -115,7 +115,8 @@ int lil_short_pow_mod(lil_t *src_a, uint64_t n, lil_t *src_m); // raising a to t
 
 // ADDITIONAL MATH FUNCTIONS
 int lil_sqr(lil_t *dst, lil_t *src); // raising source to the power of two
-int lil_sqr_root(lil_t *dst, lil_t *src); // floor from square root of source
+int lil_sqrt(lil_t *dst, lil_t *src); // floor from square root of source
+int lil_sqrt_mod(lil_t *dst, lil_t *src_a, lil_t *src_m); // modulo square root of a modulo m
 
 // FAST OPERATIONS
 int lil_fast_gcd(lil_t *dst, lil_t *src_a, lil_t *src_b); // greatest commond divisor of a and b
@@ -129,6 +130,6 @@ int lil_jacobi(lil_t *src_a, lil_t *src_m); // legendre/jacobi symbol
 
 // RANDOM NUMBER GENERATION
 int lil_rng(lil_t *src); // set source value to a random number
-int lil_prng(lil_t *src, uint64_t seed); // set source value to a pseudorandom number
+int lil_prng(lil_t *src, size_t seed); // set source value to a pseudorandom number
 
 #endif // _LONG_INT_LIB_

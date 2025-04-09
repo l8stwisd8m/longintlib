@@ -83,7 +83,7 @@ int lil_sum(lil_t *dst, lil_t *src_a, lil_t *src_b) {
         return flag;
     }
     
-    // b < 0 < 0, abs(a) < abs(b) => a + b = (a - b)
+    // b < 0 < a, abs(a) < abs(b) => a + b = (a - b)
     if (src_b->sign and (cmp_flag == 1)) {
         LIL_CPY_VAL(dst, src_a);
         flag = lil_sub(dst, src_b);
