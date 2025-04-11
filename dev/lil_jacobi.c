@@ -3,7 +3,6 @@
 #include <stdint.h>
 #include <iso646.h>
 #include "../include/longintlib.h"
-#include "../include/longintconst.h"
 #include "../include/longintmacro.h"
 
 int lil_jacobi(lil_t *src_a, lil_t *src_m) {
@@ -31,9 +30,11 @@ int lil_jacobi(lil_t *src_a, lil_t *src_m) {
     
     int symbol = 1;
     long_int *tmp_a, *tmp_m, *tmp;
-    LIL_MALLOC(tmp_a, src_a->size); LIL_CPY_VAL(tmp_a, src_a);
-    LIL_MALLOC(tmp_m, src_m->size); LIL_CPY_VAL(tmp_m, src_m);
-    LIL_MALLOC(tmp, tmp_a->size);
+    LIL_MALLOC(tmp, src_m->size);
+    LIL_MALLOC(tmp_a, src_m->size);
+    LIL_MALLOC(tmp_m, src_m->size);
+    LIL_CPY_VAL(tmp_a, src_a);
+    LIL_CPY_VAL(tmp_m, src_m);
     
     while(not lil_is_null(tmp_a)) {
         while(LIL_IS_EVEN(tmp_a)) {
@@ -46,8 +47,6 @@ int lil_jacobi(lil_t *src_a, lil_t *src_m) {
     }
     
     if (LIL_LSD(tmp_m) != 1) symbol = 0;
-    LIL_FREE(tmp);
-    LIL_FREE(tmp_a);
-    LIL_FREE(tmp_m);
+    LIL_FREES(tmp, tmp_a, tmp_m);
     return symbol;
 }

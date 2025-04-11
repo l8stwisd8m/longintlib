@@ -12,7 +12,7 @@ int lil_sqr(lil_t *dst, lil_t *src) {
     
     // default result
     LIL_SET_NULL(dst);
-    dst->sign = (LIL_IS_EVEN(src)) ? LIL_PLUS : src->sign;
+    dst->sign = LIL_PLUS;
     
     if (lil_is_null(src)){
         dst->sign = LIL_PLUS;

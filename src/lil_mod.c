@@ -15,7 +15,6 @@ int lil_mod(lil_t *dst, lil_t *src_a, lil_t *src_b) {
     uint64_t offset = 0;
     
     // default result
-    dst->sign = LIL_PLUS;
     LIL_SET_NULL(dst);
     
     // exceptions

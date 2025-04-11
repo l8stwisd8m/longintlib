@@ -6,8 +6,8 @@
 
 ## Overview
 
-The **longintlib** is a lightweight dynamic arbitrary-precision arithmetic library for x86-64 providing basic functions for operating long integers. Syntax is pretty straightforward making it simple and highly customizable. This project consists of the library itself, tests and examples.  
-There are also additional features, not provided in the main library file, but which can be added separately.
+The **𝖑𝖔𝖓𝖌𝖎𝖓𝖙𝖑𝖎𝖇** is a lightweight dynamic arbitrary-precision arithmetic library for x86-64 providing basic functions for operating long integers. Syntax is pretty straightforward making it simple and highly customizable. This project consists of the library itself, tests and examples.  
+There are also additional features, not included in the main library file, but which can be added separately.
 
 A brief introduction is provided below. See [documentation](https://github.com/l8stwisd8m/longintlib/blob/main/docs/Documentation.md) for more detailed types & functions description.
 
@@ -32,7 +32,7 @@ To run any tests or examples `git clone` this project and build executables:
 • `make tests` for tests;  
 • `make examples` for examples.  
 
-Default `Makefile` target is intended for compiling shared object file, so it can be modified and executed with `make` command to recompile it when necessary.  
+Default `Makefile` target is intended for compiling shared object file, so it can be modified and executed with `make` command to recompile the library when necessary.  
 There are various additional functions, all of which can be used to update library with `made dev`.
 
 ## Usage
@@ -82,6 +82,8 @@ free(values);
 ```
 
 There are plenty useful constants and macros in `longintconst` and `longintmacro` headers. See `docs` folder for explanation.
+
+By the way, you can copy a `template` or expolore some examples, located in the `example`. Run `make examples` to build them.
 
 ## Issues, contributing etc.
 
