@@ -15,7 +15,7 @@ int lil_ec_mul(lil_ec_t *curve, lil_point_t *dst, lil_point_t *src_p, lil_t *src
     }
     
     lil_point_t *tmp;
-    LIL_EC_CALLOC(tmp, curve->m->size);
+    LIL_EC_MALLOC(tmp, curve->m->size);
     lil_ec_cpy(dst, src_p);
     
     uint64_t shift = lil_len(src_n) - 1;

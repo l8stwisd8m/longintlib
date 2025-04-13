@@ -2,8 +2,6 @@
 #include "../include/longintmacro.h"
 #include "../include/longintcurve.h"
 
-static int lil_is_not_one(lil_t *src);
-
 int lil_ec_add(lil_ec_t *curve, lil_point_t *dst, lil_point_t *src_p, lil_point_t *src_q) {
     // sum of points p and q
     
@@ -40,10 +38,7 @@ int lil_ec_add(lil_ec_t *curve, lil_point_t *dst, lil_point_t *src_p, lil_point_
         // (x_q - x_p) = 0 => r = (0, 0)
         if (lil_is_null(tgs_num)) {
             LIL_EC_SET_NULL(dst);
-            LIL_FREE(tgs_num);
-            LIL_FREE(tgs_den);
-            LIL_FREE(tmp);
-            LIL_FREE(val);
+            LIL_FREES(tmp, val, tgs_num, tgs_den);
             return 0;
         }
         
@@ -70,12 +65,7 @@ int lil_ec_add(lil_ec_t *curve, lil_point_t *dst, lil_point_t *src_p, lil_point_
     
     // tangent slope 
     long_int *tgs = val;
-    if (lil_is_not_one(tgs_den)) {
-        lil_div_mod(tgs, tgs_num, tgs_den, curve->m);
-    }
-    else {
-        LIL_CPY_VAL(tgs, tgs_num);
-    }
+    lil_div_mod(tgs, tgs_num, tgs_den, curve->m);
     
     // actual point calculation
     
@@ -94,16 +84,6 @@ int lil_ec_add(lil_ec_t *curve, lil_point_t *dst, lil_point_t *src_p, lil_point_
     tgs_num->sign = !(src_p->y->sign);
     lil_sum_mod(dst->y, tgs_num, tgs_den, curve->m);    // y_r <- tgs * (x_p - x_r) - y_p
     
-    LIL_FREE(tgs_num);
-    LIL_FREE(tgs_den);
-    LIL_FREE(tmp);
-    LIL_FREE(tgs);
+    LIL_FREES(tmp, tgs, tgs_num, tgs_den);
     return 0;
-}
-
-static int lil_is_not_one(lil_t *src) {
-    for(size_t i = 1; i < src->size; i++) {
-        if (src->val[i]) return 1;
-    }
-    return src->val[0] == 1 ? 0 : 1;
 }

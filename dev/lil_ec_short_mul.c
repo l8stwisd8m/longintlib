@@ -15,7 +15,7 @@ int lil_ec_short_mul(lil_ec_t *curve, lil_point_t *dst, lil_point_t *src_p, uint
     }
     
     lil_point_t *tmp;
-    LIL_EC_CALLOC(tmp, curve->m->size);
+    LIL_EC_MALLOC(tmp, curve->m->size);
     lil_ec_cpy(dst, src_p);
     
     size_t ctr = LIL_BASE - (1 +__builtin_clzll(src_n));
@@ -29,6 +29,5 @@ int lil_ec_short_mul(lil_ec_t *curve, lil_point_t *dst, lil_point_t *src_p, uint
     }
     
     LIL_EC_FREE(tmp);
-
     return 0;
 }

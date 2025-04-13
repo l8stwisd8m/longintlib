@@ -18,17 +18,20 @@ int lil_ec_curve_order(lil_ec_t *curve, lil_t *dst) {
     // count other points
     while (lil_cmp_val(ctr, curve->m) != 0) {
         lil_ec_evaluate(curve, tmp, ctr);
+        
         // (ctr | m) = 0 => there is one more point
         if (lil_is_null(tmp)) {
             lil_inc(dst);
             lil_inc(ctr);
             continue;
         }
+        
         // (ctr | m) = 1 => there are two more points
         if (lil_jacobi(tmp, curve->m) == 1) {
             lil_inc(dst);
             lil_inc(dst);
         }
+        
         lil_inc(ctr);
     }
     

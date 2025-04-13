@@ -10,9 +10,9 @@ $$y^2 = x^3+ax+b$$
 where the inequality of the elliptic discriminant $\Delta=-16(4a^3+27b^2)$ to zero is a condition for the curve to be non-singular.
 
 **Prerequisites**:  
-• `lil_prng.c`
-• `lil_jacobi.c`
-• `lil_sqrt_mod.c`
+• `lil_prng.c`  
+• `lil_jacobi.c`  
+• `lil_sqrt_mod.c`  
 
 The `elliptic_curves.sh` script can be used to move all the necessary files, required by this module, to `src`, `include` and `test` directories, and recompile the library automatically. One can just run:
 ```

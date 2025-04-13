@@ -7,7 +7,6 @@
 #include "../include/longintconst.h"
 #include "../include/longintmacro.h"
 
-static int lil_is_not_one(lil_t *src);
 static void prng_quadratic_nonresidue(lil_t *src_a, lil_t *src_m);
 static void update_exp(uint64_t *exp, lil_t *tmp_e, lil_t *tmp_t, lil_t *src_a, lil_t *src_m);
 
@@ -48,7 +47,7 @@ int lil_sqrt_mod(lil_t *dst, lil_t *src_a, lil_t *src_m) {
     
     // one more exception (make sure a and m are relatively prime)
     lil_gcd(tmp_m, src_a, src_m);
-    if (lil_is_not_one(tmp_m)) {
+    if (not lil_is_one(tmp_m)) {
         errno = ERR_INVALID_INPUT;
         perror("Given number is not relatively prime to the modulus; square root calculation can not be performed");
         LIL_FREE(tmp_m);
@@ -110,7 +109,7 @@ int lil_sqrt_mod(lil_t *dst, lil_t *src_a, lil_t *src_m) {
     lil_mul_mod(tmp_b, dst, tmp_x, src_m);
     
     // b = 1 => result is already stored in dst
-    if (not lil_is_not_one(tmp_b)) {
+    if (lil_is_one(tmp_b)) {
         LIL_FREES(tmp_m, tmp_n, tmp_x, tmp_y, tmp_b);
         return 0;
     }
@@ -125,7 +124,7 @@ int lil_sqrt_mod(lil_t *dst, lil_t *src_a, lil_t *src_m) {
     // exponents
     uint64_t exp_r = trailing_zeroes; 
     uint64_t exp_m = 0;
-    while(lil_is_not_one(tmp_b)) {
+    while(not lil_is_one(tmp_b)) {
         update_exp(&exp_m, tmp_e, tmp_t, tmp_b, src_m);
         assert(exp_m != 0);
         assert(exp_m < exp_r);
@@ -143,13 +142,6 @@ int lil_sqrt_mod(lil_t *dst, lil_t *src_a, lil_t *src_m) {
     
     LIL_FREES(tmp_x, tmp_y, tmp_b, tmp_t, tmp_e);
     return 0;
-}
-
-static int lil_is_not_one(lil_t *src) {
-    for(size_t i = 1; i < src->size; i++) {
-        if (src->val[i]) return 1;
-    }
-    return src->val[0] == 1 ? 0 : 1;
 }
 
 static void prng_quadratic_nonresidue(lil_t *src_a, lil_t *src_m) {
@@ -172,7 +164,7 @@ static void update_exp(uint64_t *exp, lil_t *tmp_e, lil_t *tmp_t, lil_t *src_a, 
     do {
         if (*exp) lil_shl(tmp_e); // tmp_e <- 2 ^ exp
         lil_pow_mod(tmp_t, src_a, tmp_e, src_m);
-        if (not lil_is_not_one(tmp_t)) {
+        if (lil_is_one(tmp_t)) {
             return; // (a ^ (2 ^ exp)) = 1 mod m
         }
         *exp += 1;  // update exponent

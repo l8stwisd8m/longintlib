@@ -30,9 +30,6 @@ int lil_ec_valid_curve(lil_ec_t *curve) {
     lil_sum_mod(val_d, val_a, val_b, curve->m);       // 4 * a ^ 3 + 27 * b ^ 2 mod m
     flag = not lil_is_null(val_d);
     
-    LIL_FREE(val_a);
-    LIL_FREE(val_b);
-    LIL_FREE(val_d);
-    
+    LIL_FREES(val_a, val_b, val_d);
     return flag;
 }

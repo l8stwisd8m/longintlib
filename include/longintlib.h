@@ -64,6 +64,7 @@ int lil_cmp_val(lil_t *src_a, lil_t *src_b); // return 0 if abs(a) = abs(b), -1 
 int lil_is_null(lil_t *src); // return 1 if source is empty, 0 otherwise
 int lil_is_even(lil_t *src); // return 1 if source is even, 0 otherwise
 int lil_is_odd(lil_t *src);  // return 1 if source is odd, 0 otherwise
+int lil_is_one(lil_t *src);  // return 1 if source is one, 0 otherwise
 
 // PRINT & SCAN FUNCTIONS
 int lil_print_bin(lil_t *src); // print binary representation of source

@@ -30,11 +30,20 @@ int lil_div_mod(lil_t *dst, lil_t *src_a, lil_t *src_b, lil_t *src_m) {
     }
     #endif /* LIL_OPERAND_SIZES_CHECK */
     
+    // correct input
     lil_val_mod(src_a, src_m); // a <- a mod m
+    
+    // b = 1 => a / b mod m = a mod m
+    if (lil_is_one(src_b)) {
+        LIL_SET_NULL(dst);
+        LIL_CPY_VAL(dst, src_a);
+        return 0;
+    }
+    
     long_int *tmp_b;
     LIL_MALLOC(tmp_b, src_b->size);
     lil_inv(tmp_b, src_b, src_m); // b <- inv(b)
-    lil_mul_mod(dst, src_a, tmp_b, src_m); // a * b mod m
+    lil_mul_mod(dst, src_a, tmp_b, src_m); // a / b mod m
     
     LIL_FREE(tmp_b);
     return 0;

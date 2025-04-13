@@ -42,7 +42,6 @@ enum lil_ec_validation {
 
 int lil_ec_cpy(lil_point_t *dst, lil_point_t *src); // copy source point to destination
 int lil_ec_cmp(lil_ec_t *curve, lil_point_t *src_p, lil_point_t *src_q); // return 1 if point p is equal to q, 0 otherwise
-int lil_ec_add(lil_ec_t *curve, lil_point_t *dst, lil_point_t *src_p, lil_point_t *src_q); // check if points p and q coincide
 
 // VALIDATION
 
@@ -62,6 +61,7 @@ int lil_ec_evaluate(lil_ec_t *curve, lil_t *dst, lil_t *src); // long integer so
 int lil_ec_embed(lil_ec_t *curve, lil_point_t *dst, lil_t *src); // long integer source embedding into point
 int lil_ec_point_order(lil_ec_t *curve, lil_t *dst, lil_point_t *src); // order of source point
 int lil_ec_curve_order(lil_ec_t *curve, lil_t *dst); // order of a curve
+int lil_ec_curve_trace(lil_ec_t *curve, lil_t *dst); // frobenius trace of a curve
 
 // MACROS
 
@@ -129,13 +129,13 @@ int lil_ec_curve_order(lil_ec_t *curve, lil_t *dst); // order of a curve
     assert(SRC->x); \
     SRC->x->size = SIZE; \
     SRC->x->sign = LIL_PLUS; \
-    SRC->x->val = (uint64_t *)malloc(sizeof((SIZE) * sizeof(uint64_t))); \
+    SRC->x->val = (uint64_t *)malloc((SIZE) * sizeof(uint64_t)); \
     assert(SRC->x->val); \
     SRC->y = (long_int *)malloc(sizeof(long_int)); \
     assert(SRC->y); \
     SRC->y->size = SIZE; \
     SRC->y->sign = LIL_PLUS; \
-    SRC->y->val = (uint64_t *)malloc(sizeof((SIZE) * sizeof(uint64_t))); \
+    SRC->y->val = (uint64_t *)malloc((SIZE) * sizeof(uint64_t)); \
     assert(SRC->y->val);
 
 // clean memory allocation for point

@@ -7,16 +7,14 @@ int lil_ec_point_order(lil_ec_t *curve, lil_t *dst, lil_point_t *src) {
     
     // TODO: check exceptions
     
-    // default result
-    LIL_SET_NULL(dst);
-    
     if (LIL_EC_SPECIAL_POINT(src)) {
+        LIL_SET_NULL(dst);
         return 0;
     }
     
     lil_point_t *tmp, *res;
-    LIL_EC_CALLOC(tmp, curve->m->size);
-    LIL_EC_CALLOC(res, curve->m->size);
+    LIL_EC_MALLOC(tmp, curve->m->size);
+    LIL_EC_MALLOC(res, curve->m->size);
     lil_ec_cpy(res, src);
     
     do {
