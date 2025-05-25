@@ -1,8 +1,8 @@
 #include <iso646.h>
 #include <stddef.h>
-#include "../include/longintlib.h"
-#include "../include/longintmacro.h"
-#include "../include/longintprime.h"
+#include "longintlib.h"
+#include "longintmacro.h"
+#include "longintprime.h"
 
 static void prng_witness(lil_t *src_a, lil_t *src_m, size_t seed);
 

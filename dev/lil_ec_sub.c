@@ -1,6 +1,6 @@
-#include "../include/longintlib.h"
-#include "../include/longintmacro.h"
-#include "../include/longintcurve.h"
+#include "longintlib.h"
+#include "longintmacro.h"
+#include "longintcurve.h"
 
 int lil_ec_sub(lil_ec_t *curve, lil_point_t *dst, lil_point_t *src_p, lil_point_t *src_q) {
     // subtraction q from p

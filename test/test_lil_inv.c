@@ -4,8 +4,8 @@
 #include <sys/wait.h>
 #include <sys/types.h>
 #include <criterion/criterion.h>
-#include "../include/longintlib.h"
-#include "../include/longintconst.h"
+#include "longintlib.h"
+#include "longintconst.h"
 
 void fork_test_lil_inv_zero_value(void) {
     pid_t pid;

@@ -6,6 +6,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
+
 #ifndef uint128_t
 #define uint128_t __uint128_t
 #endif // uint128_t
@@ -25,6 +26,7 @@ typedef union {
 
 #undef PLUS
 #undef MINUS
+
 // long integer pseudonym
 #define long_int lil_t
 
@@ -33,7 +35,8 @@ typedef union {
 enum lil_perror {
     ERR_SIZE_MISMATCH = -1,
     ERR_ZERO_DIVISION = -2,
-    ERR_INVALID_INPUT = -3
+    ERR_INVALID_INPUT = -3,
+    ERR_ASSERT_FAILED = -4
 };
 
 // CONFIGURATION
@@ -73,6 +76,9 @@ int lil_print_hex(lil_t *src); // print hexadecimal representation of source
 int lil_scan_bin(lil_t *src); // scan binary representation of source
 int lil_scan_dec(lil_t *src); // scan decimal representation of source
 int lil_scan_hex(lil_t *src); // scan hexadecimal representation of source
+int lil_str_bin(lil_t *src, char *str); // extract representation of source from binary string
+int lil_str_dec(lil_t *src, char *str); // extract representation of source from decimal string
+int lil_str_hex(lil_t *src, char *str); // extract representation of source from hexadecimal string
 
 // BASIC MATH FUNCTIONS
 int lil_add(lil_t *src_a, lil_t *src_b); // addition of a and b

@@ -1,7 +1,7 @@
 #include <criterion/criterion.h>
-#include "../include/longintlib.h"
-#include "../include/longintconst.h"
-#include "../include/longintcurve.h"
+#include "longintlib.h"
+#include "longintconst.h"
+#include "longintcurve.h"
 
 Test(test_lil_ec_sub, result_is_special_point) {
     uint64_t arr_a[LIL_128_BIT] = {23};

@@ -4,8 +4,8 @@
 #include <sys/wait.h>
 #include <sys/types.h>
 #include <criterion/criterion.h>
-#include "../include/longintlib.h"
-#include "../include/longintconst.h"
+#include "longintlib.h"
+#include "longintconst.h"
 
 void fork_test_lil_div_mod_zero_modulus(void) {
     pid_t pid;

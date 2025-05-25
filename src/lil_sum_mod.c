@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <iso646.h>
-#include "../include/longintlib.h"
+#include "longintlib.h"
 
 int lil_sum_mod(lil_t *dst, lil_t *src_a, lil_t *src_b, lil_t *src_m) {
     // arithmetic sum of a and b modulo m

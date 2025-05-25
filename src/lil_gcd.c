@@ -3,9 +3,9 @@
 #include <stdint.h>
 #include <iso646.h>
 #include <assert.h>
-#include "../include/longintlib.h"
-#include "../include/longintconst.h"
-#include "../include/longintmacro.h"
+#include "longintlib.h"
+#include "longintconst.h"
+#include "longintmacro.h"
 
 static uint64_t short_gcd(uint64_t a, uint64_t b);
 static void binary_reduction(lil_t *a, lil_t *b);

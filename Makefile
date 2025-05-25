@@ -81,21 +81,21 @@ $(LIB_NAME): $(LIB_OBJ_FILES)
 $(EXX_TARGETS): $(EXX_OBJ_FILES)
 	@for obj in $^; do \
 		exe_name=$(BIN_DIR)/$$(basename $$(basename $$obj .o) .c); \
-		$(CC) -o $$exe_name $$obj -L$(LIB_DIR) -llongint $(RPATH); \
-		echo $(CC) -o $$exe_name $$obj -L$(LIB_DIR) -llongint $(RPATH); \
+		$(CC) -Iinclude -o $$exe_name $$obj -L$(LIB_DIR) -llongint $(RPATH); \
+		echo $(CC) -Iinclude -o $$exe_name $$obj -L$(LIB_DIR) -llongint $(RPATH); \
 	done
 
 $(TEST_TARGET): $(TEST_OBJ_FILES)
-	$(CC) -fprofile-arcs -ftest-coverage -o $@ $^ -L$(LIB_DIR) -llongint $(RPATH) -lcriterion -lgcov
+	$(CC) -Iinclude -fprofile-arcs -ftest-coverage -o $@ $^ -L$(LIB_DIR) -llongint $(RPATH) -lcriterion -lgcov
 
 $(OBJ_DIR)/$(SRC_DIR)/%.o: $(SRC_DIR)/%.c
-	$(CC) $(CFLAGS) $(WFLAGS) -c -o $@ $<
+	$(CC) -Iinclude $(CFLAGS) $(WFLAGS) -c -o $@ $<
 
 $(OBJ_DIR)/$(EXX_DIR)/%.o: $(EXX_DIR)/%.c
-	$(CC) $(WFLAGS) -c -o $@ $<
+	$(CC) -Iinclude $(WFLAGS) -c -o $@ $<
 
 $(OBJ_DIR)/$(TEST_DIR)/%.o: $(TEST_DIR)/%.c
-	$(CC) $(WFLAGS) -c -o $@ $< -lcriterion -lgcov
+	$(CC) -Iinclude $(WFLAGS) -c -o $@ $< -lcriterion -lgcov
 
 clean:
 	rm -rf $(LIB_DIR) $(OBJ_DIR) $(BIN_DIR)

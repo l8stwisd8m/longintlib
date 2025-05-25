@@ -4,9 +4,9 @@
 #include <iso646.h>
 #include <assert.h>
 #include <inttypes.h>
-#include "../include/longintlib.h"
-#include "../include/longintconst.h"
-#include "../include/longintmacro.h"
+#include "longintlib.h"
+#include "longintconst.h"
+#include "longintmacro.h"
 #define GCD_LEN_DIF 16 // value in range [0, 32), recommended option - between 4 and 16
 
 static uint64_t short_gcd(uint64_t a, uint64_t b);

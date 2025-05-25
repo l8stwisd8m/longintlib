@@ -1,9 +1,9 @@
 #include <errno.h>
 #include <stdio.h>
 #include <iso646.h>
-#include "../include/longintlib.h"
-#include "../include/longintconst.h"
-#include "../include/longintmacro.h"
+#include "longintlib.h"
+#include "longintconst.h"
+#include "longintmacro.h"
 
 int lil_sum(lil_t *dst, lil_t *src_a, lil_t *src_b) {
     // arithmetic sum of a and b

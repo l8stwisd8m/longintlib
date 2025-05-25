@@ -1,7 +1,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <immintrin.h>
-#include "../include/longintlib.h"
+#include "longintlib.h"
 #define ATTEMPTS 10
 #define RNG_SUCCESS 0
 #define RNG_FAIL 1

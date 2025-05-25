@@ -1,6 +1,6 @@
 #include <iso646.h>
-#include "../include/longintlib.h"
-#include "../include/longintcurve.h"
+#include "longintlib.h"
+#include "longintcurve.h"
 
 int lil_ec_cmp(lil_ec_t *curve, lil_point_t *src_p, lil_point_t *src_q) {
     // return 1 if point p is equal to q, 0 otherwise

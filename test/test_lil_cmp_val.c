@@ -1,7 +1,7 @@
 #include <stdint.h>
 #include <criterion/criterion.h>
-#include "../include/longintlib.h"
-#include "../include/longintconst.h"
+#include "longintlib.h"
+#include "longintconst.h"
 
 Test(test_lil_cmp_val, two_empty_values_value_comparison) {
     uint64_t arr_a[LIL_256_BIT] = {0};

@@ -2,9 +2,9 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <iso646.h>
-#include "../include/longintlib.h"
-#include "../include/longintconst.h"
-#include "../include/longintmacro.h"
+#include "longintlib.h"
+#include "longintconst.h"
+#include "longintmacro.h"
 
 int lil_val_mod(lil_t *src_a, lil_t *src_m) {
     // update a so it belongs to the range from zero to m

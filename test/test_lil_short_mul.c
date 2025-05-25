@@ -1,7 +1,7 @@
 #include <limits.h>
 #include <criterion/criterion.h>
-#include "../include/longintlib.h"
-#include "../include/longintconst.h"
+#include "longintlib.h"
+#include "longintconst.h"
 
 Test(test_lil_short_mul, short_multiplication_of_empty_values) {
     uint64_t arr_a[LIL_256_BIT] = {0};

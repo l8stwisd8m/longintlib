@@ -2,8 +2,8 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <iso646.h>
-#include "../include/longintlib.h"
-#include "../include/longintmacro.h"
+#include "longintlib.h"
+#include "longintmacro.h"
 
 int lil_jacobi(lil_t *src_a, lil_t *src_m) {
     // return 1 if a is quadratic residue modulo m, -1 if it is not, 0 if neither

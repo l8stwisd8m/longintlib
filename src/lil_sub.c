@@ -4,8 +4,8 @@
 #include <iso646.h>
 #include <stdint.h>
 #include <stdlib.h>
-#include "../include/longintlib.h"
-#include "../include/longintconst.h"
+#include "longintlib.h"
+#include "longintconst.h"
 
 int lil_sub(lil_t *src_a, lil_t *src_b) {
     // subtracting b from a

@@ -1,4 +1,4 @@
-#include "../include/longintlib.h"
+#include "longintlib.h"
 
 int lil_is_odd(lil_t *src) {
     // return 1 if source is odd, 0 otherwise

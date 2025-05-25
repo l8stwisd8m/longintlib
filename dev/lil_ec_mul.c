@@ -1,5 +1,5 @@
-#include "../include/longintlib.h"
-#include "../include/longintcurve.h"
+#include "longintlib.h"
+#include "longintcurve.h"
 
 int lil_ec_mul(lil_ec_t *curve, lil_point_t *dst, lil_point_t *src_p, lil_t *src_n) {
     // point p multiplied by long int n

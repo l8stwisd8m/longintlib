@@ -2,7 +2,7 @@
 
 [![docs](https://img.shields.io/badge/docs-blue)](https://github.com/l8stwisd8m/longintlib/blob/main/docs/Documentation.md)
 ![release - v0.1](https://img.shields.io/badge/release-v0.1-blueviolet)
-![coverage - 93.6%](https://img.shields.io/static/v1?label=coverage&message=93.6%&color=violet)
+![coverage - 94.8%](https://img.shields.io/badge/coverage-94.8%-violet)
 
 ## Overview
 

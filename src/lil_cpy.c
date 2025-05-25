@@ -3,8 +3,8 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <stdlib.h>
-#include "../include/longintlib.h"
-#include "../include/longintconst.h"
+#include "longintlib.h"
+#include "longintconst.h"
 
 int lil_cpy(lil_t *dst, lil_t *src) {
     // copy source structure to destination

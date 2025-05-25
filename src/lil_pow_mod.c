@@ -3,9 +3,9 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <iso646.h>
-#include "../include/longintlib.h"
-#include "../include/longintconst.h"
-#include "../include/longintmacro.h"
+#include "longintlib.h"
+#include "longintconst.h"
+#include "longintmacro.h"
 
 int lil_pow_mod(lil_t *dst, lil_t *src_a, lil_t *src_n, lil_t *src_m) {
     // raising a to the power n modulo m

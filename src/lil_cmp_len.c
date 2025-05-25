@@ -1,4 +1,4 @@
-#include "../include/longintlib.h"
+#include "longintlib.h"
 
 int lil_cmp_len(lil_t *src_a, lil_t *src_b) {
     // return 0 if len(a) = len(b), -1 if len(a) < len(b), 1 if len(a) > len(b)

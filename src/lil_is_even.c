@@ -1,4 +1,4 @@
-#include "../include/longintlib.h"
+#include "longintlib.h"
 
 int lil_is_even(lil_t *src) {
     // return 1 if source is even, 0 otherwise

@@ -3,9 +3,9 @@
 #include <stdint.h>
 #include <iso646.h>
 #include <assert.h>
-#include "../include/longintlib.h"
-#include "../include/longintconst.h"
-#include "../include/longintmacro.h"
+#include "longintlib.h"
+#include "longintconst.h"
+#include "longintmacro.h"
 
 static void prng_quadratic_nonresidue(lil_t *src_a, lil_t *src_m);
 static void update_exp(uint64_t *exp, lil_t *tmp_e, lil_t *tmp_t, lil_t *src_a, lil_t *src_m);
@@ -35,11 +35,16 @@ int lil_sqrt_mod(lil_t *dst, lil_t *src_a, lil_t *src_m) {
     
     // default result
     LIL_SET_NULL(dst);
-    dst->sign = LIL_PLUS;
     
     // a = 0 => sqrt(a) mod m = 0
     if (lil_is_null(src_a)) {
         return LIL_NO_ANSWER; 
+    }
+    
+    // a = 1 => sqrt(a) mod m = 1
+    if (lil_is_one(src_a)) {
+        LIL_LSD(dst) = 1;
+        return 0; 
     }
     
     long_int *tmp_m;

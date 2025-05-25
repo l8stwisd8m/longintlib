@@ -6,9 +6,9 @@
 #include <sys/wait.h>
 #include <sys/types.h>
 #include <criterion/criterion.h>
-#include "../include/longintlib.h"
-#include "../include/longintconst.h"
-#include "../include/longintmacro.h"
+#include "longintlib.h"
+#include "longintconst.h"
+#include "longintmacro.h"
 #define BUF_SIZE 512
 
 int test_lil_scan_dec_asset_check(lil_t *exp, const char *path) {

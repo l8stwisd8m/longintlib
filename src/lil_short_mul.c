@@ -1,9 +1,9 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <iso646.h>
-#include "../include/longintlib.h"
-#include "../include/longintconst.h"
-#include "../include/longintmacro.h"
+#include "longintlib.h"
+#include "longintconst.h"
+#include "longintmacro.h"
 
 int lil_short_mul(long_int *src_a, uint64_t src_b) {
     // multiplication of long a and short b

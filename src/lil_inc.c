@@ -1,6 +1,6 @@
 #include <stddef.h>
-#include "../include/longintlib.h"
-#include "../include/longintconst.h"
+#include "longintlib.h"
+#include "longintconst.h"
 
 int lil_inc(lil_t *src) {
     // increment source value

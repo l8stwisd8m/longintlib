@@ -1,8 +1,8 @@
 #include <stdint.h>
 #include <criterion/criterion.h>
-#include "../include/longintlib.h"
-#include "../include/longintconst.h"
-#include "../include/longintprime.h"
+#include "longintlib.h"
+#include "longintconst.h"
+#include "longintprime.h"
 
 Test(test_lil_primality, empty_value) {
     uint64_t arr_a[LIL_256_BIT] = {0};

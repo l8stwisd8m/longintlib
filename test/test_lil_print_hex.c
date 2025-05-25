@@ -3,8 +3,8 @@
 #include <limits.h>
 #include <iso646.h>
 #include <criterion/criterion.h>
-#include "../include/longintlib.h"
-#include "../include/longintconst.h"
+#include "longintlib.h"
+#include "longintconst.h"
 #define BUF_SIZE 512
 
 void test_lil_print_hex_asset_gen(lil_t *src, const char *path) {

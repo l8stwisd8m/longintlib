@@ -1,6 +1,6 @@
 #include <iso646.h>
 #include <stddef.h>
-#include "../include/longintlib.h"
+#include "longintlib.h"
 
 int lil_cmp(lil_t *src_a, lil_t *src_b) {
     // return 0 if a = b, -1 if a < b, 1 if a > b

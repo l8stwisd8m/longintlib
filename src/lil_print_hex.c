@@ -3,8 +3,8 @@
 #include <stdint.h>
 #include <iso646.h>
 #include <inttypes.h>
-#include "../include/longintlib.h"
-#include "../include/longintconst.h"
+#include "longintlib.h"
+#include "longintconst.h"
 #define LIL_PH_MASK 0xf000000000000000
 
 int lil_print_hex(lil_t *src) {

@@ -1,8 +1,8 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <iso646.h>
-#include "../include/longintlib.h"
-#include "../include/longintconst.h"
+#include "longintlib.h"
+#include "longintconst.h"
 
 int lil_shln(lil_t *src, uint64_t n) {
     // left shift by n bits

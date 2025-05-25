@@ -3,9 +3,9 @@
 #include <assert.h>
 #include <stdint.h>
 #include <inttypes.h>
-#include "../include/longintlib.h"
-#include "../include/longintconst.h"
-#include "../include/longintmacro.h"
+#include "longintlib.h"
+#include "longintconst.h"
+#include "longintmacro.h"
 
 int lil_print_dec(lil_t *src) {
     // print decimal representation of source

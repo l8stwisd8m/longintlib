@@ -4,8 +4,8 @@
 #include <sys/wait.h>
 #include <sys/types.h>
 #include <criterion/criterion.h>
-#include "../include/longintlib.h"
-#include "../include/longintconst.h"
+#include "longintlib.h"
+#include "longintconst.h"
 
 Test(test_lil_sqrt_mod, invalid_zero_value) {
     uint64_t arr_a[LIL_256_BIT] = {0};
@@ -18,6 +18,20 @@ Test(test_lil_sqrt_mod, invalid_zero_value) {
     cr_expect_eq(flag, LIL_NO_ANSWER);
     cr_expect_eq(a.sign, LIL_PLUS);
     uint64_t expected_arr[LIL_256_BIT] = {0};
+    cr_expect_arr_eq(a.val, expected_arr, a.size);
+}
+
+Test(test_lil_sqrt_mod, square_root_of_one) {
+    uint64_t arr_a[LIL_256_BIT] = {0};
+    uint64_t arr_b[LIL_256_BIT] = {1};
+    uint64_t arr_m[LIL_256_BIT] = {0x1234567};
+    long_int a = {MINUS, arr_a, LIL_256_BIT};
+    long_int b = {MINUS, arr_b, LIL_256_BIT};
+    long_int m = {MINUS, arr_m, LIL_256_BIT};
+    int flag = lil_sqrt_mod(&a, &b, &m);
+    cr_expect_eq(flag, LIL_NO_ERROR);
+    cr_expect_eq(a.sign, LIL_PLUS);
+    uint64_t expected_arr[LIL_256_BIT] = {1};
     cr_expect_arr_eq(a.val, expected_arr, a.size);
 }
 

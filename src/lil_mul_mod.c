@@ -2,9 +2,9 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <iso646.h>
-#include "../include/longintlib.h"
-#include "../include/longintconst.h"
-#include "../include/longintmacro.h"
+#include "longintlib.h"
+#include "longintconst.h"
+#include "longintmacro.h"
 
 static void mul_mod(lil_t *dst, lil_t *src_a, lil_t *src_b, lil_t *src_m);
 

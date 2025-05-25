@@ -1,7 +1,7 @@
 #include <stddef.h>
-#include "../include/longintlib.h"
-#include "../include/longintmacro.h"
-#include "../include/longintprime.h"
+#include "longintlib.h"
+#include "longintmacro.h"
+#include "longintprime.h"
 
 #define LT_SIZE 30
 #define LT_LIMIT 9

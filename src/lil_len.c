@@ -1,7 +1,7 @@
 #include <stddef.h>
 #include <stdint.h>
-#include "../include/longintlib.h"
-#include "../include/longintconst.h"
+#include "longintlib.h"
+#include "longintconst.h"
 
 uint64_t lil_len(lil_t *src) {
     // return bit length of source

@@ -1,6 +1,6 @@
 #include <stddef.h>
 #include <stdint.h>
-#include "../include/longintlib.h"
+#include "longintlib.h"
 
 int lil_rev(lil_t *src) {
     // reverse source values order

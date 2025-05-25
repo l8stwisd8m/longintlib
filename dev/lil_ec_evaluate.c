@@ -1,6 +1,6 @@
-#include "../include/longintlib.h"
-#include "../include/longintmacro.h"
-#include "../include/longintcurve.h"
+#include "longintlib.h"
+#include "longintmacro.h"
+#include "longintcurve.h"
 
 int lil_ec_evaluate(lil_ec_t *curve, lil_t *dst, lil_t *src) {
     // long integer source evaluation

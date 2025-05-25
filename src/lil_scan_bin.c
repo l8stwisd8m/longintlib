@@ -3,9 +3,9 @@
 #include <stdint.h>
 #include <iso646.h>
 #include <stdbool.h>
-#include "../include/longintlib.h"
-#include "../include/longintconst.h"
-#include "../include/longintmacro.h"
+#include "longintlib.h"
+#include "longintconst.h"
+#include "longintmacro.h"
 
 int lil_scan_bin(lil_t *src) {
     // scan binary representation of source

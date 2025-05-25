@@ -3,8 +3,8 @@
 #include <sys/wait.h>
 #include <sys/types.h>
 #include <criterion/criterion.h>
-#include "../include/longintlib.h"
-#include "../include/longintconst.h"
+#include "longintlib.h"
+#include "longintconst.h"
 
 Test(test_lil_gcd, gcd_of_not_empty_value_and_zero) {
     uint64_t arr_a[LIL_256_BIT] = {0x1234567};

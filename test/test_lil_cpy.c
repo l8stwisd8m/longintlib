@@ -4,8 +4,8 @@
 #include <sys/wait.h>
 #include <sys/types.h>
 #include <criterion/criterion.h>
-#include "../include/longintlib.h"
-#include "../include/longintconst.h"
+#include "longintlib.h"
+#include "longintconst.h"
 
 Test(test_lil_cpy, same_sized_terms_copy) {
     uint64_t arr_a[LIL_256_BIT] = {0};

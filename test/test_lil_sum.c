@@ -4,8 +4,8 @@
 #include <sys/wait.h>
 #include <sys/types.h>
 #include <criterion/criterion.h>
-#include "../include/longintlib.h"
-#include "../include/longintconst.h"
+#include "longintlib.h"
+#include "longintconst.h"
 
 Test(test_lil_sum, sum_of_empty_values) {
     uint64_t arr_a[LIL_256_BIT] = {0};

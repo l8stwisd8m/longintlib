@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <inttypes.h>
-#include "../include/longintlib.h"
+#include "longintlib.h"
 #define VAL_SIZE 20
 #define PRIME_AMNT 15
 

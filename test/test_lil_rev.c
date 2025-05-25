@@ -1,7 +1,7 @@
 #include <stdint.h>
 #include <criterion/criterion.h>
-#include "../include/longintlib.h"
-#include "../include/longintconst.h"
+#include "longintlib.h"
+#include "longintconst.h"
 
 Test(test_lil_rev, single_digit_value_reversed_digits_order) {
     uint64_t arr_a[1] = {1};

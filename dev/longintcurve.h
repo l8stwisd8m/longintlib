@@ -13,7 +13,7 @@
 #include "longintmacro.h"
 
 // ELLIPTIC CURVE TYPE
-// weierstrass normal form
+// weierstrass short form
 // y ^ 2 = x ^ 3 * a * x ^ 2 + b mod m (modulus supposed to be prime)
 
 typedef struct {
@@ -62,6 +62,7 @@ int lil_ec_embed(lil_ec_t *curve, lil_point_t *dst, lil_t *src); // long integer
 int lil_ec_point_order(lil_ec_t *curve, lil_t *dst, lil_point_t *src); // order of source point
 int lil_ec_curve_order(lil_ec_t *curve, lil_t *dst); // order of a curve
 int lil_ec_curve_trace(lil_ec_t *curve, lil_t *dst); // frobenius trace of a curve
+int lil_ec_prng_point(lil_ec_t *curve, lil_point_t *dst, size_t seed); // pseudorandom point generation
 
 // MACROS
 
@@ -162,5 +163,32 @@ int lil_ec_curve_trace(lil_ec_t *curve, lil_t *dst); // frobenius trace of a cur
     free(SRC->x); \
     free(SRC->y); \
     free(SRC);
+
+// CONSTANTS
+
+// FIELD SIZES
+
+#define LIL_PRIME_FIELD_SIZE_192 3U
+#define LIL_PRIME_FIELD_SIZE_224 4U
+#define LIL_PRIME_FIELD_SIZE_256 4U
+#define LIL_PRIME_FIELD_SIZE_384 6U
+#define LIL_PRIME_FIELD_SIZE_521 9U
+#define LIL_PRIME_FIELD_SIZE_255 4U
+#define LIL_PRIME_FIELD_SIZE_448 7U
+
+// NIST SP 800-168 
+// https://doi.org/10.6028/NIST.SP.800-186
+
+#define LIL_NIST_CURVE_P192 {0xffffffffffffffff, 0xfffffffffffffffe, 0xffffffffffffffff};
+#define LIL_NIST_CURVE_P224 {0x1, 0xffffffff00000000, 0xffffffffffffffff, 0x00000000ffffffff};
+#define LIL_NIST_CURVE_P256 {0xffffffffffffffff, 0x00000000ffffffff, 0x0, 0xffffffff00000001};
+#define LIL_NIST_CURVE_P384 {0x00000000ffffffff, 0xffffffff00000000, 0xfffffffffffffffe, \
+                             0xffffffffffffffff, 0xffffffffffffffff, 0xffffffffffffffff};
+#define LIL_NIST_CURVE_P521 {0xffffffffffffffff, 0xffffffffffffffff, 0xffffffffffffffff, \
+                             0xffffffffffffffff, 0xffffffffffffffff, 0xffffffffffffffff, \
+                             0xffffffffffffffff, 0xffffffffffffffff, 0x1ff};
+#define LIL_NIST_CURVE_25519 {0xffffffffffffffed, 0xffffffffffffffff, 0xffffffffffffffff, 0x7fffffffffffffff};
+#define LIL_NIST_CURVE_448 {0xffffffffffffffff, 0xffffffffffffffff, 0xffffffffffffffff, 0xfffffffeffffffff, \
+                            0xffffffffffffffff, 0xffffffffffffffff, 0xffffffffffffffff};
 
 #endif // _LONG_INT_CURVE_

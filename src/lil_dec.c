@@ -1,6 +1,6 @@
 #include <stddef.h>
-#include "../include/longintlib.h"
-#include "../include/longintconst.h"
+#include "longintlib.h"
+#include "longintconst.h"
 
 int lil_dec(lil_t *src) {
     // decrement source value

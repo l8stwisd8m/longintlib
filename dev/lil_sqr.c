@@ -3,9 +3,9 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <iso646.h>
-#include "../include/longintlib.h"
-#include "../include/longintconst.h"
-#include "../include/longintmacro.h"
+#include "longintlib.h"
+#include "longintconst.h"
+#include "longintmacro.h"
 
 int lil_sqr(lil_t *dst, lil_t *src) {
     // raising source to the power of two

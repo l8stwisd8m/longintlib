@@ -1,7 +1,7 @@
 #include <iso646.h>
-#include "../include/longintlib.h"
-#include "../include/longintmacro.h"
-#include "../include/longintcurve.h"
+#include "longintlib.h"
+#include "longintmacro.h"
+#include "longintcurve.h"
 
 int lil_ec_valid_curve(lil_ec_t *curve) {
     // check if curve is non-singular

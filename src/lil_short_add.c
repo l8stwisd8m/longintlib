@@ -1,7 +1,7 @@
 #include <stddef.h>
 #include <stdint.h>
-#include "../include/longintlib.h"
-#include "../include/longintconst.h"
+#include "longintlib.h"
+#include "longintconst.h"
 
 int lil_short_add(lil_t *src_a, uint64_t src_b) {
     // add short abs(b) to abs(values) of long a

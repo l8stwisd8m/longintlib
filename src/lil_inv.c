@@ -4,9 +4,9 @@
 #include <stdint.h>
 #include <iso646.h>
 #include <assert.h>
-#include "../include/longintlib.h"
-#include "../include/longintconst.h"
-#include "../include/longintmacro.h"
+#include "longintlib.h"
+#include "longintconst.h"
+#include "longintmacro.h"
 
 #ifdef COPRIME_TERMS_INVERSION
 static int lil_is_not_one(lil_t *src) {

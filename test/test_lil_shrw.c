@@ -1,8 +1,8 @@
 #include <stdint.h>
 #include <limits.h>
 #include <criterion/criterion.h>
-#include "../include/longintlib.h"
-#include "../include/longintconst.h"
+#include "longintlib.h"
+#include "longintconst.h"
 
 Test(test_lil_shrw, empty_value_right_wordsize_shift) {
     uint64_t arr_a[LIL_256_BIT] = {0};
