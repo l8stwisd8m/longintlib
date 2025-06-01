@@ -10,6 +10,10 @@
 
 ### [Long Integer type](#long-integer-type-1)
 
+### [Configuration](#configuration-1)
+
+### [Handling exceptions](#handling-exceptions-1)
+
 ### [Constants](#constants-1)
 1. [Sign constants](#1-sign-constants)  
 2. [Utility constants](#2-utility-constants)
@@ -27,10 +31,13 @@
 7. [Memory allocation (LIL_MALLOC)](#7-memory-allocation-lil_malloc)  
 8. [Clean memory allocation (LIL_CALLOC)](#8-clean-memory-allocation-lil_calloc)  
 9. [Free memory (LIL_FREE)](#9-free-memory-lil_free)  
-10. [Bitwise exclusive or (LIL_BIT_XOR)](#10-bitwise-exclusive-or-lil_bit_xor)  
-11. [Bitwise inversion (LIL_BIT_NOT)](#11-bitwise-inversion-lil_bit_not)  
-12. [Bitwise conjunction (LIL_BIT_AND)](#12-bitwise-conjunction-lil_bit_and)  
-13. [Bitwise disjunction (LIL_BIT_OR)](#13-bitwise-disjunction-lil_bit_or)  
+10. [Variadic memory allocation (LIL_MALLOCS)](#10-variadic-memory-allocation-lil_mallocs)  
+11. [Variadic clean memory allocation (LIL_CALLOCS)](#11-variadic-clean-memory-allocation-lil_callocs)  
+12. [Variadic free memory (LIL_FREES)](#12-variadic-free-memory-lil_frees)  
+13. [Bitwise exclusive or (LIL_BIT_XOR)](#13-bitwise-exclusive-or-lil_bit_xor)  
+14. [Bitwise inversion (LIL_BIT_NOT)](#14-bitwise-inversion-lil_bit_not)  
+15. [Bitwise conjunction (LIL_BIT_AND)](#15-bitwise-conjunction-lil_bit_and)  
+16. [Bitwise disjunction (LIL_BIT_OR)](#16-bitwise-disjunction-lil_bit_or)  
 
 ### [Basic functions](#basic-functions-1)
 1. [Reverse value (lil_rev)](#1-reverse-value-lil_rev)
@@ -40,16 +47,18 @@
 5. [Compare lengths (lil_cmp_len)](#5-compare-lengths-lil_cmp_len)
 6. [Compare absolute values (lil_cmp_val)](#6-compare-absolute-values-lil_cmp_val)
 7. [Check if null (lil_is_null)](#7-check-if-null-lil_is_null)
-8. [Check if even (lil_is_even)](#8-check-if-even-lil_is_even)
-9. [Check if odd (lil_is_odd)](#9-check-if-odd-lil_is_odd)
+8. [Check if one (lil_is_one)](#8-check-if-one-lil_is_one)
 
 ### [Print & Scan functions](#print--scan-functions-1)
 1. [Print binary (lil_print_bin)](#1-print-binary-lil_print_bin)
-2. [Print decimal(lil_print_dec)](#2-print-decimal-lil_print_dec)
-3. [Print hexadecimal(lil_print_hex)](#3-print-hexadecimal-lil_print_hex)
+2. [Print decimal (lil_print_dec)](#2-print-decimal-lil_print_dec)
+3. [Print hexadecimal (lil_print_hex)](#3-print-hexadecimal-lil_print_hex)
 4. [Scan binary (lil_scan_bin)](#4-scan-binary-lil_scan_bin)
-5. [Scan decimal(lil_scan_dec)](#5-scan-decimal-lil_scan_dec)
-6. [Scan hexadecimal(lil_scan_hex)](#6-scan-hexadecimal-lil_scan_hex)
+5. [Scan decimal (lil_scan_dec)](#5-scan-decimal-lil_scan_dec)
+6. [Scan hexadecimal (lil_scan_hex)](#6-scan-hexadecimal-lil_scan_hex)
+7. [Binary string (lil_str_bin)](#7-binary-string-lil_str_bin)
+8. [Decimal string (lil_str_bin)](#8-decimal-string-lil_str_dec)
+9. [Hexadecimal string (lil_str_bin)](#9-hexadecimal-string-lil_str_hex)
 
 ### [Basic math functions](#basic-math-functions-1)
 1. [Addition (lil_add)](#1-addition-lil_add)
@@ -111,7 +120,7 @@ The `longintlib.h` header contains some [custom functions](#custom-functions-1),
 • [`Criterion`](https://github.com/Snaipe/Criterion) is used for unit tests [optional];  
 • [`LCOV/GCOV`](https://github.com/linux-test-project/lcov) for coverage info [optional].  
 
-Since no `GCC`-specific intinsics and headers are used yed, one can use a different compiler. However, some changes should be made — for instance, `stdint.h` need to be replaced with `cstdint.h` for using `Clang` compiler instead of `GCC`.
+Since no `GCC`-specific intinsics and headers are used yed, one can use a different compiler.  
 
 Also, [`genhtml`](https://man.archlinux.org/man/genhtml.1.en) can be used for coverage report `html` page generation.
 
@@ -193,6 +202,65 @@ LIL_MALLOC(var, n);
 LIL_FREE(var);
 ```
 The `LIL_CALLOC` macro can be used the same way.
+
+
+## Configuration
+
+Certain configuration options, such as [exception handling](#handling-exceptions-1) and output display parameters, can be modified by changing corresponding definitions in the `longintlib.h` file.  
+
+By the default, the following options are enabled for checking exceptions:  
+1. **LIL_OPERAND_SIZES**: if the option is enabled, functions which have a requirement for operands to be of the same size check this condition;  
+2. **LIL_DIVISION_BY_ZERO**: option used in division and modular arithmetic functions to check if a divisor is equal to zero using `lil_if_null` function;  
+3. **COPRIME_TERMS_INVERSION**: used in modular arithmetic functions to check if terms are not coprime using `lil_gcd` function.  
+Despite these features can slow down the performance, it is highly recommended not to disable them.  
+
+There are four output options for `lil_print_bin`, `lil_print_dec` and `lil_print_hex` functions:  
+1. **LIL_PRINT_SIGN**: if the option is enabled, dash symbol (`-`) appears before negative number representation;  
+2. **LIL_PRINT_PREFIX**: displays `0b` and `0x` prefixes in binary and hexadecimal number representations respectively;  
+3. **LIL_PRINT_SEPARATOR**: enabled option places spaces (` `) between each value digits; since decimal digits do not correspond to actual value digits, this option can not be applyed to `lil_print_dec` function;  
+4. **LIL_PRINT_NEW_LINE**: adds carriage return after each `print` function call.     
+
+Any of the aforementioned configuration options can be disabled by removing definitions from `longintlib.h` or by undefining the desired options in each target source file.  
+
+For instance, removing `LIL_PRINT_SIGN` option from `longintlib.h`:
+```
+#if 0
+#define LIL_PRINT_SIGN
+#endif
+
+```
+will disable displaying sign of negative numbers in `lil_print_bin`, `lil_print_dec` and `lil_print_hex` functions.  
+
+To remove the feature from a certain file, such as `lil_print_dec`, one can add 
+```
+#undef LIL_PRINT_SIGN
+```
+to the `lil_print_dec.c` file content.  
+
+
+## Handling exceptions
+
+Each `longintlib` function returns an integer number. With some exceptions, all the source functions are designed to return zero if no error occured during performing operation, and nonzero value otherwise.
+These exceptions are `lil_cmp`, `lil_cmp_len` and `lil_cmp_val` functions used for comparison, which return `0`, `1` or `-1` when the compared parametes were equal, first term exceeds second or second term exceeds first one respectively;it is `lil_len` function, returning `uint64_t` integer bit length of the source value (which can be equal to zero), and `lil_is_null` / `lil_is_one` functions, which return `1` only when source value is equal to zero / one, and `0` if it is neither not equal to zero / one or input was incorrect (e.g. null pointer was entered). 
+If the input is not correct, operand sizes mismatched or any other error occured during function run, an exception is throwed by setting `errno` to a certain nonzero integer value, specified by the function: enumeration listed in the `longintlib.h` is applicable to most of the source files, but there are some additional anumerations in the `longintconst` and other headers intended for exception handling of specific functions.  
+
+Basic exception handling enumeration from the `longintlib.h` consists of the following errors:
+1. **ERR_SIZE_MISMATCH**: indicates that terms involved in the operation consist of different amount of digits making operation performing impossible;  
+2. **ERR_ZERO_DIVISION**: divisor or modulus is equal to zero;  
+3. **ERR_INVALID_INPUT**: is applicable for scan and string convertation functions;  
+4. **ERR_ASSERT_FAILED**: indicates assertion fail.  
+
+Throwing any of these exceptions indicates crucial error and crushes the program immediately.  
+
+Standard `assert` function from the `assert.h` is used most commonly for null pointer assertions after memory allocation, and inside the parts of code that are supposed to be unreachable (even despite there is a specail `ERR_ASSERT_FAILED` error number). 
+
+There are many "errors", that are not considered critical and therefore do not force program to terminate. The most common are listed in the `longintconst` header:  
+1. **LIL_OVERFLOW**: result of an arithmetic operation can not be stored in the variable;  
+2. **LIL_TRUNCATED**: input or output was truncated;  
+3. **LIL_NO_ANSWER**: function failed to perform correctly. 
+
+Special `LIL_NO_ERROR` definition indicates that no error occured.   
+
 
 ## Constants 
 
@@ -282,12 +350,12 @@ Result is stored in the source argument - source `SRC` (SRC).
 
 ### 7. Memory allocation (LIL_MALLOC)
 *Macro allocates memory for the source.*  
-Input arguments are a pointer to the long_int source pointer and the size (long_int **SRC and size_t SIZE).  
+Input arguments are a pointer to the long_int source pointer and the size (long_int *SRC and size_t SIZE).  
 Result is stored in the source pointer argument - source pointer `SRC` (SRC).
 
 ### 8. Clean memory allocation (LIL_CALLOC)
 *Macro allocates memory for the source and initializes it to zero.*  
-Input arguments are a pointer to the long_int source pointer and the size (long_int **SRC and size_t SIZE).  
+Input arguments are a pointer to the long_int source pointer and the size (long_int *SRC and size_t SIZE).  
 Result is stored in the source pointer argument - source pointer `SRC` (SRC).
 
 ### 9. Free memory (LIL_FREE)
@@ -295,22 +363,37 @@ Result is stored in the source pointer argument - source pointer `SRC` (SRC).
 Input argument is a pointer to the long_int source (lil_t *SRC).  
 It frees both the value array and the source structure itself.
 
-### 10. Bitwise exclusive or (LIL_BIT_XOR)
+### 10. Variadic memory allocation (LIL_MALLOCS)
+*Macro allocates memory for multiple sources.*  
+Input arguments are the size (size_t SIZE) and variadic list of pointers to the long_int sources.  
+Results are stored in the sources' pointers.
+
+### 11. Variadic clean memory allocation (LIL_CALLOCS)
+*Macro allocates memory for multiple sources and initializes them to zero.*  
+Input arguments are the size (size_t SIZE) and variadic list of pointers to the long_int sources.  
+Results are stored in the sources' pointers.
+
+### 12. Variadic free memory (LIL_FREES)
+*Macro frees memory allocated for multiple sources.*  
+Input argument is variadic list of pointers to the long_int sources.  
+It frees both value arrays and source structures itself.
+
+### 13. Bitwise exclusive or (LIL_BIT_XOR)
 *Macro performs bitwise exclusive or on the source values.*  
 Input arguments are pointers to the long_int source values (lil_t *SRC_A and lil_t *SRC_B).  
 Results are stored in the first source argument - `SRC_A`.
 
-### 11. Bitwise inversion (LIL_BIT_NOT)
+### 14. Bitwise inversion (LIL_BIT_NOT)
 *Macro performs bitwise inversion on the source value.*  
 Input argument is a pointer to the long_int source (lil_t *SRC).  
 Results are stored in the source argument itself.
 
-### 12. Bitwise conjunction (LIL_BIT_AND)
+### 15. Bitwise conjunction (LIL_BIT_AND)
 *Macro performs bitwise conjunction on the source values.*  
 Input arguments are pointers to the long_int source values (lil_t *SRC_A and lil_t *SRC_B).  
 Results are stored in the first source argument - `SRC_A`.
 
-### 13. Bitwise disjunction (LIL_BIT_OR)
+### 16. Bitwise disjunction (LIL_BIT_OR)
 *Macro performs bitwise disjunction on the source values.*  
 Input arguments are pointers to the long_int source values (lil_t *SRC_A and lil_t *SRC_B).  
 Results are stored in the first source argument - `SRC_A`.  
@@ -352,17 +435,17 @@ Result is 0 if abs(a) = abs(b), -1 if abs(a) < abs(b), 1 if abs(a) > abs(b).
 Input argument is a pointer to the long_int source (lil_t *src).  
 Result is 1 if source is empty, 0 otherwise.  
 
-### 8. Check if even (lil_is_even)
-*Function checks if the source is even.*  
+### 8. Check if one (lil_is_one)
+*Function checks if the source value is equal to one.*  
 Input argument is a pointer to the long_int source (lil_t *src).  
-Result is 1 if source is even, 0 otherwise.  
+Result is 1 if source is one, 0 otherwise.  
 
-### 9. Check if odd (lil_is_odd)
-*Function checks if the source is odd.*  
-Input argument is a pointer to the long_int source (lil_t *src).  
-Result is 1 if source is odd, 0 otherwise.  
 
 ## Print & Scan functions
+
+This set of functions is responsible for outputting and inputting the data in various numeral systems: binary, decimal, and hexadecimal.  
+
+Display options can be [configured](#configuration-1) using definitions within `longintlib.h` file or separate source files.  
 
 ### 1. Print binary (lil_print_bin)
 *Function prints the binary representation of the source.*  
@@ -393,6 +476,22 @@ Input argument is a pointer to the long_int source (lil_t *src).
 *Function scans and inputs a hexadecimal representation into the source.*  
 Input argument is a pointer to the long_int source (lil_t *src).  
 **Note**: the source value should have enough lenght to store a number. Excess input will be truncated.
+
+### 7. Binary string (lil_str_bin)
+*Function extracts representation of source from binary string*
+Input arguments are pointers to the long_int source (lil_t *src) and to the string (char *str).  
+Result is stored in the first argument — long integer source (src). 
+
+### 8. Binary string (lil_str_dec)
+*Function extracts representation of source from decimal string*
+Input arguments are pointers to the long_int source (lil_t *src) and to the string (char *str).  
+Result is stored in the first argument — long integer source (src). 
+
+### 9. Binary string (lil_str_hex)
+*Function extracts representation of source from hexadecimal string*
+Input arguments are pointers to the long_int source (lil_t *src) and to the string (char *str).  
+Result is stored in the first argument — long integer source (src). 
+
 
 ## Basic math functions
 
