@@ -1,6 +1,8 @@
 # compiler and flags
 CC := gcc
-CFLAGS := -fPIC -fprofile-arcs -ftest-coverage #-march=native -mrdrnd
+CFLAGS := -fPIC -fprofile-arcs -ftest-coverage
+# uncomment the next string to compile "lil_rng" funciton
+# CFLAGS += -march=native -mrdrnd
 WFLAGS = -Wall -Wpedantic -Wextra
 LDFLAGS = -Llib -llongint
 RPATH = -Wl,-rpath=./lib
@@ -81,21 +83,21 @@ $(LIB_NAME): $(LIB_OBJ_FILES)
 $(EXX_TARGETS): $(EXX_OBJ_FILES)
 	@for obj in $^; do \
 		exe_name=$(BIN_DIR)/$$(basename $$(basename $$obj .o) .c); \
-		$(CC) -Iinclude -o $$exe_name $$obj -L$(LIB_DIR) -llongint $(RPATH); \
-		echo $(CC) -Iinclude -o $$exe_name $$obj -L$(LIB_DIR) -llongint $(RPATH); \
+		$(CC) -Iinclude -o $$exe_name $$obj -lm -L$(LIB_DIR) -llongint $(RPATH); \
+		echo $(CC) -Iinclude -o $$exe_name $$obj -lm -L$(LIB_DIR) -llongint $(RPATH); \
 	done
 
 $(TEST_TARGET): $(TEST_OBJ_FILES)
 	$(CC) -Iinclude -fprofile-arcs -ftest-coverage -o $@ $^ -L$(LIB_DIR) -llongint $(RPATH) -lcriterion -lgcov
 
 $(OBJ_DIR)/$(SRC_DIR)/%.o: $(SRC_DIR)/%.c
-	$(CC) -Iinclude $(CFLAGS) $(WFLAGS) -c -o $@ $<
+	$(CC) -Iinclude $(CFLAGS) $(WFLAGS) -c -o $@ $< -lm
 
 $(OBJ_DIR)/$(EXX_DIR)/%.o: $(EXX_DIR)/%.c
-	$(CC) -Iinclude $(WFLAGS) -c -o $@ $<
+	$(CC) -Iinclude $(WFLAGS) -c -o $@ $< -lm
 
 $(OBJ_DIR)/$(TEST_DIR)/%.o: $(TEST_DIR)/%.c
-	$(CC) -Iinclude $(WFLAGS) -c -o $@ $< -lcriterion -lgcov
+	$(CC) -Iinclude $(WFLAGS) -c -o $@ $< -lcriterion -lgcov -lm
 
 clean:
 	rm -rf $(LIB_DIR) $(OBJ_DIR) $(BIN_DIR)

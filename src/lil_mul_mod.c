@@ -29,7 +29,6 @@ int lil_mul_mod(lil_t *dst, lil_t *src_a, lil_t *src_b, lil_t *src_m) {
     #endif /* LIL_OPERAND_SIZES */
     
     // default: result
-    dst->sign = LIL_PLUS;
     LIL_SET_NULL(dst);
     
     // a = 0 or b = 0 => a * b = 0 mod m

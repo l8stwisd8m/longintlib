@@ -20,7 +20,6 @@ int lil_scan_bin(lil_t *src) {
     char ch = 0;
     
     // default input
-    src->sign = LIL_PLUS;
     LIL_SET_NULL(src);
 
     while (ctr <= lim) {

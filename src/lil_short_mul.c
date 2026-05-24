@@ -12,7 +12,6 @@ int lil_short_mul(long_int *src_a, uint64_t src_b) {
     
     if ((src_b == 0) or (lil_is_null(src_a))) {
         LIL_SET_NULL(src_a);
-        src_a->sign = LIL_PLUS;
         return flag; // a * 0 = 0
     }
     

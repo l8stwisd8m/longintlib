@@ -14,7 +14,6 @@ int lil_gcd(lil_t *dst, lil_t *src_a, lil_t *src_b) {
     // greatest common divisor of sources a and b
     
     // default result
-    dst->sign = LIL_PLUS;
     LIL_SET_NULL(dst);
     dst->val[0] = 1; // set gcd = 1
     

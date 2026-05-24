@@ -21,10 +21,11 @@ int lil_inv(lil_t *dst, lil_t *src_a, lil_t *src_m) {
     // inverse element a modulo m
     
     // default result
-    dst->sign = LIL_PLUS;
     LIL_SET_NULL(dst);
+    
     // correct a
     lil_val_mod(src_a, src_m);
+    
     // correct modulo sign
     src_m->sign = LIL_PLUS;
     

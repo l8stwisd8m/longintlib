@@ -42,6 +42,7 @@ enum lil_perror {
 // CONFIGURATION
 
 // EXCEPTIONS CONFIG
+#define LIL_INVALID_INPUT       // check if an input is not valid
 #define LIL_OPERAND_SIZES       // check if operand sizes mismatch
 #define LIL_DIVISION_BY_ZERO    // check if a certain operand is equal to zero
 #define COPRIME_TERMS_INVERSION // definition can be removed for certain purposes,
@@ -59,14 +60,12 @@ enum lil_perror {
 
 // UTILITY FUNCTIONS
 int lil_rev(lil_t *src); // reverse source values order
-int lil_cpy(lil_t *dst, lil_t *src); // copy source structure to destination
+int lil_cpy(lil_t *dst, lil_t *src); // copy source structure
 uint64_t lil_len(lil_t *src); // return bit length of source
 int lil_cmp(lil_t *src_a, lil_t *src_b); // return 0 if a = b, -1 if a < b, 1 if a > b
 int lil_cmp_len(lil_t *src_a, lil_t *src_b); // return 0 if len(a) = len(b), -1 if len(a) < len(b), 1 if len(a) > len(b)
 int lil_cmp_val(lil_t *src_a, lil_t *src_b); // return 0 if abs(a) = abs(b), -1 if abs(a) < abs(b), 1 if abs(a) > abs(b)
 int lil_is_null(lil_t *src); // return 1 if source is empty, 0 otherwise
-int lil_is_even(lil_t *src); // return 1 if source is even, 0 otherwise
-int lil_is_odd(lil_t *src);  // return 1 if source is odd, 0 otherwise
 int lil_is_one(lil_t *src);  // return 1 if source is one, 0 otherwise
 
 // PRINT & SCAN FUNCTIONS
@@ -120,10 +119,20 @@ int lil_short_pow_mod(lil_t *src_a, uint64_t n, lil_t *src_m); // raising a to t
 // CUSTOM FUNCTIONS
 // source files located in the "dev" folder
 
+// INTRINSICS
+int lil_clz(uint64_t *dst, lil_t *src); // number of leading zeros
+int lil_ctz(uint64_t *dst, lil_t *src); // number of trailing zeros
+
 // ADDITIONAL MATH FUNCTIONS
 int lil_sqr(lil_t *dst, lil_t *src); // raising source to the power of two
 int lil_sqrt(lil_t *dst, lil_t *src); // floor from square root of source
-int lil_sqrt_mod(lil_t *dst, lil_t *src_a, lil_t *src_m); // modulo square root of a modulo m
+int lil_sqrt_mod(lil_t *dst, lil_t *src_a, lil_t *src_m); // modulo square root of a
+
+// FLOATING POINT MATH FUNCTIONS
+int lil_log(double *dst, lil_t *src); // natural logarithm
+int lil_log2(double *dst, lil_t *src); // logarithm of source to base 2
+int lil_log10(double *dst, lil_t *src); // logarithm of source to base 10
+int lil_fract(double *dst, lil_t *src_a, lil_t *src_b); // fraction produced by division of a by b
 
 // FAST OPERATIONS
 int lil_fast_gcd(lil_t *dst, lil_t *src_a, lil_t *src_b); // greatest commond divisor of a and b

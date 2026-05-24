@@ -29,7 +29,6 @@ int lil_pow_mod(lil_t *dst, lil_t *src_a, lil_t *src_n, lil_t *src_m) {
     
     // default result
     LIL_SET_NULL(dst);
-    dst->sign = LIL_PLUS;
     
     // a = 0 => a ^ n mod m = 0
     if (lil_is_null(src_a)) {
